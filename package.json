@@ -1,0 +1,58 @@
+{
+  "name": "arabic-letter-assessment",
+  "version": "1.0.0",
+  "description": "Windows desktop application for assessing Arabic letters",
+  "main": "main.js",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "pdfjs-dist": "4.10.38",
+    "tesseract.js": "^6.0.1"
+  },
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win nsis --publish never",
+    "verify": "node --check main.js"
+  },
+  "devDependencies": {
+    "electron": "^35.1.5",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.arabicletterassessment.desktop",
+    "productName": "Arabic Letter Assessment",
+    "artifactName": "Arabic-Letter-Assessment-Setup-${version}.${ext}",
+    "publish": {
+      "provider": "generic",
+      "url": "https://example.invalid/arabic-letter-assessment"
+    },
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "index.html",
+      "main.js",
+      "plans/**/*",
+      "vendor/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Arabic Letter Assessment"
+    }
+  }
+}
