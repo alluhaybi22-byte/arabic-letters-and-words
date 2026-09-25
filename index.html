@@ -102,7 +102,7 @@
     </section>
 
     <section id="allReport" class="card hidden">
-      <h2>الكشف الشامل لنتائج الطلاب</h2><div class="print-only">الكشف الشامل لتقييم الحروف العربية</div><div id="allReportContent" class="result"></div>
+      <h2>الكشف الشامل لنتائج الطلاب</h2><div class="print-only">الكشف الشامل لتقييم الحروف والكلمات العربية</div><div id="allReportContent" class="result"></div>
       <div class="actions no-print"><button class="secondary" id="closeAllReport">العودة إلى السجل</button></div>
     </section>
 
@@ -508,6 +508,7 @@
     }
 
     function mark(score) {
+      if ($('test').classList.contains('hidden') || pos >= q.length || !['✓', '✕', '↻'].includes(score)) return;
       const item = q[pos];
       res.push({letter:item.letter || '', word:item.word || '', position:item.position || '', diacritic:item.diacritic || '', difficulty:item.difficulty || '', tanween:item.tanween || '', errorType:item.word && score !== '✓' ? $('errorType').value : '', item:item.word || form(item.letter, item.position, item.diacritic), score});
       $('errorType').value = '';
@@ -564,7 +565,8 @@
         rosterName: roster && currentStudent(roster) && currentStudent(roster).name === $('student').value.trim() ? roster.name : '',
         completedAt: new Date().toISOString(),
         level: $('level').value,
-        levelLabel: levelName($('level').value) + ($('level').value === 'four' ? ($('wordSession').value === 'short' ? ' — قصير (15 كلمة)' : ' — كامل (30 كلمة)') : ''),
+        levelLabel: levelName($('level').value) + ($('level').value === 'four' ? ($('wordSession').value === 'short' ? ' — قصير (15 كلمة)' : ' — كامل (30 كلمة)') : '') + (res.length < q.length ? ' — تقييم جزئي (' + res.length + ' من ' + q.length + ')' : ''),
+        plannedTotal: q.length,
         items: res.map(x => ({...x})),
         summary: { total:res.length, correct, incorrect:incorrect.length, retries, percentage:res.length ? Math.round(correct / res.length * 100) : 0 },
         durationSeconds: elapsedSeconds(),
@@ -574,13 +576,13 @@
     }
 
     function completeAssessment() {
-      if (!res.length) return;
+      if (!res.length || activeRecord) return;
       stopTimer();
-      activeRecord = createRecord();
+      const record = createRecord();
       const store = getStore();
-      store.records.unshift(activeRecord);
+      store.records.unshift(record);
       saveStore(store);
-      renderReport(activeRecord);
+      renderReport(record);
     }
 
     function formatDate(value) {
@@ -601,8 +603,8 @@
     }
 
     function wordErrorSummary(record) {
-      const errors = record.items.filter(item => item.word && item.score !== '✓');
-      if (!errors.length) return 'لا توجد كلمات تحتاج إلى تدريب.';
+      const errors = record.items.filter(item => item.word && item.score === '✕');
+      if (!errors.length) return 'لم تُسجَّل أخطاء قراءة.';
       const categories = ['التنوين', 'المد', 'الشدة', 'الحركات', 'الحروف', 'الهمزة', 'أخرى'];
       const labeled = categories.map(category => {
         const count = errors.filter(item => item.errorType === category).length;
@@ -613,13 +615,28 @@
       return labeled.join('، ');
     }
 
+    function retryWordsText(record) {
+      return record.items.filter(item => item.word && item.score === '↻').map(item => item.word).join('، ');
+    }
+
+    function assessmentStatus(record) {
+      return record.plannedTotal > record.summary.total
+        ? 'تقييم جزئي (' + record.summary.total + ' من ' + record.plannedTotal + ')'
+        : 'تم الاختبار';
+    }
+
+    function reportTitle(record) {
+      return record.level === 'four' ? 'تقرير تقييم الكلمات العربية' : 'تقرير تقييم الحروف العربية';
+    }
+
     function wordBreakdownHtml(record) {
       if (record.level !== 'four' || !record.items.some(item => item.difficulty)) return '';
       return '<div class="result"><strong>القراءة حسب الصعوبة:</strong> ' +
         esc(wordScoreSummary(record, 'difficulty', ['سهل', 'متوسط', 'صعب'])) +
         '<br><strong>القراءة حسب التنوين:</strong> ' +
         esc(wordScoreSummary(record, 'tanween', ['ضم', 'فتح', 'كسر'])) +
-        '<br><strong>أنواع الصعوبات:</strong> ' + esc(wordErrorSummary(record)) + '</div>';
+        '<br><strong>أنواع أخطاء القراءة:</strong> ' + esc(wordErrorSummary(record)) +
+        (retryWordsText(record) ? '<br><strong>كلمات مؤجلة لإعادة التقييم:</strong> ' + esc(retryWordsText(record)) : '') + '</div>';
     }
 
     function mistakeLabel(record) {
@@ -644,7 +661,8 @@
       hide('test'); hide('setup'); hide('history'); hide('allReport'); hide('plans'); hide('studentProfile'); show('report'); show('homeButton');
       const s = record.summary;
       $('reportScore').textContent = s.percentage + '%';
-      document.querySelector('#report .report-banner h2').textContent = record.level === 'four' ? 'تقرير تقييم الكلمات العربية' : 'تقرير تقييم الحروف العربية';
+      document.querySelector('#report .report-banner h2').textContent = reportTitle(record);
+      document.querySelector('#report .report-score span').textContent = record.plannedTotal > s.total ? 'نتيجة البنود المقيمة' : 'النتيجة النهائية';
       $('summary').innerHTML = '<section class="report-info"><div><span class="report-label">اسم الطالب</span>' + esc(record.studentName) + '</div><div><span class="report-label">اسم المعلم</span>' + esc(record.teacherName || 'غير محدد') + '</div><div><span class="report-label">تاريخ التقييم</span>' + esc(formatDate(record.completedAt)) + '</div></section>' +
         '<section class="report-stats"><div class="report-stat good"><span>متقن</span><b>' + s.correct + '</b></div><div class="report-stat bad"><span>يحتاج تدريبًا</span><b>' + s.incorrect + '</b></div><div class="report-stat wait"><span>إعادة لاحقًا</span><b>' + s.retries + '</b></div><div class="report-stat time"><span>مدة الاختبار</span><b>' + formatDuration(record.durationSeconds || 0) + '</b></div></section>' +
         '<div class="result"><strong>المستوى:</strong> ' + esc(record.levelLabel) + ' &nbsp; | &nbsp; <strong>عدد البنود:</strong> ' + s.total + (record.rosterName ? ' &nbsp; | &nbsp; <strong>الكشف:</strong> ' + esc(record.rosterName) : '') + '</div>' + wordBreakdownHtml(record);
@@ -685,6 +703,8 @@
         ['وقت التقييم', formatDate(record.completedAt)],
         ['مدة الاختبار', formatDuration(record.durationSeconds || 0)],
         ['المستوى', record.levelLabel],
+        ['حالة التقييم', assessmentStatus(record)],
+        ['البنود المقيمة', record.summary.total + ' من ' + (record.plannedTotal || record.summary.total)],
         ['النتيجة', record.summary.percentage + '%'],
         ['متقن', record.summary.correct],
         ['يحتاج تدريبًا', record.summary.incorrect],
@@ -693,8 +713,9 @@
         ...(record.level === 'four' && record.items.some(item => item.difficulty) ? [
           ['القراءة حسب الصعوبة', wordScoreSummary(record, 'difficulty', ['سهل', 'متوسط', 'صعب'])],
           ['القراءة حسب التنوين', wordScoreSummary(record, 'tanween', ['ضم', 'فتح', 'كسر'])],
-          ['أنواع الصعوبات', wordErrorSummary(record)]
+          ['أنواع أخطاء القراءة', wordErrorSummary(record)]
         ] : []),
+        ...(record.level === 'four' && retryWordsText(record) ? [['كلمات مؤجلة لإعادة التقييم', retryWordsText(record)]] : []),
         ['البند', 'التقييم'],
         ...record.items.map(x => [x.item + (x.difficulty ? ' (' + x.difficulty + '، تنوين ' + x.tanween + ')' : ''), x.score + (x.errorType ? ' — ' + x.errorType : '')])
       ];
@@ -744,12 +765,12 @@
     function classRows() {
       const records = getStore().records;
       const roster = getRoster();
-      if (!roster || !roster.students.length) return records.map(record => [record.studentName, 'تم الاختبار', record.summary.percentage + '%', wrongText(record)]);
+      if (!roster || !roster.students.length) return records.map(record => [record.studentName, assessmentStatus(record), record.summary.percentage + '%', wrongText(record)]);
       const latestRecords = new Map();
       records.filter(record => record.rosterId === roster.id || (roster.id.startsWith('migrated-') && !record.rosterId)).forEach(record => { const key = record.studentId || record.studentName; if (!latestRecords.has(key)) latestRecords.set(key, record); });
       return roster.students.map(student => {
         const record = latestRecords.get(student.id) || latestRecords.get(student.name);
-        if (record) return [student.name, 'تم الاختبار', record.summary.percentage + '%', wrongText(record)];
+        if (record) return [student.name, assessmentStatus(record), record.summary.percentage + '%', wrongText(record)];
         if (roster.absentStudentIds[student.id]) return [student.name, 'غائب', '—', '—'];
         return [student.name, 'لم يُختبر بعد', '—', '—'];
       });
@@ -807,10 +828,14 @@
     };
     document.querySelectorAll('[data-score]').forEach(button => button.onclick = () => mark(button.dataset.score));
     document.addEventListener('keydown', event => {
-      if ($('test').classList.contains('hidden') || event.altKey || event.ctrlKey || event.metaKey || event.target.closest?.('input, select, textarea, button, [contenteditable="true"]')) return;
+      if ($('test').classList.contains('hidden') || event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
+      if (event.target.closest?.('input, select, textarea, [contenteditable]:not([contenteditable="false"])')) return;
+      const focusedButton = event.target.closest?.('button');
+      if (focusedButton && !focusedButton.matches('button[data-score]')) return;
       const score = event.key === 'Enter' ? '✓' : event.code === 'Space' ? '✕' : event.key.toLowerCase() === 'r' ? '↻' : null;
       if (!score) return;
       event.preventDefault();
+      if (event.repeat) return;
       mark(score);
     });
     $('finish').onclick = completeAssessment;
@@ -821,7 +846,7 @@
     $('skipAbsent').onclick = skipAbsentStudent;
     $('printFormat').onchange = () => activeRecord && renderDetails(activeRecord);
     $('print').onclick = () => window.print();
-    $('word').onclick = () => activeRecord && saveDoc(individualRows(activeRecord), 'تقرير-' + activeRecord.studentName + '.docx', 'تقرير تقييم الحروف العربية للطالب ' + activeRecord.studentName);
+    $('word').onclick = () => activeRecord && saveDoc(individualRows(activeRecord), 'تقرير-' + activeRecord.studentName + '.docx', reportTitle(activeRecord) + ' للطالب ' + activeRecord.studentName);
     $('showPlans').onclick = showPlans;
     $('closePlans').onclick = () => {
       hide('plans');
@@ -845,7 +870,7 @@
     $('closeHistory').onclick = goHome;
     $('allWord').onclick = () => {
       const roster = getRoster();
-      saveDoc(allRows(), 'كشف-نتائج-الطلاب.docx', 'الكشف الشامل لتقييم الحروف العربية' + (roster ? ' — ' + roster.name : ''));
+      saveDoc(allRows(), 'كشف-نتائج-الطلاب.docx', 'الكشف الشامل لتقييم الحروف والكلمات العربية' + (roster ? ' — ' + roster.name : ''));
     };
     $('allPrint').onclick = () => { renderAllReport(); window.print(); };
     $('closeAllReport').onclick = showHistory;
