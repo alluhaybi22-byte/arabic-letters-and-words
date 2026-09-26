@@ -72,7 +72,8 @@
         <div><label for="student">اسم الطالب</label><input id="student" placeholder="اكتب اسم الطالب"></div>
       </div>
       <div id="rosterPickerWrap" class="hidden" style="margin-top:19px"><label for="rosterStudent">اختيار طالب من الكشف</label><select id="rosterStudent"></select></div>
-      <div style="margin-top:19px"><label for="level">المستوى</label><select id="level"><option value="one">المستوى الأول — 28 حرفًا منفردًا بلا حركات</option><option value="two">المستوى الثاني — 28 حرفًا في مواضع عشوائية</option><option value="three">المستوى الثالث — عشوائي موسّع (56 بندًا)</option><option value="four">المستوى الرابع — كلمات بالحركات والتنوين والمدود</option></select></div>
+      <div style="margin-top:19px"><label for="level">المستوى</label><select id="level"><option value="one">المستوى الأول — 28 حرفًا منفردًا بلا حركات</option><option value="two">المستوى الثاني — 28 حرفًا في مواضع عشوائية</option><option value="three">المستوى الثالث — عشوائي موسّع (56 بندًا)</option><option value="four">المستوى الرابع — 30 كلمة متنوعة بالحركات والتنوين والمدود</option></select></div>
+      <div id="wordSessionWrap" class="hidden" style="margin-top:12px"><label for="wordSession">عدد كلمات المستوى الرابع</label><select id="wordSession"><option value="full">اختبار كامل — 30 كلمة</option><option value="short">اختبار قصير — 15 كلمة متوازنة</option></select></div>
       <div style="margin-top:19px"><label for="rosterName">اسم الكشف أو الصف</label><input id="rosterName" placeholder="مثال: الصف الثاني الابتدائي — الفصل أ"></div>
       <div style="margin-top:19px"><label for="savedRosters">الكشف النشط</label><select id="savedRosters"><option value="">لا يوجد كشف محفوظ</option></select></div>
       <div style="margin-top:19px"><label>استيراد كشف أسماء الطلاب</label><input id="rosterFile" class="hidden" type="file" accept=".docx,.pdf,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"><button class="secondary no-print" id="importRoster" type="button">استيراد كشف PDF أو Word أو Excel</button><div id="rosterMessage" class="file-message">سمِّ الكشف ثم ارفع ملف PDF أو Word أو Excel؛ ستراجع الأسماء قبل حفظها.</div></div>
@@ -83,6 +84,7 @@
       <div class="test-head"><div><strong id="counter"></strong><div class="student" id="studentName"></div><div id="timer" class="timer">00:00</div></div><div class="actions no-print"><button class="secondary" id="returnHome">العودة للصفحة الرئيسية</button><button class="absent" id="skipAbsent">تخطي الطالب الغائب</button><button class="secondary" id="finish">إنهاء الاختبار</button></div></div>
       <div class="bar"><i id="progress"></i></div><div class="letter" id="letter">اَ</div><div class="hint">اطلب من الطالب نطق ما يظهر، ثم اختر النتيجة المناسبة.</div>
       <div class="keyboard-help no-print">اختصارات لوحة المفاتيح: <span class="key">Enter</span> متقن، <span class="key">مسافة</span> يحتاج تدريبًا، <span class="key">R</span> إعادة لاحقًا.</div>
+      <div id="errorTypeWrap" class="hidden no-print" style="margin:12px auto;max-width:430px"><label for="errorType">نوع الصعوبة في قراءة الكلمة (اختياري عند التقييم)</label><select id="errorType"><option value="">لم أحدد نوع الصعوبة</option><option value="التنوين">التنوين</option><option value="المد">المد</option><option value="الشدة">الشدة</option><option value="الحركات">الحركات</option><option value="الحروف">الحروف</option><option value="الهمزة">الهمزة</option><option value="أخرى">أخرى</option></select></div>
       <div class="scores no-print"><button class="score ok" data-score="✓" title="متقن — Enter"><span class="score-symbol">✓</span>متقن<span class="score-key">Enter</span></button><button class="score no" data-score="✕" title="يحتاج تدريبًا — مسافة"><span class="score-symbol">✕</span>يحتاج تدريبًا<span class="score-key">مسافة</span></button><button class="score later" data-score="↻" title="إعادة لاحقًا — R"><span class="score-symbol">↻</span>إعادة لاحقًا<span class="score-key">R</span></button></div>
       <div class="result" id="last">لم تُسجّل نتيجة بعد.</div>
     </section>
@@ -100,7 +102,7 @@
     </section>
 
     <section id="allReport" class="card hidden">
-      <h2>الكشف الشامل لنتائج الطلاب</h2><div class="print-only">الكشف الشامل لتقييم الحروف العربية</div><div id="allReportContent" class="result"></div>
+      <h2>الكشف الشامل لنتائج الطلاب</h2><div class="print-only">الكشف الشامل لتقييم الحروف والكلمات العربية</div><div id="allReportContent" class="result"></div>
       <div class="actions no-print"><button class="secondary" id="closeAllReport">العودة إلى السجل</button></div>
     </section>
 
@@ -126,7 +128,38 @@
     const LEVEL_ONE_LETTERS = ['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','هـ','و','ي'];
     const H = ['َ','ُ','ِ'];
     const P = ['initial','final','middle'];
-    const WORDS = ['كَتَبَ','قَلَمٌ','بَحَرٌ','ذَهَبَ','بَابٌ','نُورٌ','فِيلٌ','كِتَابٌ','تَمْرَةٌ','زَهْرَةٌ','مَكْتَبٌ','مَدْرَسَةٌ','عُصْفُورٌ','مَفْتُوحٌ','مَسَاءٌ','سَمَاءٌ','بَيْتٌ','حِصَانٌ','وَلَدٌ','بِنْتٌ'];
+    const WORDS = [
+      {word:'بَابٌ', difficulty:'سهل', tanween:'ضم'},
+      {word:'قَلَمٌ', difficulty:'سهل', tanween:'ضم'},
+      {word:'بَيْتٌ', difficulty:'سهل', tanween:'ضم'},
+      {word:'وَلَدٌ', difficulty:'سهل', tanween:'ضم'},
+      {word:'دَارًا', difficulty:'سهل', tanween:'فتح'},
+      {word:'جَبَلًا', difficulty:'سهل', tanween:'فتح'},
+      {word:'سَمَكًا', difficulty:'سهل', tanween:'فتح'},
+      {word:'أَسَدٍ', difficulty:'سهل', tanween:'كسر'},
+      {word:'شَمْسٍ', difficulty:'سهل', tanween:'كسر'},
+      {word:'بِنْتٍ', difficulty:'سهل', tanween:'كسر'},
+      {word:'كِتَابٌ', difficulty:'متوسط', tanween:'ضم'},
+      {word:'حِصَانٌ', difficulty:'متوسط', tanween:'ضم'},
+      {word:'مَدْرَسَةٌ', difficulty:'متوسط', tanween:'ضم'},
+      {word:'مِفْتَاحًا', difficulty:'متوسط', tanween:'فتح'},
+      {word:'حَدِيقَةً', difficulty:'متوسط', tanween:'فتح'},
+      {word:'عَمُودًا', difficulty:'متوسط', tanween:'فتح'},
+      {word:'نَافِذَةً', difficulty:'متوسط', tanween:'فتح'},
+      {word:'فِرَاشٍ', difficulty:'متوسط', tanween:'كسر'},
+      {word:'رَسُولٍ', difficulty:'متوسط', tanween:'كسر'},
+      {word:'طَائِرٍ', difficulty:'متوسط', tanween:'كسر'},
+      {word:'عُصْفُورٌ', difficulty:'صعب', tanween:'ضم'},
+      {word:'بُرْتُقَالٌ', difficulty:'صعب', tanween:'ضم'},
+      {word:'سُلَحْفَاةٌ', difficulty:'صعب', tanween:'ضم'},
+      {word:'مُهَنْدِسًا', difficulty:'صعب', tanween:'فتح'},
+      {word:'مَكْتَبَةً', difficulty:'صعب', tanween:'فتح'},
+      {word:'تِلْمِيذًا', difficulty:'صعب', tanween:'فتح'},
+      {word:'مِظَلَّةٍ', difficulty:'صعب', tanween:'كسر'},
+      {word:'مُعَلِّمٍ', difficulty:'صعب', tanween:'كسر'},
+      {word:'مِصْبَاحٍ', difficulty:'صعب', tanween:'كسر'},
+      {word:'اِسْتِرَاحَةٍ', difficulty:'صعب', tanween:'كسر'}
+    ];
     const STORAGE_KEY = 'arabic-letter-assessment.records';
     const STORAGE_VERSION = 2;
     const TEACHER_STORAGE_KEY = 'arabic-letter-assessment.teacher-name';
@@ -150,7 +183,14 @@
       hide('homeButton');
       updateRosterMessage();
     }
-    const shuffle = a => [...a].sort(() => Math.random() - .5);
+    function shuffle(items) {
+      const shuffled = [...items];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
     const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const makeId = prefix => prefix + '-' + (globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(16).slice(2));
     const levelName = value => ({one:'المستوى الأول — الحروف بلا حركات',two:'المستوى الثاني — مواضع الحروف',three:'المستوى الثالث — عشوائي موسّع',four:'المستوى الرابع — الكلمات بالحركات والتنوين والمدود'})[value] || value;
@@ -418,18 +458,36 @@
       }
     }
 
+    function shortWordSelection() {
+      // Five words at each difficulty and five of each tanween type.
+      const quotas = {
+        'سهل': { 'ضم': 2, 'فتح': 2, 'كسر': 1 },
+        'متوسط': { 'ضم': 1, 'فتح': 2, 'كسر': 2 },
+        'صعب': { 'ضم': 2, 'فتح': 1, 'كسر': 2 }
+      };
+      return Object.entries(quotas).flatMap(([difficulty, types]) =>
+        Object.entries(types).flatMap(([tanween, count]) =>
+          shuffle(WORDS.filter(entry => entry.difficulty === difficulty && entry.tanween === tanween)).slice(0, count)
+        )
+      );
+    }
+
     function build() {
       const level = $('level').value, letters = shuffle(L);
       if (level === 'one') return shuffle(LEVEL_ONE_LETTERS).map(l => ({letter:l, position:'isolated', diacritic:''}));
       if (level === 'two') return letters.map((l, i) => ({letter:l, position:P[i % P.length], diacritic:H[Math.floor(Math.random() * H.length)]}));
       if (level === 'three') return shuffle([...L, ...L]).map(l => ({letter:l, position:P[Math.floor(Math.random() * P.length)], diacritic:H[Math.floor(Math.random() * H.length)]}));
-      if (level === 'four') return shuffle(WORDS).map(word => ({word, item:word}));
+      if (level === 'four') {
+        const words = $('wordSession').value === 'short' ? shortWordSelection() : WORDS;
+        return shuffle(words).map(({word, difficulty, tanween}) => ({word, item:word, difficulty, tanween}));
+      }
       return [];
     }
 
     function begin() {
       if (!$('student').value.trim()) return $('student').focus();
       q = build(); pos = 0; res = []; activeRecord = null;
+      $('errorType').value = '';
       hide('setup'); hide('report'); hide('history'); hide('allReport'); hide('studentProfile'); show('test'); show('homeButton');
       const roster = getRoster();
       const selectedStudent = currentStudent(roster);
@@ -444,13 +502,16 @@
       $('counter').textContent = 'البند ' + (pos + 1) + ' من ' + q.length;
       $('letter').textContent = item.word || form(item.letter, item.position, item.diacritic);
       $('letter').classList.toggle('word-item', Boolean(item.word));
+      $('errorTypeWrap').classList.toggle('hidden', !item.word);
       $('progress').style.width = (pos / q.length * 100) + '%';
       $('last').textContent = pos ? 'آخر تقييم: ' + res[res.length - 1].item + ' ' + res[res.length - 1].score : 'لم تُسجّل نتيجة بعد.';
     }
 
     function mark(score) {
+      if ($('test').classList.contains('hidden') || pos >= q.length || !['✓', '✕', '↻'].includes(score)) return;
       const item = q[pos];
-      res.push({letter:item.letter || '', word:item.word || '', position:item.position || '', diacritic:item.diacritic || '', item:item.word || form(item.letter, item.position, item.diacritic), score});
+      res.push({letter:item.letter || '', word:item.word || '', position:item.position || '', diacritic:item.diacritic || '', difficulty:item.difficulty || '', tanween:item.tanween || '', errorType:item.word && score !== '✓' ? $('errorType').value : '', item:item.word || form(item.letter, item.position, item.diacritic), score});
+      $('errorType').value = '';
       if (++pos === q.length) return completeAssessment();
       render();
     }
@@ -504,7 +565,8 @@
         rosterName: roster && currentStudent(roster) && currentStudent(roster).name === $('student').value.trim() ? roster.name : '',
         completedAt: new Date().toISOString(),
         level: $('level').value,
-        levelLabel: levelName($('level').value),
+        levelLabel: levelName($('level').value) + ($('level').value === 'four' ? ($('wordSession').value === 'short' ? ' — قصير (15 كلمة)' : ' — كامل (30 كلمة)') : '') + (res.length < q.length ? ' — تقييم جزئي (' + res.length + ' من ' + q.length + ')' : ''),
+        plannedTotal: q.length,
         items: res.map(x => ({...x})),
         summary: { total:res.length, correct, incorrect:incorrect.length, retries, percentage:res.length ? Math.round(correct / res.length * 100) : 0 },
         durationSeconds: elapsedSeconds(),
@@ -514,13 +576,13 @@
     }
 
     function completeAssessment() {
-      if (!res.length) return;
+      if (!res.length || activeRecord) return;
       stopTimer();
-      activeRecord = createRecord();
+      const record = createRecord();
       const store = getStore();
-      store.records.unshift(activeRecord);
+      store.records.unshift(record);
       saveStore(store);
-      renderReport(activeRecord);
+      renderReport(record);
     }
 
     function formatDate(value) {
@@ -529,7 +591,52 @@
 
     function wrongText(record) {
       if (record.incorrectWords && record.incorrectWords.length) return record.incorrectWords.join('، ');
+      if (record.level === 'four') return 'لا توجد كلمات تحتاج إلى تدريب.';
       return record.incorrectLetters.length ? record.incorrectLetters.map(x => x.letter + (x.occurrence > 1 ? ' (تكرار ' + x.occurrence + ')' : '')).join('، ') : 'لا توجد حروف مخطأ بها.';
+    }
+
+    function wordScoreSummary(record, field, labels) {
+      return labels.map(label => {
+        const items = record.items.filter(item => item[field] === label);
+        return items.length ? label + ': ' + items.filter(item => item.score === '✓').length + '/' + items.length : '';
+      }).filter(Boolean).join('، ');
+    }
+
+    function wordErrorSummary(record) {
+      const errors = record.items.filter(item => item.word && item.score === '✕');
+      if (!errors.length) return 'لم تُسجَّل أخطاء قراءة.';
+      const categories = ['التنوين', 'المد', 'الشدة', 'الحركات', 'الحروف', 'الهمزة', 'أخرى'];
+      const labeled = categories.map(category => {
+        const count = errors.filter(item => item.errorType === category).length;
+        return count ? category + ': ' + count : '';
+      }).filter(Boolean);
+      const unspecified = errors.filter(item => !item.errorType).length;
+      if (unspecified) labeled.push('لم يُحدَّد النوع: ' + unspecified);
+      return labeled.join('، ');
+    }
+
+    function retryWordsText(record) {
+      return record.items.filter(item => item.word && item.score === '↻').map(item => item.word).join('، ');
+    }
+
+    function assessmentStatus(record) {
+      return record.plannedTotal > record.summary.total
+        ? 'تقييم جزئي (' + record.summary.total + ' من ' + record.plannedTotal + ')'
+        : 'تم الاختبار';
+    }
+
+    function reportTitle(record) {
+      return record.level === 'four' ? 'تقرير تقييم الكلمات العربية' : 'تقرير تقييم الحروف العربية';
+    }
+
+    function wordBreakdownHtml(record) {
+      if (record.level !== 'four' || !record.items.some(item => item.difficulty)) return '';
+      return '<div class="result"><strong>القراءة حسب الصعوبة:</strong> ' +
+        esc(wordScoreSummary(record, 'difficulty', ['سهل', 'متوسط', 'صعب'])) +
+        '<br><strong>القراءة حسب التنوين:</strong> ' +
+        esc(wordScoreSummary(record, 'tanween', ['ضم', 'فتح', 'كسر'])) +
+        '<br><strong>أنواع أخطاء القراءة:</strong> ' + esc(wordErrorSummary(record)) +
+        (retryWordsText(record) ? '<br><strong>كلمات مؤجلة لإعادة التقييم:</strong> ' + esc(retryWordsText(record)) : '') + '</div>';
     }
 
     function mistakeLabel(record) {
@@ -544,7 +651,7 @@
         : '<strong>تفصيل التقييم:</strong><table class="detail-table"><thead><tr><th>البند</th><th>النتيجة</th><th>الملاحظة</th></tr></thead><tbody>' + record.items.map(item => {
           const outcome = item.score === '✓' ? 'متقن' : item.score === '✕' ? 'يحتاج تدريبًا' : 'إعادة لاحقًا';
           const note = item.score === '✓' ? 'أداء جيد' : item.score === '✕' ? 'يحتاج إلى تدريب ومتابعة' : 'يعاد التقييم لاحقًا';
-          return '<tr><td>' + esc(item.item) + '</td><td>' + item.score + ' ' + outcome + '</td><td>' + note + '</td></tr>';
+          return '<tr><td>' + esc(item.item) + '</td><td>' + item.score + ' ' + outcome + '</td><td>' + note + (item.difficulty ? ' — ' + esc(item.difficulty) + '، تنوين ' + esc(item.tanween) : '') + (item.errorType ? ' — نوع الصعوبة: ' + esc(item.errorType) : '') + '</td></tr>';
         }).join('') + '</tbody></table>';
     }
 
@@ -554,9 +661,11 @@
       hide('test'); hide('setup'); hide('history'); hide('allReport'); hide('plans'); hide('studentProfile'); show('report'); show('homeButton');
       const s = record.summary;
       $('reportScore').textContent = s.percentage + '%';
+      document.querySelector('#report .report-banner h2').textContent = reportTitle(record);
+      document.querySelector('#report .report-score span').textContent = record.plannedTotal > s.total ? 'نتيجة البنود المقيمة' : 'النتيجة النهائية';
       $('summary').innerHTML = '<section class="report-info"><div><span class="report-label">اسم الطالب</span>' + esc(record.studentName) + '</div><div><span class="report-label">اسم المعلم</span>' + esc(record.teacherName || 'غير محدد') + '</div><div><span class="report-label">تاريخ التقييم</span>' + esc(formatDate(record.completedAt)) + '</div></section>' +
         '<section class="report-stats"><div class="report-stat good"><span>متقن</span><b>' + s.correct + '</b></div><div class="report-stat bad"><span>يحتاج تدريبًا</span><b>' + s.incorrect + '</b></div><div class="report-stat wait"><span>إعادة لاحقًا</span><b>' + s.retries + '</b></div><div class="report-stat time"><span>مدة الاختبار</span><b>' + formatDuration(record.durationSeconds || 0) + '</b></div></section>' +
-        '<div class="result"><strong>المستوى:</strong> ' + esc(record.levelLabel) + ' &nbsp; | &nbsp; <strong>عدد البنود:</strong> ' + s.total + (record.rosterName ? ' &nbsp; | &nbsp; <strong>الكشف:</strong> ' + esc(record.rosterName) : '') + '</div>';
+        '<div class="result"><strong>المستوى:</strong> ' + esc(record.levelLabel) + ' &nbsp; | &nbsp; <strong>عدد البنود:</strong> ' + s.total + (record.rosterName ? ' &nbsp; | &nbsp; <strong>الكشف:</strong> ' + esc(record.rosterName) : '') + '</div>' + wordBreakdownHtml(record);
       $('wrongLetters').innerHTML = '<strong>' + mistakeLabel(record) + ':</strong> ' + esc(wrongText(record));
       const roster = getRoster();
       const selectedStudent = currentStudent(roster);
@@ -594,20 +703,28 @@
         ['وقت التقييم', formatDate(record.completedAt)],
         ['مدة الاختبار', formatDuration(record.durationSeconds || 0)],
         ['المستوى', record.levelLabel],
+        ['حالة التقييم', assessmentStatus(record)],
+        ['البنود المقيمة', record.summary.total + ' من ' + (record.plannedTotal || record.summary.total)],
         ['النتيجة', record.summary.percentage + '%'],
         ['متقن', record.summary.correct],
         ['يحتاج تدريبًا', record.summary.incorrect],
         ['إعادة لاحقًا', record.summary.retries],
         [mistakeLabel(record), wrongText(record)],
+        ...(record.level === 'four' && record.items.some(item => item.difficulty) ? [
+          ['القراءة حسب الصعوبة', wordScoreSummary(record, 'difficulty', ['سهل', 'متوسط', 'صعب'])],
+          ['القراءة حسب التنوين', wordScoreSummary(record, 'tanween', ['ضم', 'فتح', 'كسر'])],
+          ['أنواع أخطاء القراءة', wordErrorSummary(record)]
+        ] : []),
+        ...(record.level === 'four' && retryWordsText(record) ? [['كلمات مؤجلة لإعادة التقييم', retryWordsText(record)]] : []),
         ['البند', 'التقييم'],
-        ...record.items.map(x => [x.item, x.score])
+        ...record.items.map(x => [x.item + (x.difficulty ? ' (' + x.difficulty + '، تنوين ' + x.tanween + ')' : ''), x.score + (x.errorType ? ' — ' + x.errorType : '')])
       ];
     }
 
     function showHistory() {
       hide('setup'); hide('test'); hide('report'); hide('allReport'); hide('plans'); hide('studentProfile'); hide('importReview'); show('history'); show('homeButton');
       const records = getStore().records;
-      $('historyList').innerHTML = records.length ? records.map(record => '<article class="history-item"><div class="history-head"><div><strong>' + esc(record.studentName) + '</strong><div class="history-meta">' + esc(record.levelLabel) + ' — ' + esc(formatDate(record.completedAt)) + (record.rosterName ? ' — الكشف: ' + esc(record.rosterName) : '') + (record.teacherName ? ' — المعلم: ' + esc(record.teacherName) : '') + '</div></div><span class="stat">' + record.summary.percentage + '%</span></div><div class="wrong"><strong>الحروف المخطأ بها:</strong> ' + esc(wrongText(record)) + '</div><div class="actions no-print"><button class="secondary" data-record="' + record.id + '">عرض التقرير</button><button class="secondary" data-profile="' + record.id + '">ملف الطالب</button><button class="absent" data-delete-record="' + record.id + '" title="حذف التقرير">حذف التقرير</button></div></article>').join('') : '<div class="history-empty">لا توجد نتائج محفوظة بعد.</div>';
+      $('historyList').innerHTML = records.length ? records.map(record => '<article class="history-item"><div class="history-head"><div><strong>' + esc(record.studentName) + '</strong><div class="history-meta">' + esc(record.levelLabel) + ' — ' + esc(formatDate(record.completedAt)) + (record.rosterName ? ' — الكشف: ' + esc(record.rosterName) : '') + (record.teacherName ? ' — المعلم: ' + esc(record.teacherName) : '') + '</div></div><span class="stat">' + record.summary.percentage + '%</span></div><div class="wrong"><strong>' + esc(mistakeLabel(record)) + ':</strong> ' + esc(wrongText(record)) + '</div><div class="actions no-print"><button class="secondary" data-record="' + record.id + '">عرض التقرير</button><button class="secondary" data-profile="' + record.id + '">ملف الطالب</button><button class="absent" data-delete-record="' + record.id + '" title="حذف التقرير">حذف التقرير</button></div></article>').join('') : '<div class="history-empty">لا توجد نتائج محفوظة بعد.</div>';
       document.querySelectorAll('[data-record]').forEach(button => button.onclick = () => {
         const record = getStore().records.find(x => x.id === button.dataset.record);
         if (record) renderReport(record);
@@ -641,26 +758,36 @@
     function renderAllReport() {
       const rows = classRows();
       const roster = getRoster();
-      $('allReportContent').innerHTML = (roster ? '<p><strong>الكشف:</strong> ' + esc(roster.name) + '</p>' : '') + (rows.length ? '<table class="class-table"><thead><tr><th>الطالب</th><th>الحالة</th><th>النتيجة</th><th>الحروف المخطأ بها</th></tr></thead><tbody>' + rows.map(row => '<tr><td>' + esc(row[0]) + '</td><td>' + esc(row[1]) + '</td><td>' + esc(row[2]) + '</td><td>' + esc(row[3]) + '</td></tr>').join('') + '</tbody></table>' : 'لا توجد نتائج محفوظة بعد.');
+      $('allReportContent').innerHTML = (roster ? '<p><strong>الكشف:</strong> ' + esc(roster.name) + '</p>' : '') + (rows.length ? '<table class="class-table"><thead><tr><th>الطالب</th><th>الحالة</th><th>النتيجة</th><th>الحروف أو الكلمات التي تحتاج إلى تدريب</th></tr></thead><tbody>' + rows.map(row => '<tr><td>' + esc(row[0]) + '</td><td>' + esc(row[1]) + '</td><td>' + esc(row[2]) + '</td><td>' + esc(row[3]) + '</td></tr>').join('') + '</tbody></table>' : 'لا توجد نتائج محفوظة بعد.');
       hide('history'); hide('report'); hide('setup'); hide('plans'); hide('studentProfile'); show('allReport'); show('homeButton');
     }
 
     function classRows() {
       const records = getStore().records;
       const roster = getRoster();
-      if (!roster || !roster.students.length) return records.map(record => [record.studentName, 'تم الاختبار', record.summary.percentage + '%', wrongText(record)]);
+      if (!roster || !roster.students.length) return records.map(record => [record.studentName, assessmentStatus(record), record.summary.percentage + '%', wrongText(record)]);
       const latestRecords = new Map();
       records.filter(record => record.rosterId === roster.id || (roster.id.startsWith('migrated-') && !record.rosterId)).forEach(record => { const key = record.studentId || record.studentName; if (!latestRecords.has(key)) latestRecords.set(key, record); });
       return roster.students.map(student => {
         const record = latestRecords.get(student.id) || latestRecords.get(student.name);
-        if (record) return [student.name, 'تم الاختبار', record.summary.percentage + '%', wrongText(record)];
+        if (record) return [student.name, assessmentStatus(record), record.summary.percentage + '%', wrongText(record)];
         if (roster.absentStudentIds[student.id]) return [student.name, 'غائب', '—', '—'];
         return [student.name, 'لم يُختبر بعد', '—', '—'];
       });
     }
 
     function allRows() {
-      return [['الطالب','الحالة','النتيجة','الحروف المخطأ بها'], ...classRows()];
+      return [['الطالب','الحالة','النتيجة','الحروف أو الكلمات التي تحتاج إلى تدريب'], ...classRows()];
+    }
+
+    function runPrintWithFreshLayout(prepare) {
+      if (typeof prepare === 'function') prepare();
+      const trigger = () => window.print();
+      if (globalThis.requestAnimationFrame) {
+        requestAnimationFrame(() => requestAnimationFrame(trigger));
+      } else {
+        setTimeout(trigger, 0);
+      }
     }
 
     function showPlans() {
@@ -671,6 +798,10 @@
     }
 
     $('start').onclick = begin;
+    $('level').addEventListener('change', () => {
+      $('wordSessionWrap').classList.toggle('hidden', $('level').value !== 'four');
+    });
+    $('wordSessionWrap').classList.toggle('hidden', $('level').value !== 'four');
     $('teacher').addEventListener('change', saveTeacherName);
     $('teacher').addEventListener('blur', saveTeacherName);
     $('importRoster').onclick = () => $('rosterFile').click();
@@ -707,10 +838,14 @@
     };
     document.querySelectorAll('[data-score]').forEach(button => button.onclick = () => mark(button.dataset.score));
     document.addEventListener('keydown', event => {
-      if ($('test').classList.contains('hidden') || event.altKey || event.ctrlKey || event.metaKey) return;
+      if ($('test').classList.contains('hidden') || event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
+      if (event.target.closest?.('input, select, textarea, [contenteditable]:not([contenteditable="false"])')) return;
+      const focusedButton = event.target.closest?.('button');
+      if (focusedButton && !focusedButton.matches('button[data-score]')) return;
       const score = event.key === 'Enter' ? '✓' : event.code === 'Space' ? '✕' : event.key.toLowerCase() === 'r' ? '↻' : null;
       if (!score) return;
       event.preventDefault();
+      if (event.repeat) return;
       mark(score);
     });
     $('finish').onclick = completeAssessment;
@@ -720,8 +855,8 @@
     };
     $('skipAbsent').onclick = skipAbsentStudent;
     $('printFormat').onchange = () => activeRecord && renderDetails(activeRecord);
-    $('print').onclick = () => window.print();
-    $('word').onclick = () => activeRecord && saveDoc(individualRows(activeRecord), 'تقرير-' + activeRecord.studentName + '.docx', 'تقرير تقييم الحروف العربية للطالب ' + activeRecord.studentName);
+    $('print').onclick = () => activeRecord && runPrintWithFreshLayout(() => renderDetails(activeRecord));
+    $('word').onclick = () => activeRecord && saveDoc(individualRows(activeRecord), 'تقرير-' + activeRecord.studentName + '.docx', reportTitle(activeRecord) + ' للطالب ' + activeRecord.studentName);
     $('showPlans').onclick = showPlans;
     $('closePlans').onclick = () => {
       hide('plans');
@@ -745,9 +880,9 @@
     $('closeHistory').onclick = goHome;
     $('allWord').onclick = () => {
       const roster = getRoster();
-      saveDoc(allRows(), 'كشف-نتائج-الطلاب.docx', 'الكشف الشامل لتقييم الحروف العربية' + (roster ? ' — ' + roster.name : ''));
+      saveDoc(allRows(), 'كشف-نتائج-الطلاب.docx', 'الكشف الشامل لتقييم الحروف والكلمات العربية' + (roster ? ' — ' + roster.name : ''));
     };
-    $('allPrint').onclick = () => { renderAllReport(); window.print(); };
+    $('allPrint').onclick = () => runPrintWithFreshLayout(renderAllReport);
     $('closeAllReport').onclick = showHistory;
     $('homeButton').onclick = () => {
       if (!$('test').classList.contains('hidden') && res.length && !window.confirm('سيتم إلغاء الاختبار الحالي غير المحفوظ. هل تريد العودة للصفحة الرئيسية؟')) return;
