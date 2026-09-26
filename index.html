@@ -780,6 +780,16 @@
       return [['الطالب','الحالة','النتيجة','الحروف أو الكلمات التي تحتاج إلى تدريب'], ...classRows()];
     }
 
+    function runPrintWithFreshLayout(prepare) {
+      if (typeof prepare === 'function') prepare();
+      const trigger = () => window.print();
+      if (globalThis.requestAnimationFrame) {
+        requestAnimationFrame(() => requestAnimationFrame(trigger));
+      } else {
+        setTimeout(trigger, 0);
+      }
+    }
+
     function showPlans() {
       $('planList').innerHTML = TREATMENT_PLANS.map(plan => '<article class="plan-option"><h3>' + esc(plan.title) + '</h3><button class="secondary" data-plan-file="' + plan.file + '">فتح ملف PDF</button></article>').join('');
       document.querySelectorAll('[data-plan-file]').forEach(button => button.onclick = () => window.open(button.dataset.planFile, '_blank', 'noopener'));
@@ -845,7 +855,7 @@
     };
     $('skipAbsent').onclick = skipAbsentStudent;
     $('printFormat').onchange = () => activeRecord && renderDetails(activeRecord);
-    $('print').onclick = () => window.print();
+    $('print').onclick = () => activeRecord && runPrintWithFreshLayout(() => renderDetails(activeRecord));
     $('word').onclick = () => activeRecord && saveDoc(individualRows(activeRecord), 'تقرير-' + activeRecord.studentName + '.docx', reportTitle(activeRecord) + ' للطالب ' + activeRecord.studentName);
     $('showPlans').onclick = showPlans;
     $('closePlans').onclick = () => {
@@ -872,7 +882,7 @@
       const roster = getRoster();
       saveDoc(allRows(), 'كشف-نتائج-الطلاب.docx', 'الكشف الشامل لتقييم الحروف والكلمات العربية' + (roster ? ' — ' + roster.name : ''));
     };
-    $('allPrint').onclick = () => { renderAllReport(); window.print(); };
+    $('allPrint').onclick = () => runPrintWithFreshLayout(renderAllReport);
     $('closeAllReport').onclick = showHistory;
     $('homeButton').onclick = () => {
       if (!$('test').classList.contains('hidden') && res.length && !window.confirm('سيتم إلغاء الاختبار الحالي غير المحفوظ. هل تريد العودة للصفحة الرئيسية؟')) return;
