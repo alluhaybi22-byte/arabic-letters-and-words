@@ -19,7 +19,7 @@
     "test": "node smoke.cjs && node tests/print-ipc.cjs && node tests/profile-migration.cjs"
   },
   "devDependencies": {
-    "electron": "^35.1.5",
+    "electron": "44.5.1",
     "electron-builder": "^26.0.12"
   },
   "build": {

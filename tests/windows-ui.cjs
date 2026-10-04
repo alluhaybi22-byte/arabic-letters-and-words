@@ -42,15 +42,34 @@ const output=path.resolve('release/ui-proof');
     await preview.waitForSelector('#doPrint');assert.equal(await preview.locator('.class-table tbody tr').count(),2);
     await preview.screenshot({path:path.join(output,'print-preview.png')});
     const pdfPath=path.join(output,'report.pdf');
-    await app.evaluate(async({BrowserWindow},file)=>{
-      const window=BrowserWindow.getAllWindows().find(window=>window.getParentWindow());
-      const pdf=await window.webContents.printToPDF({pageSize:'A4',preferCSSPageSize:true,printBackground:true});
-      await require('node:fs/promises').writeFile(file,pdf);
+    await app.evaluate(({dialog},file)=>{
+      globalThis.lughatyTestSaveDialog=dialog.showSaveDialog;
+      dialog.showSaveDialog=async()=>({canceled:false,filePath:file});
     },pdfPath);
+    try {
+      await preview.locator('#savePdf').click();
+      await preview.waitForFunction(()=>document.getElementById('printStatus').textContent==='حُفظ ملف PDF.');
+    } finally {
+      await app.evaluate(({dialog})=>{dialog.showSaveDialog=globalThis.lughatyTestSaveDialog;delete globalThis.lughatyTestSaveDialog;});
+    }
     const pdf=await fs.readFile(pdfPath);assert.ok(pdf.length>1000);assert.equal(pdf.subarray(0,4).toString(),'%PDF');
+    await app.evaluate(({BrowserWindow})=>{
+      const wc=BrowserWindow.getAllWindows().find(window=>window.getParentWindow()).webContents;
+      globalThis.lughatyTestPrinters=wc.getPrintersAsync;wc.getPrintersAsync=async()=>[];
+    });
+    try {
+      await preview.locator('#doPrint').click();
+      await preview.waitForFunction(()=>document.getElementById('printStatus').textContent.includes('لا توجد طابعة'));
+      assert.equal(await preview.locator('#doPrint').isEnabled(),true);
+    } finally {
+      await app.evaluate(({BrowserWindow})=>{
+        BrowserWindow.getAllWindows().find(window=>window.getParentWindow()).webContents.getPrintersAsync=globalThis.lughatyTestPrinters;
+        delete globalThis.lughatyTestPrinters;
+      });
+    }
     const userData=await app.evaluate(({app})=>app.getPath('userData'));
     await fs.writeFile(path.join(userData,'installer-data-retention-test'),'retained');
-    await fs.writeFile(path.join(output,'results.json'),JSON.stringify({success:true,session,userData,checks:['sizes','Arial','RTL','diacritics','assessment','class folders','test folders','print preview','native PDF']},null,2));
+    await fs.writeFile(path.join(output,'results.json'),JSON.stringify({success:true,session,userData,checks:['sizes','Arial','RTL','diacritics','assessment','class folders','test folders','print preview','PDF button with native PDF generation','print button missing-printer response']},null,2));
     console.log('PASS: installed Windows app, sizes/RTL/Arial, scoring, folders, native print preview/PDF');
   } finally {await app.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});

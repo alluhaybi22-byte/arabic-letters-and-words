@@ -26,6 +26,7 @@ jobs:
         run: npm ci
       - name: Verify and test
         run: |
+          npm audit --audit-level=high
           npm run verify
           npm test
       - name: Build Windows EXE installer
