@@ -1575,12 +1575,7 @@ label{font-size:.72rem;margin-bottom:5px}input,select,textarea{min-height:39px;p
     $('cancelRosterReview').onclick = () => { pendingRosterImport = null; $('rosterFile').value = ''; goHome(); };
     $('resumeDraft').onclick = resumeDraft;
     $('discardDraft').onclick = () => {if (window.confirm('حذف الاختبار غير المكتمل؟')) clearDraft();};
-    // Preserve data from the original repository build without overwriting trial data.
-    for (const suffix of ['records','roster','teacher-name','principal-name','school-info','draft']) {
-      const current = 'lughaty-oral-diagnostic.' + suffix;
-      const previous = 'arabic-letter-assessment.' + suffix;
-      if (localStorage.getItem(current) === null && localStorage.getItem(previous) !== null) localStorage.setItem(current,localStorage.getItem(previous));
-    }
+    // Load only this installation's saved data; never auto-import legacy records.
     restoreTeacherName();
     updateRosterMessage(); updateDraftBanner();
   </script>

@@ -1,6 +1,6 @@
 {
   "name": "lughaty-oral-diagnostic",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "اختبار تشخيصي شفوي عربي للصفوف الأولية — لغتي الجميلة",
   "main": "main.js",
   "author": "محمد اللهيبي",
@@ -16,7 +16,7 @@
     "predist": "node scripts/third-party-notices.cjs",
     "dist": "electron-builder --win nsis --publish never",
     "verify": "node --check main.js && node --check print-bridge.js",
-    "test": "node smoke.cjs && node tests/print-ipc.cjs && node tests/profile-migration.cjs"
+    "test": "node smoke.cjs && node tests/print-ipc.cjs && node tests/profile-policy.cjs"
   },
   "devDependencies": {
     "electron": "44.5.1",
@@ -38,7 +38,7 @@
       "package.json",
       "LICENSE",
       "PRIVACY.md",
-      "profile-migration.js"
+      "profile-policy.js"
     ],
     "win": {
       "icon": "brand/icon.ico",

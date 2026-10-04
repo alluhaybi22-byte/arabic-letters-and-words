@@ -6,10 +6,27 @@ const output=path.resolve('release/ui-proof');
   const executablePath=process.env.LUGHATY_EXECUTABLE || require('electron');
   const args=process.env.LUGHATY_EXECUTABLE ? [] : ['.'];
   if (process.env.LUGHATY_TEST_NO_SANDBOX==='1') args.push('--no-sandbox');
-  const app=await electron.launch({executablePath,args,timeout:60000});
+  const oldSentinels=[];
+  if(process.platform==='win32' && process.env.CI) {
+    for(const name of ['arabic-letter-assessment','Arabic Letter Assessment','lughaty-oral-diagnostic']) {
+      const directory=path.join(process.env.APPDATA,name,'Local Storage');
+      await fs.mkdir(directory,{recursive:true});
+      const sentinel=path.join(directory,'clean-install-legacy-sentinel');
+      await fs.writeFile(sentinel,'previous-private-roster');oldSentinels.push(sentinel);
+    }
+  }
+  let app=await electron.launch({executablePath,args,timeout:60000});
   try {
     const page=await app.firstWindow();page.on('dialog',dialog=>dialog.accept());
     await page.waitForSelector('#student');
+    const initial=await page.evaluate(()=>({classes:getRosterStore().rosters.length,records:getStore().records.length,draft:readDraft(),student:document.getElementById('student').value,teacher:document.getElementById('teacher').value,school:document.getElementById('schoolName').value}));
+    assert.deepEqual(initial,{classes:0,records:0,draft:null,student:'',teacher:'',school:''},'first install must start without saved student/school data');
+    for(const sentinel of oldSentinels) assert.equal(await fs.readFile(sentinel,'utf8'),'previous-private-roster');
+    const initialUserData=await app.evaluate(({app})=>app.getPath('userData'));
+    assert.equal(path.basename(initialUserData),'lughaty-oral-diagnostic-clean');
+    for(const directory of ['Local Storage','IndexedDB']) {
+      assert.equal(await fs.access(path.join(initialUserData,directory,'clean-install-legacy-sentinel')).then(()=>true,()=>false),false);
+    }
     for (const [width,height] of [[760,680],[1024,768],[1440,1000]]) {
       await app.evaluate(({BrowserWindow},size)=>BrowserWindow.getAllWindows()[0].setSize(...size),[width,height]);
       await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
@@ -69,7 +86,13 @@ const output=path.resolve('release/ui-proof');
     }
     const userData=await app.evaluate(({app})=>app.getPath('userData'));
     await fs.writeFile(path.join(userData,'installer-data-retention-test'),'retained');
-    await fs.writeFile(path.join(output,'results.json'),JSON.stringify({success:true,session,userData,checks:['sizes','Arial','RTL','diacritics','assessment','class folders','test folders','print preview','PDF button with native PDF generation','print button missing-printer response']},null,2));
-    console.log('PASS: installed Windows app, sizes/RTL/Arial, scoring, folders, native print preview/PDF');
+    await app.close();
+    app=await electron.launch({executablePath,args,timeout:60000});
+    const restarted=await app.firstWindow();await restarted.waitForSelector('#student');
+    assert.equal(await restarted.evaluate(()=>getRosterStore().rosters[0].students.length),2);
+    assert.equal(await restarted.evaluate(()=>getStore().records.length),2,'own records must survive restart');
+    for(const sentinel of oldSentinels) assert.equal(await fs.readFile(sentinel,'utf8'),'previous-private-roster');
+    await fs.writeFile(path.join(output,'results.json'),JSON.stringify({success:true,session,userData,checks:['clean initial profile','old profiles untouched','own imports and results survive restart','sizes','Arial','RTL','diacritics','assessment','class folders','test folders','print preview','PDF button with native PDF generation','print button missing-printer response']},null,2));
+    console.log('PASS: clean installed Windows app, legacy profiles untouched, own imports retained, sizes/RTL/Arial, scoring, folders, native print preview/PDF');
   } finally {await app.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});

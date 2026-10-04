@@ -2,7 +2,10 @@ const { app, BrowserWindow, shell, ipcMain, dialog } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs/promises");
 const os = require("node:os");
-const {copyLegacyProfile} = require("./profile-migration");
+const {configureUserData} = require("./profile-policy");
+
+// A separate profile starts empty and never imports another installation's data.
+configureUserData(app);
 
 let mainWindow;
 
@@ -168,13 +171,7 @@ app.on("browser-window-created", (_, window) => {
   }
 });
 
-app.whenReady().then(async () => {
-  if (process.platform === "win32" && app.isPackaged) {
-    try { await copyLegacyProfile(app.getPath("appData"),app.getPath("userData")); }
-    catch (error) {
-      await dialog.showMessageBox({type:"warning",title:"بيانات النسخة السابقة",message:"تعذر نسخ بيانات البرنامج القديم. أغلق النسخة القديمة ثم أعد المحاولة.",detail:"البيانات الأصلية لم تُحذف. " + error.message});
-    }
-  }
+app.whenReady().then(() => {
   createWindow();
 
   app.on("activate", () => {

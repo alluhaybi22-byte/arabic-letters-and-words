@@ -25,7 +25,7 @@ class BrowserWindow {
 const electron={BrowserWindow,app:{whenReady:()=>Promise.resolve(),on(){},quit(){}},shell:{openExternal(){}},ipcMain:{handle:(key,fn)=>handlers.set(key,fn)},dialog:{showSaveDialog:async()=>({canceled,filePath:'/tmp/test.pdf'})}};
 const fakeFs={mkdtemp:async()=>'/tmp/test-preview',writeFile:async(...args)=>writes.push(args),rm:async(...args)=>removed.push(args)};
 const context=vm.createContext({__dirname:'/app',process:{platform:'win32'},Buffer,console,
-  require:name=>name==='electron'?electron:name==='node:fs/promises'?fakeFs:name==='./profile-migration'?{copyLegacyProfile:async()=>false}:require(name)});
+  require:name=>name==='electron'?electron:name==='node:fs/promises'?fakeFs:name==='./profile-policy'?{configureUserData:()=>{}}:require(name)});
 vm.runInContext(fs.readFileSync(__dirname+'/../main.js','utf8'),context);
 (async()=>{
   await Promise.resolve();
