@@ -1,7 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const asar=require('@electron/asar');
 const archive=path.resolve('release/win-unpacked/resources/app.asar');
-const entries=asar.listPackage(archive);
+const entries=asar.listPackage(archive).map(file=>file.replace(/\\/g,'/'));
 const allowed=new Set(['/node_modules','/vendor','/brand','/LICENSE','/PRIVACY.md','/index.html','/main.js','/package.json','/print-bridge.js','/profile-policy.js']);
 for(const file of entries) {
   if(file.startsWith('/node_modules/')||file.startsWith('/vendor/')||file.startsWith('/brand/'))continue;
