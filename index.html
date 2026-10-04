@@ -239,6 +239,13 @@ label{font-size:.72rem;margin-bottom:5px}input,select,textarea{min-height:39px;p
       <section class="form-panel school-preview"><p class="history-meta">معاينة رأس التقرير</p><div class="school-preview-head"><div><strong>لغتي الجميلة</strong><p>الاختبار التشخيصي الشفوي</p></div><div><b id="schoolPreviewName">—</b><span id="schoolPreviewPrincipal">مدير المدرسة: —</span></div></div></section>
       <section class="form-panel school-form"><div class="panel-heading"><span class="step">⚙</span><div><h3>معلومات المدرسة</h3><p>أدخل البيانات ليتم تضمينها في التقرير.</p></div></div><div class="settings-fields"><div><label for="schoolName">اسم المدرسة</label><input id="schoolName" placeholder="اسم المدرسة"></div><div><label for="teacher">اسم المعلم</label><input id="teacher" placeholder="اسم المعلم"></div><div><label for="principal">اسم مدير / مديرة المدرسة</label><input id="principal" placeholder="اسم المدير (اختياري)"></div></div><div class="actions"><button id="saveSchool" type="button">حفظ البيانات</button><span id="schoolSaved" class="history-meta" aria-live="polite"></span></div></section>
       <div class="file-message">تُحفظ هذه البيانات على هذا الجهاز وتظهر في معاينة التقرير والطباعة.</div>
+      <section class="form-panel no-print" aria-labelledby="updateHeading" style="margin-top:20px">
+        <div class="panel-heading"><span class="step" aria-hidden="true">↻</span><div><h3 id="updateHeading">تحديث البرنامج</h3><p>الإصدار الحالي: <span id="appVersion">—</span></p></div></div>
+        <p id="updateStatus" role="status" aria-live="polite">جارٍ تجهيز خدمة التحديث...</p>
+        <progress id="updateProgress" class="hidden" max="100" value="0" aria-label="تنزيل التحديث" style="width:100%"></progress>
+        <div class="actions"><button id="checkUpdate" class="secondary" type="button">التحقق من التحديثات</button><button id="downloadUpdate" class="hidden" type="button">تنزيل التحديث</button><button id="installUpdate" class="hidden" type="button">تثبيت وإعادة التشغيل</button></div>
+        <small class="history-meta">يتصل التحديث بخدمة GitHub عند طلبك؛ لا يرسل أسماء الطلاب أو نتائجهم.</small>
+      </section>
     </section>
 
     <section id="allReport" class="card hidden">
@@ -1473,6 +1480,31 @@ label{font-size:.72rem;margin-bottom:5px}input,select,textarea{min-height:39px;p
     $('historyLevel').addEventListener('change', renderHistoryRows);
     ['schoolName','principal'].forEach(id => $(id).addEventListener('input', updateSchoolPreview));
     $('saveSchool').onclick = () => { saveTeacherName(); $('schoolSaved').textContent = '✓ تم الحفظ بنجاح'; window.setTimeout(() => $('schoolSaved').textContent = '', 2500); };
+    let latestUpdateState;
+    function renderUpdateState(state) {
+      latestUpdateState=state;
+      $('appVersion').textContent=state.currentVersion || '—';
+      $('updateStatus').textContent=state.message+(state.version?' — '+state.version:'');
+      $('checkUpdate').disabled=['checking','downloading','downloaded','installing','unsupported'].includes(state.status);
+      $('downloadUpdate').classList.toggle('hidden',state.status!=='available');
+      $('installUpdate').classList.toggle('hidden',state.status!=='downloaded');
+      $('downloadUpdate').disabled=state.status!=='available';
+      $('installUpdate').disabled=state.status!=='downloaded';
+      $('updateProgress').classList.toggle('hidden',state.status!=='downloading');
+      $('updateProgress').value=state.percent || 0;
+    }
+    for(const [id,action] of [['checkUpdate','check'],['downloadUpdate','download'],['installUpdate','install']]) {
+      $(id).onclick=async()=>{
+        $(id).disabled=true;
+        try {renderUpdateState(await window.updateActions[action]());}
+        catch {renderUpdateState({...latestUpdateState,status:'error',message:'تعذر تنفيذ طلب التحديث. أعد المحاولة.'});}
+        finally {if(latestUpdateState)renderUpdateState(latestUpdateState);}
+      };
+    }
+    if(window.updateActions) {
+      window.updateActions.onState(renderUpdateState);
+      window.updateActions.getState().then(renderUpdateState).catch(()=>renderUpdateState({status:'unsupported',message:'تعذر تجهيز خدمة التحديث.'}));
+    } else renderUpdateState({status:'unsupported',message:'التحديث متاح في نسخة Windows المثبتة.'});
     $('reviewNames').addEventListener('input', updateImportCount);
     $('importRoster').onclick = () => $('rosterFile').click();
     $('rosterName').addEventListener('input',updateClassNameHint);

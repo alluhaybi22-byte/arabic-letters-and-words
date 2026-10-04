@@ -3,6 +3,7 @@ const path = require("node:path");
 const fs = require("node:fs/promises");
 const os = require("node:os");
 const {configureUserData} = require("./profile-policy");
+const {setupUpdates} = require("./update-service");
 
 // A separate profile starts empty and never imports another installation's data.
 configureUserData(app);
@@ -30,6 +31,7 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, "index.html"));
   mainWindow.once("ready-to-show", () => mainWindow.show());
+  mainWindow.webContents.on("will-navigate", event => event.preventDefault());
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (url === "about:blank") {
@@ -173,6 +175,8 @@ app.on("browser-window-created", (_, window) => {
 
 app.whenReady().then(() => {
   createWindow();
+  setupUpdates({app,ipcMain,dialog,getWindow:()=>mainWindow,
+    canInstall:()=>mainWindow.webContents.executeJavaScript("typeof readDraft === 'function' && !readDraft() && !pendingRosterImport && document.getElementById('test').classList.contains('hidden')")});
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
