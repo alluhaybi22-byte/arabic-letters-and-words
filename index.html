@@ -3,124 +3,262 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>تقييم الحروف العربية</title>
-  <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
-  <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <title>الاختبار التشخيصي الشفوي | لغتي الجميلة</title>
   <script src="./vendor/tesseract.min.js"></script>
+
+  <link rel="icon" type="image/svg+xml" href="./brand/logo.svg">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap');
-    :root{--ink:#4c3629;--brown:#7a5136;--brown-dark:#543525;--beige:#f2e6d2;--cream:#fbf6ec;--card:#fffdf8;--line:#e4d4bc;--muted:#78685c;--accent:#c18a4c;--green:#477b4b;--green-dark:#2f6137;--red:#a85143;--gold:#aa772c}*{box-sizing:border-box}html{background:var(--cream)}body{margin:0;background:var(--cream);color:var(--ink);font-family:'Noto Naskh Arabic','Amiri',serif;font-size:21px}.wrap{max-width:1180px;margin:auto;padding:30px 24px 80px}.hero{position:relative;overflow:hidden;background:#8b6243;color:#fffaf0;border-radius:8px;padding:31px 42px 29px;box-shadow:0 10px 25px #6a49301f;border:1px solid #765137}.hero:before{content:'📚  ✎  ❋';position:absolute;left:34px;bottom:19px;direction:ltr;font:1.8rem/1 system-ui;opacity:.55;letter-spacing:10px}.hero h1{position:relative;margin:0;font-size:2.3rem;font-weight:700}.hero:after{content:'مساحة هادئة وواضحة لتقييم مهارات القراءة';position:relative;display:block;margin-top:4px;color:#f8ead4;font-size:1rem}.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:30px;margin-top:20px;box-shadow:0 7px 20px #7a513612}label{font-weight:700;color:var(--brown-dark);display:block;margin-bottom:7px}input,select,textarea{font:inherit;width:100%;color:var(--ink);border:1px solid #cfbda4;border-radius:6px;padding:11px 13px;background:#fffefa;box-shadow:inset 0 1px 2px #6b482008}input:focus,select:focus,textarea:focus{outline:3px solid #e8c98f;border-color:var(--accent)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}button{font:inherit;font-weight:700;border:1px solid transparent;border-radius:6px;padding:11px 18px;cursor:pointer;background:var(--brown);color:#fffdf8;box-shadow:0 2px 5px #5b39221c;transition:transform .15s,background .15s,box-shadow .15s}button:hover{transform:translateY(-1px);background:var(--brown-dark);box-shadow:0 5px 11px #5b39222a}button:focus-visible{outline:3px solid #e8c98f;outline-offset:3px}#start{background:var(--green);padding-inline:26px}#start:hover{background:var(--green-dark)}button.secondary{background:#f0e4d1;color:var(--brown-dark);border-color:#dcc7a9;box-shadow:none}button.secondary:hover{background:#e8d6bc}button.absent{background:#f8e9e4;color:#99453a;border-color:#ecc8bf}.hidden{display:none!important}.file-message{color:var(--muted);font-size:.9rem;margin-top:9px}.test-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.student{color:var(--muted)}.timer{font-family:Tahoma,sans-serif;font-weight:700;color:var(--brown-dark);background:#f4e8d4;border:1px solid #dfc5a1;border-radius:6px;padding:8px 13px;margin-top:7px;display:inline-block;direction:ltr}.bar{height:10px;background:#ecdfcc;border-radius:99px;overflow:hidden;margin:24px 0}.bar i{height:10px;display:block;background:var(--green);transition:width .25s}.letter{font-family:'Noto Naskh Arabic','Amiri',serif;text-align:center;font-size:14rem;line-height:1.45;font-weight:700;margin:24px 0 12px;color:#4d3020;text-shadow:0 1px 0 #fffdf8;font-variant-ligatures:common-ligatures}.word-item{font-size:6.2rem;letter-spacing:0;line-height:1.6}.hint{text-align:center;color:var(--muted);margin-bottom:16px}.keyboard-help{text-align:center;background:#f7eddd;border:1px solid #ead7bb;border-radius:6px;padding:10px;margin-bottom:18px;color:#6e4b31;font-size:.9rem}.key{display:inline-block;direction:ltr;font-family:Tahoma,sans-serif;background:#fffdf8;border:1px solid #ceb796;border-radius:4px;padding:1px 8px;margin:0 2px}.scores{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.score{font-family:'Noto Naskh Arabic','Amiri',serif;font-size:1.25rem;padding:18px;border-width:1px}.score-symbol{display:block;font-family:Tahoma,sans-serif;font-size:3rem;line-height:1}.score-key{display:block;font-family:Tahoma,sans-serif;font-size:.8rem;margin-top:7px}.ok{background:#e7f2e5;color:#27643b;border-color:#b9d6bb}.ok:hover{background:#d8ecd8}.no{background:#faece8;color:#a2463e;border-color:#ecc5be}.no:hover{background:#f4dcd5}.later{background:#fbf1d9;color:#89611d;border-color:#e7d2a0}.later:hover{background:#f7e7bf}.result{margin-top:22px;padding:15px;border-radius:6px;background:#faf3e8;border:1px solid #eadbc6;line-height:1.9}.report-card{overflow:hidden;padding:0}.report-banner{position:relative;background:#8b6243;color:#fffaf0;padding:27px 34px;display:flex;justify-content:space-between;align-items:center;gap:22px;border-bottom:5px solid #c69552}.report-banner h2{margin:0;font-size:1.85rem}.report-banner p{margin:3px 0 0;color:#f6e7cf}.report-score{min-width:120px;text-align:center;background:#fffaf01e;border:1px solid #f6dfbc88;border-radius:6px;padding:10px}.report-score b{display:block;font:700 2rem Tahoma,sans-serif}.report-body{padding:28px 34px 34px}.report-info,.report-stats{display:grid;gap:11px}.report-info{grid-template-columns:repeat(3,1fr);margin-bottom:21px}.report-info div{background:#faf1e4;border-right:4px solid var(--accent);border-radius:5px;padding:9px 14px}.report-label{color:#927354;font-size:.86rem;display:block}.report-stats{grid-template-columns:repeat(4,1fr);margin:18px 0 22px}.report-stat{text-align:center;border-radius:6px;padding:13px 8px;background:#fffdf9;border:1px solid #eadfce}.report-stat b{display:block;font:700 1.7rem Tahoma,sans-serif}.report-stat.good b{color:var(--green)}.report-stat.bad b{color:var(--red)}.report-stat.wait b{color:var(--gold)}.report-stat.time b{color:var(--brown);font-size:1.25rem;margin-top:8px}.wrong{margin-top:15px;padding:13px 17px;border-radius:6px;background:#fbeeea;border:1px solid #f0d2c9;color:#7f352d}.detail-table{width:100%;border-collapse:collapse;font-size:.95rem;margin-top:12px}.detail-table th,.detail-table td{padding:9px 10px;border:1px solid var(--line);text-align:center}.detail-table th{background:#f3e6d3;color:var(--brown-dark)}.plan-option,.history-item{border:1px solid var(--line);border-radius:7px;padding:16px;margin-top:13px;background:#fffdf9;box-shadow:0 3px 9px #7a51360b}.plan-option{display:flex;align-items:center;justify-content:space-between;gap:15px}.plan-option h3{margin:0;font-size:1.15rem}.history-head{display:flex;justify-content:space-between;align-items:center;gap:15px}.history-meta{color:var(--muted);font-size:.9rem}.history-empty{color:var(--muted);text-align:center;padding:20px}.class-table{width:100%;border-collapse:collapse;font-size:.9rem}.class-table th,.class-table td{border:1px solid var(--line);padding:9px;text-align:right}.class-table th{background:#f3e6d3;color:var(--brown-dark)}.print-only{display:none}.no-print{display:block}.home-button{position:fixed;z-index:10;left:22px;bottom:22px;box-shadow:0 6px 16px #5b392233;background:var(--brown-dark);display:flex;align-items:center;gap:7px}.review-list{width:100%;min-height:220px;line-height:1.8}.profile-timeline{margin-top:16px}.profile-timeline .history-item{border-right:4px solid var(--accent)}@media print{body{background:#fff;color:#3d2c22;font-size:17px}.hero,.home-button{display:none}.no-print,#setup,#test,#history,#plans,#studentProfile,#importReview{display:none!important}.wrap{max-width:none;padding:0}.card{max-width:none;border:0;padding:0;margin:0;box-shadow:none}.report-card{border:0}.report-body{padding:18px}.print-only{display:block}@page{size:A4;margin:12mm}}@media(max-width:650px){body{font-size:19px}.grid,.scores,.report-info,.report-stats{grid-template-columns:1fr}.wrap{padding:14px}.hero{padding:25px 24px 55px}.hero:before{left:18px;bottom:16px;font-size:1.4rem}.letter{font-size:9rem;line-height:1.55}.word-item{font-size:3.7rem}.test-head,.history-head,.plan-option,.report-banner{align-items:flex-start;flex-direction:column}.class-table{font-size:.75rem}.home-button{left:14px;bottom:14px}}
-    /* Typography-only override: keep the application structure and behavior unchanged. */
-    body,input,select,textarea,button,.score,.letter{font-family:Arial,sans-serif}
-    .letter{font-weight:700;letter-spacing:0}
-    /* Reference-inspired educational surface: presentation only, no behavior changes. */
-    :root{--ink:#07356b;--blue:#087d82;--blue-dark:#005761;--line:#c8d7e7;--paper:#effbfa;--accent:#f1d16a;--green:#12918c;--green-dark:#08756f;--red:#c83843;--gold:#dcae36}
-    html,body{background:#e9f8f6}
-    body{color:var(--ink);font-size:19px}
-    .wrap{max-width:1280px;padding:24px 24px 88px}
-    .hero{min-height:142px;background:#087d82;border:0;border-radius:0 0 58px 58px;padding:29px 40px 28px;text-align:center;box-shadow:0 8px 20px #087d8226}
-    .hero:before{content:'أ  ب  ت';left:8%;bottom:20px;color:#d7efed;font:bold 3.6rem Arial,sans-serif;letter-spacing:18px;opacity:.45}
-    .hero h1{font-size:2.65rem;color:#fff;line-height:1.15}
-    .hero:after{content:'أداة تعليمية لمعلمي الصفوف الأولية';color:#e2f5f2;font-size:1.08rem;margin-top:9px}
-    .card{background:#fff;border:1px solid #d7e5ed;border-radius:22px;padding:31px;box-shadow:0 12px 28px #0a687015;margin-top:22px}
-    #setup{position:relative;padding-top:92px}
-    #setup:before{content:'👥  بيانات الاختبار';position:absolute;right:32px;top:24px;background:#e5f5f2;color:#074d63;border-radius:99px;padding:11px 19px;font:bold 1.2rem Arial,sans-serif}
-    #setup:after{content:'ابدأ بتعبئة البيانات التالية';position:absolute;left:32px;top:33px;color:#2b5b83;font-size:1rem}
-    label{color:#07356b;font-size:1.03rem;margin-bottom:8px}
-    label::after{content:' ●';color:#087d82;font-size:.65rem;vertical-align:middle}
-    input,select,textarea{border:2px solid #d2dce7;border-radius:11px;padding:13px 15px;background:#fff;color:#07356b;box-shadow:0 2px 5px #0c4d7010}
-    input::placeholder{color:#93a3b9}
-    input:focus,select:focus,textarea:focus{outline:3px solid #bde7e4;border-color:#128d91}
-    .grid{gap:22px}
-    .file-message{display:block;text-align:center;background:#f6fbff;border:2px dashed #9bc7f9;border-radius:14px;padding:18px;color:#607491;font-size:.93rem;margin-top:14px}
-    #importRoster{background:#e3f0ff;color:#0868d8;border-color:#c9e0ff;box-shadow:none;width:100%;margin-top:10px;padding:14px}
-    #importRoster:hover{background:#d5e8ff;color:#075ab9}
-    .actions{gap:14px}
-    button{border-radius:11px;background:#087d82;padding:13px 20px;box-shadow:0 4px 10px #0758651c}
-    button:hover{background:#006d75;box-shadow:0 7px 14px #0758652b}
-    #start{background:#12918c;order:-1;flex:1;min-width:220px;font-size:1.13rem}
-    #start:hover{background:#08756f}
-    #clearRoster{background:#fff0f1;color:#bd2735;border:1px solid #ffd0d4;flex:1;min-width:180px}
-    #clearRoster:hover{background:#ffe3e6}
-    #showHistory{background:#e4f0ff;color:#0867cc;border:1px solid #c5dfff;flex:1;min-width:200px}
-    #showHistory:hover{background:#d5e8ff}
-    .test-head{padding-bottom:15px;border-bottom:1px solid #dce9ee}
-    .timer{background:#e8f7f5;border-color:#a9ddd9;color:#006b70}
-    .bar{height:13px;background:#e6f1f3}.bar i{height:13px;background:#12918c}
-    .letter{min-height:330px;display:flex;align-items:center;justify-content:center;color:#07356b;font-size:15rem;line-height:1.35;margin:12px 0 4px;text-shadow:none}
-    .word-item{font-size:6.1rem;line-height:1.5}
-    .hint{font-size:1.02rem;color:#5d7692}
-    .keyboard-help{background:#f2f8ff;border:1px solid #d6e8ff;color:#37658f;border-radius:10px}
-    .key{border-color:#c5d8ef;color:#244e76}
-    .scores{gap:16px}.score{border-radius:12px;padding:20px}.score-symbol{font-size:3.3rem}
-    .report-banner{background:#087d82;border-bottom:5px solid #f1d16a}.report-info div{background:#edf8f8;border-right-color:#119ca0}.report-stat{border-color:#d8e8ea}.result{background:#f5fbfc;border-color:#d9e8ec}.wrong{background:#fff3f2;border-color:#ffd6d1;color:#a0463b}
-    .plan-option,.history-item{border-color:#d6e5ec;border-radius:13px;background:#fff;box-shadow:0 4px 11px #0a68700b}.profile-timeline .history-item{border-right-color:#12918c}
-    .detail-table th,.class-table th{background:#eaf7f6;color:#075060}.detail-table td,.class-table td{border-color:#d8e5ed}
-    .home-button{background:#005761;border-radius:14px;left:24px;bottom:24px}.home-button:hover{background:#003f49}
-    @media(max-width:650px){.wrap{padding:0 14px 78px}.hero{margin:0 -14px;min-height:128px;border-radius:0 0 36px 36px;padding:25px 20px}.hero h1{font-size:2rem}.hero:before{display:none}.card{padding:21px 17px;border-radius:16px}#setup{padding-top:88px}#setup:before{right:17px;top:22px;font-size:1.05rem}#setup:after{display:none}.letter{min-height:260px;font-size:10rem}.word-item{font-size:3.5rem}.actions>*{width:100%}}
-  </style>
+/* اتجاه 02: مساحة القراءة — القيم نفسها موثقة كمتغيرات في Figma. */
+:root{
+  --ui-canvas:#f7f4ee;--ui-surface:#fff;--ui-surface-alt:#f1ede5;
+  --ui-ink:#25243a;--ui-muted:#696a7a;--ui-primary:#5746ad;
+  --ui-primary-hover:#463493;--ui-primary-tint:#ede9fa;
+  --ui-success:#1b765f;--ui-warning:#ac6b12;--ui-danger:#bc4c5c;
+  --ui-info:#3d69a5;--ui-border:#ded8cb;--ui-white:#fff;
+  --ui-space-4:4px;--ui-space-8:8px;--ui-space-12:12px;--ui-space-16:16px;
+  --ui-space-24:24px;--ui-space-32:32px;--ui-space-48:48px;
+  --ui-radius-12:12px;--ui-radius-20:20px;--ui-radius-28:28px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ui-canvas);color:var(--ui-ink);direction:rtl}
+body,input,select,textarea,button,.letter{font-family:Arial,sans-serif}
+body{font-size:17px;line-height:1.6}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:1px solid var(--ui-primary);border-radius:var(--ui-radius-12);padding:11px 18px;background:var(--ui-primary);color:var(--ui-white);font-weight:700;min-height:48px;transition:background .15s,border-color .15s,box-shadow .15s,transform .15s}
+button:hover{background:var(--ui-primary-hover);border-color:var(--ui-primary-hover);transform:translateY(-1px)}
+button:active{transform:translateY(0);box-shadow:inset 0 2px 4px #25243a1f}
+button:disabled{cursor:not-allowed;opacity:.46;transform:none;box-shadow:none}
+button.secondary{background:var(--ui-surface);color:var(--ui-ink);border-color:var(--ui-border)}
+button.secondary:hover{background:var(--ui-primary-tint);border-color:var(--ui-primary);color:var(--ui-primary)}
+button.absent,.danger-text{background:var(--ui-surface);color:var(--ui-danger);border-color:#e7b8c0}
+button.absent:hover,.danger-text:hover{background:#fff0f2;color:var(--ui-danger);border-color:var(--ui-danger)}
+input,select,textarea{width:100%;min-height:48px;padding:11px 14px;background:var(--ui-white);border:1px solid var(--ui-border);border-radius:var(--ui-radius-12);color:var(--ui-ink);direction:rtl}
+input:focus,select:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:3px solid #cfc4fa;outline-offset:2px;border-color:var(--ui-primary)}
+label{display:block;margin-bottom:7px;font-weight:700;color:var(--ui-ink)}
+h1,h2,h3,p{margin-top:0}h2,h3{line-height:1.35}h2{font-size:1.9rem}h3{font-size:1.15rem}
+.hidden{display:none!important}.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.wrap{max-width:1600px;min-height:100vh;margin:auto;padding:24px;display:grid;grid-template-columns:224px minmax(0,1fr);gap:24px;align-items:start}
+.side-nav{position:sticky;top:24px;min-height:calc(100vh - 48px);padding:22px 15px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--ui-radius-28);display:flex;flex-direction:column;gap:30px}
+.hero{padding:8px 7px 18px;border-bottom:1px solid var(--ui-border)}.brand-lockup{display:flex;align-items:center;gap:10px}.brand-mark{width:54px;height:54px;border-radius:17px;display:inline-grid;place-items:center;flex:none;background:var(--ui-primary);color:#fff;font-size:1.8rem;font-weight:700;line-height:1}.hero h1{font-size:1.2rem;margin:0}.hero p{font-size:.8rem;color:var(--ui-muted);margin:0}.hero-kicker{display:none}
+.side-links{display:flex;flex-direction:column;gap:7px}.nav-caption,.eyebrow{font-size:.78rem;color:var(--ui-primary);font-weight:700;letter-spacing:.01em}.nav-caption{padding:0 11px 8px}.nav-link{display:flex;gap:12px;align-items:center;width:100%;text-align:right;padding:10px 12px;background:transparent;color:var(--ui-ink);border:1px solid transparent;border-radius:var(--ui-radius-12);font-size:.95rem;min-height:45px}.nav-link:hover,.nav-link:focus-visible{background:var(--ui-primary-tint);color:var(--ui-primary);border-color:transparent;transform:none}.side-note{margin-top:auto;color:var(--ui-muted);font-size:.79rem;padding:15px 10px;border-top:1px solid var(--ui-border)}
+.workspace{min-width:0}.card{background:transparent;margin:0;min-width:0}.card:not(.report-card){padding:8px 0 24px}.page-title{margin-bottom:24px}.page-title h2{margin:4px 0 5px}.page-title p{margin:0;color:var(--ui-muted)}
+.setup-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);gap:20px;align-items:start}.setup-flow,.setup-aside{display:grid;gap:18px;min-width:0}.form-panel{border:1px solid var(--ui-border);background:var(--ui-surface);border-radius:var(--ui-radius-20);padding:22px;min-width:0;box-shadow:0 2px 9px #25243a06}.form-panel>*+*{margin-top:18px}.form-panel>div+div{margin-top:18px}.form-panel .file-message{margin-top:10px}.panel-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:18px}.panel-heading h3{margin:0 0 2px}.panel-heading p{margin:0;color:var(--ui-muted);font-size:.88rem}.step{display:inline-grid;place-items:center;background:var(--ui-primary-tint);color:var(--ui-primary);border-radius:var(--ui-radius-12);font-weight:700;min-width:36px;height:36px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.level-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.level-choice{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;min-height:79px;text-align:right;background:var(--ui-white);color:var(--ui-ink);border:1px solid var(--ui-border);padding:10px 13px}.level-choice:hover{background:var(--ui-primary-tint);color:var(--ui-primary);border-color:var(--ui-primary)}.level-choice[aria-pressed="true"]{background:var(--ui-primary-tint);border:2px solid var(--ui-primary);color:var(--ui-primary);padding:9px 12px}.level-choice small{color:var(--ui-muted);font-size:.78rem;font-weight:400}.level-choice[aria-pressed="true"] small{color:var(--ui-primary)}
+.settings{margin:0}.settings summary{font-weight:700;cursor:pointer;list-style:none}.settings summary:before{content:'⌄';float:left;color:var(--ui-primary)}.settings-fields{display:grid;gap:12px;margin-top:16px}.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.setup-actions{margin-top:0}#start{min-width:190px}#importRoster,#clearRoster{width:100%;margin-top:8px}.file-message{background:var(--ui-primary-tint);color:var(--ui-ink);border-radius:var(--ui-radius-12);padding:12px 14px;font-size:.85rem;line-height:1.6}.file-message button{margin:5px}
+/* شاشة التقييم: مادة القراءة هي العنصر المهيمن؛ الأزرار الثلاثة في متناول نقرة واحدة. */
+#test{display:flex;flex-direction:column;gap:15px}.assessment-header{display:flex;justify-content:space-between;align-items:center;gap:20px}.assessment-header h2{margin:5px 0 0;font-size:1.55rem}.student{color:var(--ui-muted)}.timer-block{border:1px solid var(--ui-border);border-radius:var(--ui-radius-12);background:var(--ui-surface-alt);padding:8px 16px;text-align:center;flex:none}.timer-block span{font-size:.76rem;color:var(--ui-muted)}.timer{direction:ltr;font-size:1.35rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}.bar{height:8px;background:#e6e0d5;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--ui-primary);border-radius:99px;transition:width .2s}.reading-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:330px;background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--ui-radius-20);padding:25px;box-shadow:0 4px 15px #25243a0b}.letter{width:100%;min-height:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ui-ink);font-size:clamp(8rem,14vw,12rem);font-weight:700;line-height:1.5;letter-spacing:0;overflow-wrap:anywhere}.letter.word-item{font-size:clamp(5rem,8vw,7.5rem)}.letter.sentence-item{font-size:clamp(2.25rem,4vw,4.25rem);min-height:220px;line-height:1.8}.sentence-source{text-align:center;color:var(--ui-primary);font-weight:700;font-size:.87rem}.hint{text-align:center;color:var(--ui-muted);font-size:.9rem}.scores{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.score{min-height:86px;font-size:1.12rem;background:var(--ui-white);display:flex;align-items:center;justify-content:center;gap:8px}.score-symbol{font-size:1.6rem;line-height:1}.score-key{font-size:.73rem;font-weight:400;opacity:.7}.score.ok{color:var(--ui-success);border-color:var(--ui-success)}.score.ok:hover{background:#e6f4ee;box-shadow:0 4px 13px #1b765f1a}.score.no{color:var(--ui-danger);border-color:var(--ui-danger)}.score.no:hover{background:#fff0f2;box-shadow:0 4px 13px #bc4c5c1a}.score.later{color:var(--ui-warning);border-color:var(--ui-warning)}.score.later:hover{background:#fff7e9;box-shadow:0 4px 13px #ac6b121a}.assessment-footer{display:flex;justify-content:space-between;align-items:center;gap:12px}.assessment-footer .actions{margin:0}.assessment-footer button{min-height:44px;font-size:.9rem;padding:8px 12px}.keyboard-help{font-size:.76rem;color:var(--ui-muted);text-align:left}#last{margin:0;font-size:.85rem}
+.test-level{display:inline-block;margin-top:5px;padding:2px 9px;border-radius:999px;background:var(--ui-primary-tint);color:var(--ui-primary);font-size:.82rem;font-weight:700}
+.score.ok:active{background:var(--ui-success);color:var(--ui-white)}
+.score.no:active{background:var(--ui-danger);color:var(--ui-white)}
+.score.later:active{background:var(--ui-warning);color:var(--ui-white)}
+/* النتائج والسجلات والحقول ذات المعاني المشتركة. */
+.result{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--ui-radius-12);padding:14px 16px;line-height:1.7;margin-top:16px}.wrong{background:#fff4f5;border:1px solid #ebcbd1;color:#8e3645;border-radius:var(--ui-radius-12);padding:12px 16px;margin-top:14px}.history-item{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--ui-radius-20);padding:18px 20px;margin:12px 0}.history-head,.test-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.history-meta{font-size:.85rem;color:var(--ui-muted)}.history-empty{color:var(--ui-muted);background:var(--ui-surface);border:1px dashed var(--ui-border);border-radius:var(--ui-radius-20);padding:32px;text-align:center}.stat{background:var(--ui-primary-tint);color:var(--ui-primary);border-radius:99px;padding:4px 12px;font-weight:700}#history .test-head,#importReview .test-head,#studentProfile .test-head{margin-bottom:18px}#allReport h2{margin:5px 0 16px}.review-list{min-height:260px;line-height:1.8;white-space:pre;overflow-x:auto}.profile-timeline .history-item{border-right:4px solid var(--ui-primary)}
+.report-card{background:var(--ui-surface);border:1px solid var(--ui-border);border-radius:var(--ui-radius-20);overflow:hidden}.report-banner{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 26px;border-bottom:1px solid var(--ui-border);background:var(--ui-white)}.report-heading{display:flex;align-items:center;gap:12px}.report-heading img{display:none}.report-banner h2{margin:0;font-size:1.45rem;color:var(--ui-ink)}.report-banner p{margin:3px 0 0;color:var(--ui-muted);font-size:.88rem}.report-score{background:var(--ui-primary-tint);border-radius:var(--ui-radius-12);padding:8px 17px;text-align:center;min-width:140px;color:var(--ui-primary)}.report-score span{display:block;font-size:.76rem}.report-score b{display:block;font-size:2rem;line-height:1.2}.report-body{padding:22px 26px}.report-info,.report-stats,.signatures{display:grid;gap:12px}.report-info{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:15px}.report-info>div,.report-stat{background:var(--ui-white);border:1px solid var(--ui-border);border-radius:var(--ui-radius-12);padding:12px 14px}.report-label{display:block;font-size:.78rem;color:var(--ui-muted)}.report-stats{grid-template-columns:repeat(4,minmax(0,1fr));margin:15px 0}.report-stat b{display:block;font-size:1.65rem;line-height:1.4}.report-stat.good b{color:var(--ui-success)}.report-stat.bad b{color:var(--ui-danger)}.report-stat.wait b{color:var(--ui-warning)}.report-stat.time b{font-size:1.16rem;color:var(--ui-primary)}.signatures{grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ui-border);margin-top:27px;padding-top:16px}.signatures>div{display:flex;flex-direction:column;gap:4px}.signatures small{color:var(--ui-muted)}.report-card>.actions{padding:0 26px 25px;margin:0}
+.detail-table,.class-table{border-collapse:collapse;width:100%;font-size:.85rem;margin-top:12px}.detail-table th,.detail-table td,.class-table th,.class-table td{border:1px solid var(--ui-border);padding:8px 10px;text-align:right}.detail-table th,.class-table th{background:var(--ui-surface-alt);color:var(--ui-ink)}.class-table{table-layout:fixed;overflow-wrap:anywhere}.print-only{display:none}
+@media(max-width:1150px){.wrap{grid-template-columns:190px minmax(0,1fr);gap:16px;padding:16px}.side-nav{top:16px;padding:17px 10px}.setup-layout{grid-template-columns:1fr}.keyboard-help{display:none}.assessment-footer{flex-wrap:wrap}}
+@media(max-width:850px){.wrap{display:block;padding:12px}.side-nav{position:static;min-height:0;margin-bottom:16px;padding:12px;gap:10px}.hero{padding:0 0 8px}.side-links{flex-direction:row;flex-wrap:wrap;gap:6px}.nav-caption,.side-note{display:none}.nav-link{width:auto}.workspace{width:100%}.assessment-footer{align-items:flex-start}.scores{gap:8px}.score{min-height:75px;font-size:.95rem;flex-wrap:wrap}.reading-stage{min-height:300px}}
+@media(max-width:600px){body{font-size:15px}.wrap{padding:8px}.hero h1{font-size:1rem}.brand-mark{width:42px;height:42px;font-size:1.45rem}.nav-link{font-size:.8rem;min-height:40px;padding:7px 9px}.nav-link span{display:none}.page-title h2{font-size:1.5rem}.form-panel{padding:16px}.grid,.level-choices,.report-info,.signatures{grid-template-columns:1fr}.setup-layout{gap:12px}.assessment-header h2{font-size:1.2rem}.timer-block{padding:5px 8px}.timer{font-size:1.03rem}.reading-stage{padding:15px;min-height:270px}.letter{min-height:185px;font-size:clamp(6rem,24vw,9rem)}.letter.word-item{font-size:clamp(3.5rem,14vw,5.7rem)}.letter.sentence-item{font-size:clamp(1.7rem,6.5vw,2.6rem);min-height:190px}.score{min-height:72px;font-size:.78rem;padding:8px 3px;gap:2px}.score-symbol{font-size:1.2rem}.score-key{display:none}.assessment-footer .actions button{flex:1}.report-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.report-banner{padding:16px;align-items:flex-start}.report-body{padding:15px}.report-card>.actions{padding:0 15px 18px}.report-score{min-width:90px;padding:7px}.report-score b{font-size:1.5rem}.history-head,.test-head{flex-wrap:wrap}}
+/* Figma Make: توزيع مساحة المعلم والصف، مع إبقاء Arial وواجهات العمل الفعلية. */
+:root{--ui-canvas:#f5f1eb;--ui-surface-alt:#fafaf9;--ui-ink:#24243a;--ui-muted:#8b8a98;--ui-primary:#4f46e5;--ui-primary-hover:#4338ca;--ui-primary-tint:#eef2ff;--ui-success:#059669;--ui-warning:#d97706;--ui-danger:#dc3549;--ui-border:#e7e5e4}
+body{font-family:Arial,sans-serif;font-size:16px}
+.wrap{max-width:none;min-height:100vh;padding:0;gap:0;grid-template-columns:166px minmax(0,1fr)}
+.side-nav{position:sticky;top:0;height:100vh;min-height:100vh;border-radius:0;border:0;border-left:1px solid var(--ui-border);padding:16px 11px;background:#fff;gap:14px}
+.hero{padding:0 0 16px;border-bottom:1px solid var(--ui-border)}.brand-lockup{gap:8px}.brand-mark{width:34px;height:34px;border-radius:10px;font-size:1.2rem;background:linear-gradient(135deg,#4f46e5,#7c3aed)}.hero h1{font-size:.92rem}.hero p{font-size:.55rem;white-space:nowrap}
+.side-links{gap:5px}.nav-caption{display:block;padding:0 10px 5px;color:#6366f1;font-size:.69rem}.nav-link{min-height:37px;padding:8px 9px;gap:8px;font-size:.78rem;font-weight:700;white-space:nowrap}.nav-link .nav-icon{display:inline-flex;width:16px;justify-content:center;flex:none;font-size:.9rem;color:#a8a3bb}.nav-link.is-active{background:var(--ui-primary-tint);color:#4338ca;border-color:transparent}.nav-link.is-active .nav-icon{color:#4f46e5}.side-note{font-size:.64rem;line-height:1.6;padding:10px 6px}
+.workspace{min-height:100vh}.card:not(.report-card){padding:26px;max-width:1350px;margin:auto}.page-title{margin:0 0 20px}.page-title h2{font-size:2rem;margin:2px 0 3px}.page-title p{font-size:.82rem}.eyebrow{color:#6366f1;font-size:.72rem}
+#setup.card{max-width:none;padding:0;display:grid;grid-template-columns:240px minmax(0,1fr);gap:0;align-items:start;min-height:100vh}
+#setup .page-title{grid-column:2;padding:24px 26px 0;margin:0}.setup-layout{display:contents}.setup-flow{grid-column:2;display:grid;gap:16px;padding:14px 26px 28px;align-content:start;min-width:0}.setup-aside{grid-column:1;grid-row:1 / span 4;position:sticky;top:0;height:100vh;min-width:0;overflow-y:auto;display:flex;flex-direction:column;gap:0;background:#fff;border-left:1px solid var(--ui-border)}
+#draftBanner{grid-column:2;margin:14px 26px 0}.setup-aside .form-panel{border:0;border-radius:0;box-shadow:none;padding:22px 16px;background:#fff}.setup-aside .panel-heading{padding-bottom:15px;border-bottom:1px solid #f1f0ee;margin:-2px -16px 18px;padding-right:16px;padding-left:16px}.setup-aside .panel-heading h3{font-size:.88rem}.setup-aside .panel-heading p{font-size:.68rem}
+.form-panel{border-color:#eeece8;border-radius:15px;box-shadow:0 2px 3px #24243a0b;padding:21px}.form-panel>*+*{margin-top:14px}.form-panel>div+div{margin-top:14px}.panel-heading{margin-bottom:17px;gap:10px}.panel-heading h3{font-size:1rem}.panel-heading p{font-size:.72rem}.step{border-radius:50%;width:28px;min-width:28px;height:28px;color:#fff;background:#4f46e5;font-size:.82rem}
+label{font-size:.72rem;margin-bottom:5px}input,select,textarea{min-height:39px;padding:8px 11px;background:#fafaf9;border-color:#e7e5e4;border-radius:10px;font-size:.83rem}input:focus,select:focus,textarea:focus{background:#fff;border-color:#818cf8;outline:2px solid #e0e7ff;outline-offset:0}button{border-radius:11px}button:focus-visible{outline-color:#a5b4fc}
+.grid{gap:13px}.level-choices{gap:9px}.level-choice{min-height:57px;padding:9px 13px;background:#fafaf9;border-radius:10px;gap:0}.level-choice b{font-size:.84rem}.level-choice small{font-size:.68rem;color:#aaa6b1}.level-choice[aria-pressed="true"]{background:#4f46e5;border-color:#4f46e5;color:#fff;padding:8px 12px;box-shadow:0 4px 9px #4f46e52a}.level-choice[aria-pressed="true"] small{color:#d8d7ff}.level-choice:hover:not([aria-pressed="true"]){background:#eef2ff;border-color:#c7d2fe}
+.setup-actions{display:flex;flex-direction:column;gap:5px}#start{width:100%;min-height:52px;font-size:1.08rem;background:linear-gradient(115deg,#4f46e5,#7c3aed);border:0;box-shadow:0 6px 17px #4f46e53b}#start:hover{background:linear-gradient(115deg,#4338ca,#6d28d9)}.start-summary{text-align:center;color:var(--ui-muted);font-size:.72rem;margin:0}.setup-actions #showHistory{align-self:center;min-height:33px;padding:5px 11px;border:0;background:transparent;color:#6366f1;font-size:.75rem}
+#importRoster{border:2px dashed #c7d2fe;color:#4f46e5;background:#fff;font-size:.74rem;min-height:40px;padding:7px;width:100%}#importRoster:hover{background:#eef2ff}.setup-aside #rosterName,.setup-aside #savedRosters{font-size:.75rem}.setup-aside .file-message{font-size:.71rem;background:#fafaf9;border:1px solid var(--ui-border);line-height:1.65;padding:11px;color:#706d7a}.setup-aside #clearRoster{font-size:.71rem;min-height:36px;padding:7px;width:100%}.roster-school-link{margin-top:auto!important;border:0;border-top:1px solid var(--ui-border)!important;border-radius:0;background:#fff;text-align:right;display:flex;justify-content:space-between;color:#37334a;font-size:.72rem;padding:13px 17px;min-height:44px}.roster-school-link:hover{background:#eef2ff}
+#test,#report,#history,#schoolPage,#allReport,#importReview,#studentProfile{max-width:1250px}.reading-stage{box-shadow:0 3px 12px #24243a0a}.score.ok:hover,.score.no:hover,.score.later:hover{transform:translateY(-1px)}.report-card{margin:26px auto;border-radius:15px}.report-banner{border-bottom:2px solid #4f46e5}.report-banner h2{color:#4338ca}.report-score{background:#eef2ff;color:#4338ca}.report-card>.actions{padding-bottom:24px}
+#history .page-title,#schoolPage .page-title{margin-bottom:20px}.history-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:17px}.history-stat{background:#fff;border:1px solid #eeece8;border-radius:15px;padding:16px 18px;box-shadow:0 2px 3px #24243a0b}.history-stat span{display:block;color:#9995a4;font-size:.72rem;font-weight:700}.history-stat b{display:block;color:#4338ca;font-size:1.9rem;line-height:1.35}.history-filters{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #eeece8;border-radius:15px;padding:12px 15px;margin-bottom:16px}.history-filters input{flex:1}.history-filters select{width:190px}.history-filters span{font-size:.72rem;color:#9995a4;white-space:nowrap}.history-filters button{font-size:.74rem;min-height:39px}.history-table{background:#fff;border:1px solid #eeece8;border-radius:15px;overflow-x:auto}.history-table table{border-collapse:collapse;width:100%;min-width:690px;font-size:.83rem}.history-table th{background:#fafaf9;color:#8b8a98;font-size:.72rem}.history-table td,.history-table th{padding:12px 13px;text-align:right;border-bottom:1px solid #f2f0ed}.history-table tr:last-child td{border-bottom:0}.history-table tbody tr:hover{background:#f7f8ff}.history-name{font-weight:700;color:#303046}.history-meta{font-size:.7rem;color:#9895a0}.history-percent{font-weight:800;color:#4338ca}.history-actions{display:flex;gap:4px;flex-wrap:wrap}.history-actions button{min-height:29px;padding:3px 7px;font-size:.68rem}.history-table .wrong{margin:0;padding:3px 7px;font-size:.7rem;display:inline-block}.history-empty{margin:0;border:0;background:#fff}
+#schoolPage .form-panel{margin-bottom:16px}.school-preview-head{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #4f46e5;padding-bottom:14px}.school-preview-head strong{font-size:1.3rem;color:#4338ca}.school-preview-head p{font-size:.78rem;color:#6b7280;margin:0}.school-preview-head>div:last-child{text-align:left;font-size:.8rem}.school-preview-head span{display:block;color:#6b7280}.school-form .settings-fields{max-width:720px;margin-bottom:18px}.school-form .settings-fields>div{margin-bottom:12px}.school-form .settings-fields .grid>div{margin:0}.school-form .step{border-radius:9px}
+@media(max-width:1100px){.wrap{grid-template-columns:150px minmax(0,1fr)}#setup.card{grid-template-columns:220px minmax(0,1fr)}.side-nav{padding:12px 7px}.hero p{white-space:normal}.setup-flow{padding:13px 18px 24px}#setup .page-title{padding:20px 18px 0}.level-choice small{line-height:1.3}.history-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:850px){.wrap{display:block}.side-nav{position:static;height:auto;min-height:0;border-bottom:1px solid var(--ui-border);border-left:0;padding:10px 12px}.hero{border:0;padding:0}.side-links{display:flex;flex-direction:row}.nav-caption,.side-note{display:none}.nav-link{width:auto}.nav-link span{display:inline}.workspace{min-height:0}#setup.card{grid-template-columns:1fr}.setup-aside{grid-column:1;grid-row:auto;position:static;height:auto;border:0;border-bottom:1px solid var(--ui-border);order:0}#setup .page-title{grid-column:1;grid-row:1}.setup-aside{grid-row:2;display:block}.setup-aside .form-panel{padding:12px 18px}.setup-aside .form-panel>div{margin-top:8px}.setup-aside .panel-heading{margin:0 0 8px}.roster-school-link{width:100%}.setup-flow{grid-column:1;grid-row:3}#draftBanner{grid-column:1;grid-row:4}#history.card,#schoolPage.card{padding:18px}}
+@media(max-width:600px){.side-links{flex-wrap:wrap}.nav-link{font-size:.7rem}.nav-link span{display:inline}.page-title h2{font-size:1.55rem}.setup-flow{padding:12px}.form-panel{padding:16px}.grid,.level-choices{grid-template-columns:1fr}.level-choice{min-height:50px}.history-stats{grid-template-columns:repeat(2,1fr)}.history-filters{flex-wrap:wrap}.history-filters input{flex-basis:100%}.history-filters select{flex:1}.school-preview-head{flex-direction:column}.school-preview-head>div:last-child{text-align:right}}
+.report-school{margin-bottom:13px;border-bottom:2px solid #4f46e5;padding:0 0 10px;color:#5145ba;font-size:.88rem}
+
+/* 1.3.1: readable Arabic typography and spacious controls, separate from paper styles. */
+@media screen {
+  :root{font-size:19px;--ui-muted:#686575}
+  body{font-size:19px}
+  .wrap{grid-template-columns:208px minmax(0,1fr)}
+  .side-nav{padding:22px 14px;overflow-y:auto}
+  .brand-mark{width:46px;height:46px;font-size:1.5rem}.hero h1{font-size:1.05rem}.hero p{font-size:.8rem;white-space:normal}
+  .nav-link{font-size:.95rem;min-height:50px;white-space:normal}.nav-caption,.side-note{font-size:.82rem}
+  #setup.card{grid-template-columns:288px minmax(0,1fr)}
+  .setup-aside .form-panel{padding:24px 20px}.setup-aside .panel-heading{margin-inline:-20px;padding-inline:20px}
+  .setup-aside .panel-heading h3,.panel-heading h3{font-size:1.1rem}
+  .setup-aside .panel-heading p,.panel-heading p,.page-title p{font-size:.9rem}
+  label{font-size:.95rem;margin-bottom:8px}
+  input,select,textarea{font-size:1rem;min-height:50px;padding:11px 14px}
+  button{font-size:1rem;min-height:50px}
+  .level-choice{min-height:86px;padding:14px 16px;gap:6px}.level-choice[aria-pressed="true"]{padding:13px 15px}
+  .level-choice b{font-size:1.05rem}.level-choice small{font-size:.88rem;line-height:1.6;color:#706d7a}.level-choice[aria-pressed="true"] small{color:#fff}
+  #start{min-height:62px;font-size:1.2rem}
+  .start-summary,.setup-actions #showHistory{font-size:.9rem}.setup-actions #showHistory{min-height:46px}
+  #importRoster,.setup-aside #clearRoster,.roster-school-link{font-size:.9rem;min-height:50px}
+  .setup-aside #rosterName,.setup-aside #savedRosters{font-size:.95rem}
+  .setup-aside .file-message,.file-message{font-size:.9rem;color:var(--ui-ink)}
+  .history-stat span,.history-filters span,.history-meta{font-size:.88rem;color:var(--ui-muted)}
+  .history-table table{font-size:.95rem}.history-table th{font-size:.9rem;color:var(--ui-muted)}
+  .history-actions button{font-size:.88rem;min-height:44px;padding:7px 12px}
+  .history-table .wrong{font-size:.9rem;line-height:1.6}.history-filters button{font-size:.95rem;min-height:50px}
+  .history-filters{flex-wrap:wrap}.history-filters input{min-width:180px}.history-filters select{width:220px}
+  .detail-table,.class-table{font-size:.95rem}.report-label,.report-score span,.report-school{font-size:.9rem}
+  .school-preview-head p,.school-preview-head>div:last-child{font-size:.95rem}
+  .score{font-size:1.1rem;min-height:86px}.score-key,.timer-block span,.keyboard-help{font-size:.85rem}
+  .assessment-footer button{font-size:.95rem;min-height:50px}.hint,#last,.test-level{font-size:.95rem}
+  @media(max-width:1200px){
+    .wrap{grid-template-columns:190px minmax(0,1fr)}
+    #setup.card{grid-template-columns:1fr}#setup .page-title{grid-column:1;grid-row:1}
+    .setup-flow{grid-column:1;grid-row:2}.setup-aside{grid-column:1;grid-row:3;position:static;height:auto;border-top:1px solid var(--ui-border)}
+    #draftBanner{grid-column:1;grid-row:4}.roster-school-link{width:100%}
+    .assessment-footer{flex-wrap:wrap}.history-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:850px){
+    .wrap{display:block}.side-nav{height:auto;min-height:0;padding:14px;position:static;gap:12px}
+    .side-links{flex-wrap:wrap}.nav-link{white-space:normal}.nav-caption,.side-note{display:none}
+    .setup-aside .form-panel{padding:20px}.setup-aside .panel-heading{margin-inline:0;padding-inline:0}
+    .assessment-header{flex-wrap:wrap}.assessment-footer .actions{flex-wrap:wrap}
+  }
+  @media(max-width:700px){
+    .grid,.level-choices{grid-template-columns:1fr}.score{font-size:1rem;flex-wrap:wrap}.score-key{display:none}
+    .history-filters input{flex-basis:100%}.history-filters select{flex:1;min-width:150px}
+  }
+}
+
+
+@media screen {
+ .history-path{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+ .history-path button{font-size:.95rem;min-height:46px;padding:8px 13px}.history-path span{font-weight:700}
+ .history-folders{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:16px}
+ .history-folder{min-height:164px;background:#fff;color:var(--ui-ink);border:1px solid var(--ui-border);padding:22px;text-align:right;display:flex;flex-direction:column;gap:8px;align-items:flex-start;white-space:normal;overflow-wrap:anywhere}
+ .history-folder:hover{background:var(--ui-primary-tint);border-color:var(--ui-primary);color:var(--ui-ink)}
+ .history-folder-icon{font-size:1.7rem;color:var(--ui-primary);line-height:1}.history-folder strong{font-size:1.12rem;line-height:1.5}
+ .history-folder small{font-size:.88rem;font-weight:400;color:var(--ui-muted)}
+ .class-name-hint{display:block;color:var(--ui-muted);font-size:.85rem;margin-top:7px;line-height:1.6}.class-name-hint.invalid{color:var(--ui-danger)}
+ #reviewClassName{margin-bottom:5px}#reviewClassHint{margin-bottom:15px}#historyReportActions{margin-top:18px}
+}
+
+@media print{
+  @page{size:A4;margin:12mm}
+  html,body{background:#fff!important;color:#111!important;font:13px/1.4 Arial,sans-serif!important;direction:rtl}
+  .side-nav,.no-print,#setup,#test,#history,#schoolPage,#studentProfile,#importReview{display:none!important}
+  .wrap,.workspace{display:block!important;max-width:none!important;padding:0!important;margin:0!important}
+  .card,.report-card{background:#fff!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:0!important;margin:0!important}
+  .report-banner{background:#fff!important;padding:4px 0 8px!important;border-bottom:1px solid #555!important;color:#111!important}.report-banner h2,.report-banner p,.report-score,.report-score b{color:#111!important}.report-score{background:#fff!important;border:1px solid #999!important}
+  .report-body{padding:10px 0!important}.report-info>div,.report-stat,.result,.wrong,.signatures{background:#fff!important;color:#111!important;border-color:#bbb!important;box-shadow:none!important}
+  .report-stat b,.wrong strong,.report-school{color:#111!important}.report-stats{gap:6px;margin:8px 0}.report-stat{padding:6px}.report-info{gap:6px;margin-bottom:8px}
+  .detail-table,.class-table{font-size:11px}.detail-table th,.detail-table td,.class-table th,.class-table td{padding:5px;border-color:#999!important;background:#fff!important;color:#111!important}
+  table{break-inside:auto}thead{display:table-header-group}tr,.report-stat,.report-info>div,.signatures,.wrong{break-inside:avoid;page-break-inside:avoid}.print-only{display:block}
+}
+
+</style>
 </head>
 <body>
   <main class="wrap">
-    <section class="hero"><h1>تقييم الحروف العربية</h1></section>
-    <button id="homeButton" class="home-button hidden no-print" type="button" title="العودة إلى الصفحة الرئيسية">⌂ الرئيسية</button>
-
+    <aside class="side-nav no-print" aria-label="تنقل المعلم">
+    <section class="hero"><div class="brand-lockup"><span class="brand-mark" aria-hidden="true">ل</span><div><h1>لغتي الجميلة</h1><p>الاختبار التشخيصي الشفوي</p></div></div></section>
+      <nav class="side-links" aria-label="التنقل">
+        <span class="nav-caption">مساحة المعلم</span>
+        <button id="homeButton" class="nav-link hidden" type="button">⌂ <span>الرئيسية</span></button>
+        <button id="navRoster" class="nav-link" type="button"><span class="nav-icon" aria-hidden="true">▤</span><span>الطلاب والصف</span></button>
+        <button id="navHistory" class="nav-link" type="button"><span class="nav-icon" aria-hidden="true">◷</span><span>سجل النتائج</span></button>
+        <button id="navSettings" class="nav-link" type="button"><span class="nav-icon" aria-hidden="true">⚙</span><span>بيانات المدرسة</span></button>
+      </nav>
+      <div class="side-note">تقييم شفوي بقرار المعلم<br>تُحفظ النتائج على هذا الجهاز</div>
+    </aside>
+    <div class="workspace">
     <section id="setup" class="card">
-      <div class="grid">
-        <div><label for="teacher">اسم المعلم</label><input id="teacher" placeholder="مثال: أ. أحمد"></div>
-        <div><label for="student">اسم الطالب</label><input id="student" placeholder="اكتب اسم الطالب"></div>
+      <header class="page-title"><span class="eyebrow">مساحة القراءة / 01</span><h2>تهيئة الاختبار</h2><p>اختر الطالب والمستوى، ثم ابدأ التقييم. جميع أحكامك تُحفظ بعد كل اختيار.</p></header>
+      <div id="draftBanner" class="file-message hidden"><span>يوجد اختبار لم يكتمل محفوظ على هذا الجهاز.</span> <button id="resumeDraft" type="button">استئناف الاختبار</button><button id="discardDraft" class="secondary" type="button">حذف المسودة</button></div>
+      <div class="setup-layout">
+        <div class="setup-flow">
+          <section class="form-panel" aria-labelledby="studentPanelTitle"><div class="panel-heading"><span class="step">١</span><div><h3 id="studentPanelTitle">اختيار الطالب</h3><p>اختر طالبًا من الصف أو اكتب اسمه.</p></div></div>
+            <div class="grid"><div><label for="student">اسم الطالب</label><input id="student" placeholder="اكتب اسم الطالب"></div><div><label for="guardian">اسم ولي الأمر</label><input id="guardian" placeholder="اسم ولي أمر الطالب (اختياري)"></div></div>
+            <div id="rosterPickerWrap" class="hidden"><label for="rosterStudent">طالب من الصف</label><select id="rosterStudent"></select></div>
+          </section>
+          <section class="form-panel" aria-labelledby="levelPanelTitle"><div class="panel-heading"><span class="step">٢</span><div><h3 id="levelPanelTitle">اختيار المستوى</h3><p>يمكن إعادة المستوى لاحقًا ومقارنة المحاولات.</p></div></div>
+            <label class="sr-only" for="level">المستوى</label><select id="level" class="sr-only"><option value="one">المستوى الأول — 28 حرفًا منفردًا بلا حركات</option><option value="two">المستوى الثاني — 28 حرفًا في مواضع عشوائية</option><option value="three">المستوى الثالث — عشوائي موسّع (56 بندًا)</option><option value="fatha">كلمات من نصوص القراءة — بالفتحة فقط</option><option value="vocalized">كلمات من نصوص القراءة — بالحركات والتنوين</option><option value="four">المستوى الرابع — 30 كلمة متنوعة بالحركات والتنوين والمدود</option><option value="five">المستوى الخامس — جمل قصيرة مشكولة (22 جملة)</option></select>
+            <div class="level-choices" role="group" aria-label="اختيار مستوى الاختبار">
+              <button type="button" class="level-choice" data-select-level="one"><b>الحروف</b><small>منفردة بلا حركات · 28 بندًا</small></button>
+              <button type="button" class="level-choice" data-select-level="two"><b>مواضع الحروف</b><small>أول ووسط وآخر الكلمة</small></button>
+              <button type="button" class="level-choice" data-select-level="three"><b>عشوائي موسّع</b><small>56 بندًا من الحروف</small></button>
+              <button type="button" class="level-choice" data-select-level="fatha"><b>كلمات الفتحة</b><small>من نصوص القراءة · 12 كلمة</small></button>
+              <button type="button" class="level-choice" data-select-level="vocalized"><b>كلمات بالحركات</b><small>حركات وتنوين · 12 كلمة</small></button>
+              <button type="button" class="level-choice" data-select-level="four"><b>كلمات متنوعة</b><small>30 كلمة أو اختبار قصير</small></button>
+              <button type="button" class="level-choice" data-select-level="five"><b>جمل قصيرة</b><small>22 جملة مشكولة</small></button>
+            </div>
+            <div id="wordSessionWrap" class="hidden"><label for="wordSession">عدد كلمات المستوى الرابع</label><select id="wordSession"><option value="full">اختبار كامل — 30 كلمة</option><option value="short">اختبار قصير — 15 كلمة متوازنة</option></select></div>
+          </section>
+          <div class="actions setup-actions no-print"><button id="start">ابدأ الاختبار الشفوي</button><p id="startSummary" class="start-summary" aria-live="polite"></p><button class="secondary" id="showHistory">عرض سجل النتائج</button></div>
+        </div>
+        <div class="setup-aside">
+          <section class="form-panel"><div class="panel-heading"><span class="step">▤</span><div><h3>صف الطلاب</h3><p>راجع بيانات الفصل قبل البدء.</p></div></div>
+            <div><label for="rosterName">اسم الصف</label><input id="rosterName" placeholder="مثال: الصف الثاني الابتدائي — الفصل أ" aria-describedby="classNameHint"><small id="classNameHint" class="class-name-hint" role="status"></small></div>
+            <div><label for="savedRosters">الصف النشط</label><select id="savedRosters"><option value="">لا يوجد صف محفوظ</option></select></div>
+            <div><label>استيراد صف أسماء الطلاب</label><input id="rosterFile" class="hidden" type="file" accept=".docx,.xlsx,.pdf"><button class="secondary no-print" id="importRoster" type="button">استيراد Word أو Excel أو PDF</button><div id="rosterMessage" class="file-message">سمِّ الصف ثم ارفع الملف؛ راجع الأسماء وأولياء الأمور قبل الحفظ.</div></div>
+            <button class="secondary danger-text no-print" id="clearRoster">حذف الصف النشط</button>
+          </section>
+          <button class="secondary roster-school-link" id="rosterSchoolLink" type="button">بيانات المدرسة والتوقيعات <span aria-hidden="true">←</span></button>
+        </div>
       </div>
-      <div id="rosterPickerWrap" class="hidden" style="margin-top:19px"><label for="rosterStudent">اختيار طالب من الكشف</label><select id="rosterStudent"></select></div>
-      <div style="margin-top:19px"><label for="level">المستوى</label><select id="level"><option value="one">المستوى الأول — 28 حرفًا منفردًا بلا حركات</option><option value="two">المستوى الثاني — 28 حرفًا في مواضع عشوائية</option><option value="three">المستوى الثالث — عشوائي موسّع (56 بندًا)</option><option value="four">المستوى الرابع — 30 كلمة متنوعة بالحركات والتنوين والمدود</option></select></div>
-      <div id="wordSessionWrap" class="hidden" style="margin-top:12px"><label for="wordSession">عدد كلمات المستوى الرابع</label><select id="wordSession"><option value="full">اختبار كامل — 30 كلمة</option><option value="short">اختبار قصير — 15 كلمة متوازنة</option></select></div>
-      <div style="margin-top:19px"><label for="rosterName">اسم الكشف أو الصف</label><input id="rosterName" placeholder="مثال: الصف الثاني الابتدائي — الفصل أ"></div>
-      <div style="margin-top:19px"><label for="savedRosters">الكشف النشط</label><select id="savedRosters"><option value="">لا يوجد كشف محفوظ</option></select></div>
-      <div style="margin-top:19px"><label>استيراد كشف أسماء الطلاب</label><input id="rosterFile" class="hidden" type="file" accept=".docx,.pdf,.xlsx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"><button class="secondary no-print" id="importRoster" type="button">استيراد كشف PDF أو Word أو Excel</button><div id="rosterMessage" class="file-message">سمِّ الكشف ثم ارفع ملف PDF أو Word أو Excel؛ ستراجع الأسماء قبل حفظها.</div></div>
-      <div class="actions no-print"><button id="start">بدء الاختبار</button><button class="secondary" id="clearRoster">حذف الكشف النشط</button><button class="secondary" id="showHistory">سجل النتائج المحفوظة</button></div>
     </section>
 
     <section id="test" class="card hidden">
-      <div class="test-head"><div><strong id="counter"></strong><div class="student" id="studentName"></div><div id="timer" class="timer">00:00</div></div><div class="actions no-print"><button class="secondary" id="returnHome">العودة للصفحة الرئيسية</button><button class="absent" id="skipAbsent">تخطي الطالب الغائب</button><button class="secondary" id="finish">إنهاء الاختبار</button></div></div>
-      <div class="bar"><i id="progress"></i></div><div class="letter" id="letter">اَ</div><div class="hint">اطلب من الطالب نطق ما يظهر، ثم اختر النتيجة المناسبة.</div>
-      <div class="keyboard-help no-print">اختصارات لوحة المفاتيح: <span class="key">Enter</span> متقن، <span class="key">مسافة</span> يحتاج تدريبًا، <span class="key">R</span> إعادة لاحقًا.</div>
-      <div id="errorTypeWrap" class="hidden no-print" style="margin:12px auto;max-width:430px"><label for="errorType">نوع الصعوبة في قراءة الكلمة (اختياري عند التقييم)</label><select id="errorType"><option value="">لم أحدد نوع الصعوبة</option><option value="التنوين">التنوين</option><option value="المد">المد</option><option value="الشدة">الشدة</option><option value="الحركات">الحركات</option><option value="الحروف">الحروف</option><option value="الهمزة">الهمزة</option><option value="أخرى">أخرى</option></select></div>
-      <div class="scores no-print"><button class="score ok" data-score="✓" title="متقن — Enter"><span class="score-symbol">✓</span>متقن<span class="score-key">Enter</span></button><button class="score no" data-score="✕" title="يحتاج تدريبًا — مسافة"><span class="score-symbol">✕</span>يحتاج تدريبًا<span class="score-key">مسافة</span></button><button class="score later" data-score="↻" title="إعادة لاحقًا — R"><span class="score-symbol">↻</span>إعادة لاحقًا<span class="score-key">R</span></button></div>
-      <div class="result" id="last">لم تُسجّل نتيجة بعد.</div>
+      <header class="assessment-header"><div><span class="eyebrow">الاختبار التشخيصي الشفوي</span><h2 id="counter">البند 1</h2><div class="student" id="studentName"></div><div id="testLevel" class="test-level"></div></div><div class="timer-block"><span>مدة التقييم</span><div id="timer" class="timer">00:00</div></div></header>
+      <div class="bar" role="progressbar" aria-label="تقدم التقييم"><i id="progress"></i></div>
+      <div class="reading-stage"><div id="sentenceSource" class="sentence-source hidden"></div><div class="letter" id="letter">أَ</div><div class="hint">اطلب من الطالب قراءة ما يظهر، ثم سجّل حكمك.</div></div>
+      <div class="scores no-print" role="group" aria-label="تقييم المعلم"><button class="score ok" data-score="✓" title="متقن — Enter"><span class="score-symbol">✓</span>متقن<span class="score-key">Enter</span></button><button class="score no" data-score="✕" title="يحتاج تدريبًا — مسافة"><span class="score-symbol">✕</span>يحتاج تدريبًا<span class="score-key">مسافة</span></button><button class="score later" data-score="↻" title="إعادة لاحقًا — R"><span class="score-symbol">↻</span>إعادة لاحقًا<span class="score-key">R</span></button></div>
+      <div class="assessment-footer no-print"><div class="actions"><button class="secondary" id="previousItem" type="button">السابق</button><button class="secondary" id="nextItem" type="button">التالي</button><button class="secondary" id="returnHome">الرئيسية</button><button class="absent" id="skipAbsent">تخطي الغائب</button><button class="secondary" id="finish">إنهاء الاختبار</button></div><div class="keyboard-help">الاختصارات: Enter متقن · مسافة يحتاج تدريبًا · R إعادة لاحقًا</div></div>
+      <div class="result" id="last" aria-live="polite">لم تُسجّل نتيجة بعد.</div>
     </section>
 
     <section id="report" class="card report-card hidden">
-      <header class="report-banner"><div><h2>تقرير تقييم الحروف العربية</h2><p>نتيجة الطالب وتفصيل أدائه في الاختبار</p></div><div class="report-score"><span>النتيجة النهائية</span><b id="reportScore">0%</b></div></header>
-      <div class="report-body"><div id="summary"></div><div id="wrongLetters" class="wrong"></div><div id="details" class="result"></div></div>
-      <div class="actions no-print"><select id="printFormat" style="width:auto"><option value="brief">طباعة مختصرة</option><option value="detailed">طباعة تفصيلية</option></select><button class="secondary" id="print">طباعة</button><button id="word">تنزيل تقرير Word</button><button class="secondary" id="showPlans">📚 الخطط العلاجية</button><button class="secondary" id="previousStudent">اختبار الطالب السابق</button><button class="secondary" id="nextStudent">اختبار الطالب التالي</button><button class="secondary" id="again">اختبار طالب جديد</button><button class="secondary" id="reportHistory">سجل النتائج</button></div>
+      <header class="report-banner"><div class="report-heading"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9ItmD2KrYp9ioINmF2YHYqtmI2K0g2YjYudmE2KfZhdipINil2KrZgtin2YYiPgogIDxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiByeD0iMzAiIGZpbGw9IiMwQzY2NzUiLz4KICA8cGF0aCBkPSJNMjIgMzdjMTgtNiAzMS0zIDQyIDR2NTNjLTEyLTctMjctOS00Mi00VjM3WiIgZmlsbD0iI0ZGRkZGRiIvPgogIDxwYXRoIGQ9Ik0xMDYgMzdjLTE4LTYtMzEtMy00MiA0djUzYzEyLTcgMjctOSA0Mi00VjM3WiIgZmlsbD0iI0UxRjVGNCIvPgogIDxwYXRoIGQ9Ik02NCA0MXY1MyIgc3Ryb2tlPSIjODRDOUM1IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxjaXJjbGUgY3g9IjkyIiBjeT0iOTEiIHI9IjIzIiBmaWxsPSIjRjNCRDVCIiBzdHJva2U9IiMwQzY2NzUiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxwYXRoIGQ9Im04MiA5MSA3IDcgMTQtMTYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzEyM0I1RCIgc3Ryb2tlLXdpZHRoPSI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true"><div><h2>تقرير الاختبار التشخيصي الشفوي</h2><p>نتيجة الطالب وتفصيل أدائه في الاختبار</p></div></div><div class="report-score"><span>النتيجة النهائية</span><b id="reportScore">0%</b></div></header>
+      <div class="report-body"><div id="summary"></div><div id="wrongLetters" class="wrong"></div><div id="details" class="result"></div><div id="signatures" class="signatures"></div></div>
+      <div class="actions no-print"><select id="printFormat" style="width:auto"><option value="brief">طباعة مختصرة</option><option value="detailed">طباعة تفصيلية</option></select><button class="secondary" id="print">طباعة</button><button id="word">تنزيل تقرير Word</button><button class="secondary" id="previousStudent">اختبار الطالب السابق</button><button class="secondary" id="nextStudent">اختبار الطالب التالي</button><button class="secondary" id="again">اختبار طالب جديد</button><button class="secondary" id="reportHistory">سجل النتائج</button></div>
     </section>
 
     <section id="history" class="card hidden">
-      <div class="test-head"><div><h2 style="margin:0">سجل النتائج المحفوظة</h2><div class="student">تُحفظ النتائج على هذا الجهاز ولا تُستبدل عند إضافة اختبار جديد.</div></div><button class="secondary no-print" id="closeHistory">العودة</button></div>
+      <header class="page-title"><span class="eyebrow">ساحة المعلم / سجل النتائج</span><h2>سجل النتائج</h2><p>نتائج الاختبارات الشفوية المحفوظة وتقاريرها التفصيلية.</p></header>
+      <nav id="historyPath" class="history-path no-print" aria-label="مسار سجل النتائج"></nav>
+      <div id="historyStats" class="history-stats"></div>
+      <div class="history-filters no-print"><label for="historySearch" class="sr-only">ابحث باسم الصف أو الطالب</label><input id="historySearch" type="search" placeholder="ابحث باسم الصف أو الطالب..."><label for="historyLevel" class="sr-only">تصفية حسب المستوى</label><select id="historyLevel"><option value="all">جميع المستويات</option></select><span id="historyCount"></span><button class="secondary" id="closeHistory">العودة</button></div>
       <div id="historyList"></div>
-      <div class="actions no-print"><button id="allWord">تنزيل كشف Word شامل</button><button class="secondary" id="allPrint">طباعة الكشف الشامل</button></div>
+      <div id="historyReportActions" class="actions no-print"><button id="allWord">تنزيل تقرير الصف Word</button><button class="secondary" id="allPrint">طباعة تقرير الصف</button></div>
+    </section>
+
+    <section id="schoolPage" class="card hidden">
+      <header class="page-title"><span class="eyebrow">ساحة المعلم / بيانات المدرسة</span><h2>بيانات المدرسة</h2><p>تظهر بيانات المدرسة والتوقيعات في تقارير الطلاب.</p></header>
+      <section class="form-panel school-preview"><p class="history-meta">معاينة رأس التقرير</p><div class="school-preview-head"><div><strong>لغتي الجميلة</strong><p>الاختبار التشخيصي الشفوي</p></div><div><b id="schoolPreviewName">—</b><span id="schoolPreviewPrincipal">مدير المدرسة: —</span></div></div></section>
+      <section class="form-panel school-form"><div class="panel-heading"><span class="step">⚙</span><div><h3>معلومات المدرسة</h3><p>أدخل البيانات ليتم تضمينها في التقرير.</p></div></div><div class="settings-fields"><div><label for="schoolName">اسم المدرسة</label><input id="schoolName" placeholder="اسم المدرسة"></div><div><label for="teacher">اسم المعلم</label><input id="teacher" placeholder="اسم المعلم"></div><div><label for="principal">اسم مدير / مديرة المدرسة</label><input id="principal" placeholder="اسم المدير (اختياري)"></div></div><div class="actions"><button id="saveSchool" type="button">حفظ البيانات</button><span id="schoolSaved" class="history-meta" aria-live="polite"></span></div></section>
+      <div class="file-message">تُحفظ هذه البيانات على هذا الجهاز وتظهر في معاينة التقرير والطباعة.</div>
     </section>
 
     <section id="allReport" class="card hidden">
-      <h2>الكشف الشامل لنتائج الطلاب</h2><div class="print-only">الكشف الشامل لتقييم الحروف والكلمات العربية</div><div id="allReportContent" class="result"></div>
+      <h2>تقرير نتائج الصف</h2><div class="print-only">تقرير نتائج الصف للاختبار التشخيصي الشفوي</div><div id="allReportContent" class="result"></div>
       <div class="actions no-print"><button class="secondary" id="closeAllReport">العودة إلى السجل</button></div>
     </section>
 
-    <section id="plans" class="card hidden">
-      <div class="test-head"><div><h2 style="margin:0">الخطط العلاجية</h2><div class="student">اختر الخطة المناسبة للطالب لفتح ملف PDF ثم طباعته.</div></div><button class="secondary no-print" id="closePlans">العودة إلى التقرير</button></div>
-      <div id="planList"></div>
-    </section>
-
     <section id="importReview" class="card hidden">
-      <div class="test-head"><div><h2 style="margin:0">مراجعة أسماء الطلاب</h2><div class="student">راجع الأسماء بالترتيب قبل اعتماد الكشف. يمكنك حذف أي سطر أو تعديله.</div></div></div>
+      <div class="test-head"><div><h2 style="margin:0">مراجعة أسماء الطلاب</h2><div class="student">كل سطر: اسم الطالب ثم علامة تبويب ثم اسم ولي الأمر إن وُجد. عدّل السطور أو احذفها قبل الحفظ.</div></div></div>
+      <div id="importCount" class="file-message" aria-live="polite"></div>
+      <label for="reviewClassName">اسم الصف</label><input id="reviewClassName" aria-describedby="reviewClassHint"><small id="reviewClassHint" class="class-name-hint" role="status"></small>
       <textarea id="reviewNames" class="review-list" aria-label="الأسماء المستخرجة"></textarea>
-      <div class="actions no-print"><button id="approveRoster">اعتماد وحفظ الكشف</button><button class="secondary" id="cancelRosterReview">إلغاء</button></div>
+      <div class="actions no-print"><button id="approveRoster">اعتماد وحفظ الصف</button><button class="secondary" id="cancelRosterReview">إلغاء</button></div>
     </section>
 
     <section id="studentProfile" class="card hidden">
       <div class="test-head"><div><h2 id="profileTitle" style="margin:0">ملف الطالب</h2><div id="profileMeta" class="student"></div></div></div>
       <div id="profileContent" class="profile-timeline"></div>
     </section>
+    </div>
   </main>
 
   <script>
@@ -160,28 +298,45 @@
       {word:'مِصْبَاحٍ', difficulty:'صعب', tanween:'كسر'},
       {word:'اِسْتِرَاحَةٍ', difficulty:'صعب', tanween:'كسر'}
     ];
-    const STORAGE_KEY = 'arabic-letter-assessment.records';
-    const STORAGE_VERSION = 2;
-    const TEACHER_STORAGE_KEY = 'arabic-letter-assessment.teacher-name';
-    const ROSTER_STORAGE_KEY = 'arabic-letter-assessment.roster';
-    const ROSTER_VERSION = 3;
-    const TREATMENT_PLANS = [
-      {title:'برنامج مقترح لرفع وتحسين مستوى بعض التلاميذ الضعاف — لغتي الصف الأول الابتدائي', file:'plans/plan-grade-1.pdf'},
-      {title:'خطة علاجية للطلاب الضعاف في القراءة والكتابة — الصف الثاني والثالث الابتدائي', file:'plans/plan-grades-2-3.pdf'},
-      {title:'خطة علاجية مبكرة — لغتي ثالث ابتدائي', file:'plans/plan-grade-3.pdf'},
-      {title:'كراسة علاجية لغة عربية — الصفوف الأولية', file:'plans/workbook-primary.pdf'},
-      {title:'مذكرة علاجية لغتي لطلاب الصفوف الأولية — أ. أشرف محمود', file:'plans/workbook-primary-ashraf.pdf'}
+    // الكلمات التالية مطابقة حرفيًا لنصوص القراءة المرفقة، 3–4 حروف أصلية.
+    const FATHA_WORDS = ['سَأَلَ','طَلَبَ','حَدَثَ','شَكَرَ','جَلَسَ','بَدَأَ','قَالَ','عَادَ','دَعَا','عَاشَ','كَانَ','وَسَطَ'];
+    const VOCALIZED_WORDS = ['بَدْرٌ','عَصًا','قَمْحٍ','عَامٍ','اسْمٌ','جَمِيلٌ','نُورَةُ','طَارِقٌ','صِلَةُ','مُذِيعٍ','يَوْمًا','شَيْئًا'];
+    // جملتان قصيرتان من كل نص قرائي أو قصة إثرائية في «نصوص القراءة».
+    const SENTENCE_GROUPS = [
+      {source:'صِلَةُ الرَّحِمِ', sentences:['إِنَّهُ رَأْيٌ جَمِيلٌ.', 'أَنَا مُتَشَوِّقَةٌ لِهَذَا الْيَوْمِ.']},
+      {source:'عُذْرًا يَا جَدِّي', sentences:['رَأَى الْمُعَلِّمُ فَوَّازًا يَجْلِسُ حَزِينًا.', 'لَيْتَ جَدِّي يُسَامِحُنِي!']},
+      {source:'الصَّدِيقَانِ', sentences:['نَدِمَ عَمَّارٌ عَلَى تَسَرُّعِهِ.', 'اعْتَذَرَ عَمَّارٌ إِلَى خَالِدٍ.']},
+      {source:'الْجَارُ الصَّغِيرُ', sentences:['اتَّصَلَ فَوَّازٌ بِالدِّفَاعِ الْمَدَنِيِّ.', 'شَكَرَ الْجَارُ فَوَّازًا عَلَى حُسْنِ تَصَرُّفِهِ.']},
+      {source:'مَدِينَتَانِ مُقَدَّسَتَانِ', sentences:['فِي وَطَنِي الْحَبِيبِ مَدِينَتَانِ مُقَدَّسَتَانِ.', 'فِي مَكَّةَ الْمُكَرَّمَةِ الْمَسْجِدُ الْحَرَامُ.']},
+      {source:'عَلَمُ بِلَادِي', sentences:['عَلَمُ بِلَادِي لَوْنُهُ أَخْضَرُ.', 'أَنَا أُحِبُّ عَلَمَ بِلَادِي وَأَعْتَزُّ بِهِ.']},
+      {source:'رِحْلَةُ حَبَّةِ قَمْحٍ', sentences:['أَنَا حَبَّةُ قَمْحٍ صَفْرَاءُ.', 'يَسْقِينِي بِالْمَاءِ فَتَنْمُو جُذُورِي.']},
+      {source:'مَنْ أَنَا؟', sentences:['ثِمَارِي لَذِيذَةُ الطَّعْمِ.', 'جِذْعِي سَمِيكٌ.']},
+      {source:'الْفَتَى الشُجَاعُ', sentences:['فَخَرَجَ النَّاسُ فَرِحِينَ.', 'انْطَلَقَ عَبْدُالْعَزِيزِ مَعَ رِجَالِهِ إِلَى الرِّيَاضِ.']},
+      {source:'الْحَمَامَتَانِ', sentences:['كَانَ هُنَاكَ حَمَامَةٌ لَطِيفَةٌ.', 'سَقَطَتْ حَبَّةُ الْقَمْحِ مِنْ فَمِهَا.']},
+      {source:'آدَابُ الِاسْتِئْذَانِ', sentences:['هَذَا خَطَأٌ مِنِّي.', 'سَأَعْتَذِرُ إِلَيْهِ.']}
     ];
-    let q = [], pos = 0, res = [], activeRecord = null, assessmentStartedAt = 0, timerId = null, pendingRosterImport = null;
+    const STORAGE_KEY = 'lughaty-oral-diagnostic.records';
+    const STORAGE_VERSION = 2;
+    const TEACHER_STORAGE_KEY = 'lughaty-oral-diagnostic.teacher-name';
+    const PRINCIPAL_STORAGE_KEY = 'lughaty-oral-diagnostic.principal-name';
+    const SCHOOL_STORAGE_KEY = 'lughaty-oral-diagnostic.school-info';
+    const DRAFT_KEY = 'lughaty-oral-diagnostic.draft';
+    const ROSTER_STORAGE_KEY = 'lughaty-oral-diagnostic.roster';
+    const ROSTER_VERSION = 3;
+    const TEST_SESSIONS_KEY = 'lughaty-oral-diagnostic.test-sessions';
+    let currentTestSession = null;
+    let historyClassKey = null, historyTestKey = null, historyAll = false;
+    let q = [], pos = 0, res = [], activeRecord = null, assessmentStartedAt = 0, timerId = null, pendingRosterImport = null, assessmentDuration = 0;
     const $ = x => document.getElementById(x);
     const show = x => $(x).classList.remove('hidden');
     const hide = x => $(x).classList.add('hidden');
     function goHome() {
       stopTimer();
-      ['test','report','history','allReport','plans','studentProfile','importReview'].forEach(hide);
+      ['test','report','history','schoolPage','allReport','studentProfile','importReview'].forEach(hide);
       show('setup');
       hide('homeButton');
       updateRosterMessage();
+      setActiveNav('navRoster');
     }
     function shuffle(items) {
       const shuffled = [...items];
@@ -193,7 +348,7 @@
     }
     const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const makeId = prefix => prefix + '-' + (globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(16).slice(2));
-    const levelName = value => ({one:'المستوى الأول — الحروف بلا حركات',two:'المستوى الثاني — مواضع الحروف',three:'المستوى الثالث — عشوائي موسّع',four:'المستوى الرابع — الكلمات بالحركات والتنوين والمدود'})[value] || value;
+    const levelName = value => ({one:'المستوى الأول — الحروف بلا حركات',two:'المستوى الثاني — مواضع الحروف',three:'المستوى الثالث — عشوائي موسّع',fatha:'كلمات نصوص القراءة — بالفتحة فقط',vocalized:'كلمات نصوص القراءة — بالحركات والتنوين',four:'المستوى الرابع — الكلمات بالحركات والتنوين والمدود',five:'المستوى الخامس — جمل قصيرة مشكولة'})[value] || value;
 
     function formatDuration(seconds) {
       const minutes = Math.floor(seconds / 60);
@@ -209,7 +364,7 @@
     }
 
     function startTimer() {
-      stopTimer();
+      if (assessmentStartedAt) return;
       assessmentStartedAt = Date.now();
       updateTimer();
       timerId = window.setInterval(updateTimer, 1000);
@@ -218,6 +373,62 @@
     function stopTimer() {
       if (timerId !== null) window.clearInterval(timerId);
       timerId = null;
+    }
+
+    function getTestSessions() {
+      try { const stored = JSON.parse(localStorage.getItem(TEST_SESSIONS_KEY) || '{}'); return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {}; } catch { return {}; }
+    }
+    function saveTestSession(session) {
+      const sessions = getTestSessions(); sessions[session.id] = session;
+      localStorage.setItem(TEST_SESSIONS_KEY,JSON.stringify(sessions));
+    }
+    function prepareTestSession(continueSession, reference) {
+      const roster = getRoster(), student = currentStudent(roster);
+      const selected = student && student.name === $('student').value.trim() ? roster : null;
+      const classId = selected?.id || null;
+      const saved = reference?.testSessionId ? getTestSessions()[reference.testSessionId] : currentTestSession;
+      if (continueSession && saved && saved.rosterId === classId && saved.level === $('level').value && saved.wordSession === $('wordSession').value) {
+        currentTestSession = saved;
+      } else {
+        const startedAt = new Date().toISOString();
+        const number = Object.values(getTestSessions()).filter(session => session.rosterId === classId && testDateKey(session.startedAt) === testDateKey(startedAt)).length + 1;
+        currentTestSession = {id:makeId('test'),number,startedAt,rosterId:classId,rosterName:selected?.name || '',level:$('level').value,wordSession:$('wordSession').value,absentStudentIds:{}};
+      }
+      saveTestSession(currentTestSession);
+    }
+
+    function saveDraft() {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({q,pos,res,assessmentStartedAt,testSession:currentTestSession,studentId:currentStudent()?.id || null,student:$('student').value.trim(),guardian:$('guardian').value.trim(),level:$('level').value,wordSession:$('wordSession').value,rosterId:getRoster()?.id || null, savedAt:Date.now()}));
+      updateDraftBanner();
+    }
+    function clearDraft() { localStorage.removeItem(DRAFT_KEY); updateDraftBanner(); }
+    function readDraft() { try { const draft = JSON.parse(localStorage.getItem(DRAFT_KEY)); return draft && Array.isArray(draft.q) && Array.isArray(draft.res) && draft.q.length ? draft : null; } catch { return null; } }
+    function updateDraftBanner() { $('draftBanner').classList.toggle('hidden', !readDraft()); }
+    function resumeDraft() {
+      const draft = readDraft(); if (!draft) return;
+      if (draft.rosterId) {
+        const store = getRosterStore();
+        const roster = store.rosters.find(item => item.id === draft.rosterId);
+        if (roster) {
+          store.activeRosterId = roster.id;
+          const index = roster.students.findIndex(student => draft.studentId ? student.id === draft.studentId : student.name === draft.student);
+          if (index >= 0) roster.currentIndex = index;
+          saveRosterStore(store);
+        }
+      }
+      currentTestSession = draft.testSession || {id:makeId('test'),startedAt:new Date(draft.savedAt || Date.now()).toISOString(),rosterId:draft.rosterId || null,rosterName:getRoster()?.name || '',level:draft.level,wordSession:draft.wordSession || 'full',absentStudentIds:{}};
+      saveTestSession(currentTestSession);
+      ({q,pos,res,assessmentStartedAt} = draft);
+      $('student').value = draft.student; $('guardian').value = draft.guardian || '';
+      $('level').value = draft.level; $('wordSession').value = draft.wordSession || 'full';
+      $('wordSessionWrap').classList.toggle('hidden', draft.level !== 'four');
+      syncLevelChoices();
+      activeRecord = null; stopTimer();
+      if (assessmentStartedAt) timerId = window.setInterval(updateTimer, 1000);
+      hide('setup'); show('test'); show('homeButton');
+      $('studentName').textContent = 'الطالب: ' + draft.student;
+      $('testLevel').textContent = levelName(draft.level);
+      render(); updateTimer();
     }
 
     function form(l, p, h) {
@@ -244,10 +455,50 @@
 
     function restoreTeacherName() {
       $('teacher').value = localStorage.getItem(TEACHER_STORAGE_KEY) || '';
+      $('principal').value = localStorage.getItem(PRINCIPAL_STORAGE_KEY) || '';
+      try {
+        const saved = JSON.parse(localStorage.getItem(SCHOOL_STORAGE_KEY) || '{}');
+        $('schoolName').value = saved.name || '';
+      } catch { /* البيانات القديمة للمعلم والمدير تبقى قابلة للقراءة */ }
+      updateSchoolPreview();
     }
 
     function saveTeacherName() {
       localStorage.setItem(TEACHER_STORAGE_KEY, $('teacher').value.trim());
+      localStorage.setItem(PRINCIPAL_STORAGE_KEY, $('principal').value.trim());
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(SCHOOL_STORAGE_KEY) || '{}'); } catch {}
+      localStorage.setItem(SCHOOL_STORAGE_KEY, JSON.stringify({...saved,name:$('schoolName').value.trim()}));
+      updateSchoolPreview();
+    }
+
+    function updateSchoolPreview() {
+      $('schoolPreviewName').textContent = $('schoolName').value.trim() || '—';
+      $('schoolPreviewPrincipal').textContent = 'مدير المدرسة: ' + ($('principal').value.trim() || '—');
+    }
+
+    function setActiveNav(id) {
+      ['navRoster','navHistory','navSettings'].forEach(item => $(item).classList.toggle('is-active', item === id));
+    }
+
+    function showSchoolPage() {
+      stopTimer();
+      ['setup','test','report','history','allReport','studentProfile','importReview'].forEach(hide);
+      show('schoolPage'); show('homeButton'); setActiveNav('navSettings');
+      updateSchoolPreview();
+    }
+
+    function updateStartSummary() {
+      $('startSummary').textContent = 'الطالب: ' + ($('student').value.trim() || '—') + ' · المستوى: ' + levelName($('level').value);
+    }
+
+    function saveGuardianName() {
+      const roster = getRoster();
+      const student = currentStudent(roster);
+      if (student && student.name === $('student').value.trim()) {
+        student.guardianName = $('guardian').value.trim();
+        saveRoster(roster);
+      }
     }
 
     function getRosterStore() {
@@ -255,11 +506,11 @@
         const stored = JSON.parse(localStorage.getItem(ROSTER_STORAGE_KEY));
         if (stored && Array.isArray(stored.rosters)) {
           const migratedStore = {...stored, version:ROSTER_VERSION, rosters:stored.rosters.map(normalizeRoster)};
-          if (stored.version !== ROSTER_VERSION) localStorage.setItem(ROSTER_STORAGE_KEY, JSON.stringify(migratedStore));
+          if (stored.version !== ROSTER_VERSION || JSON.stringify(stored.rosters) !== JSON.stringify(migratedStore.rosters)) localStorage.setItem(ROSTER_STORAGE_KEY, JSON.stringify(migratedStore));
           return migratedStore;
         }
         if (stored && stored.version === 1 && Array.isArray(stored.names)) {
-          const migratedRoster = normalizeRoster({...stored, id:makeId('roster'), name:stored.sourceName ? stored.sourceName.replace(/\.[^.]+$/, '') : 'الكشف السابق', sourceType:'docx'});
+          const migratedRoster = normalizeRoster({...stored, id:makeId('roster'), name:stored.sourceName ? stored.sourceName.replace(/\.[^.]+$/, '') : 'الصف السابق', sourceType:'docx'});
           const migratedStore = {version:ROSTER_VERSION, activeRosterId:migratedRoster.id, rosters:[migratedRoster]};
           localStorage.setItem(ROSTER_STORAGE_KEY, JSON.stringify(migratedStore));
           return migratedStore;
@@ -286,7 +537,7 @@
 
     function normalizeRoster(roster) {
       const students = Array.isArray(roster.students) && roster.students.length
-        ? roster.students.map(student => ({id:student.id || makeId('student'), name:cleanRosterName(student.name || '')})).filter(student => student.name)
+        ? roster.students.map(student => ({id:student.id || makeId('student'), name:cleanRosterName(student.name || ''), guardianName:student.guardianName || ''})).filter(student => student.name)
         : (roster.names || []).map(name => ({id:makeId('student'), name:cleanRosterName(name)})).filter(student => student.name);
       const legacyAbsences = roster.absentNames || {};
       return {...roster, students, names:students.map(student => student.name), absentStudentIds:roster.absentStudentIds || Object.fromEntries(students.filter(student => legacyAbsences[student.name]).map(student => [student.id, true]))};
@@ -309,61 +560,143 @@
       const store = getRosterStore();
       $('savedRosters').innerHTML = store.rosters.length
         ? store.rosters.map(roster => '<option value="' + esc(roster.id) + '"' + (roster.id === store.activeRosterId ? ' selected' : '') + '>' + esc(roster.name) + ' (' + roster.students.length + ' طالبًا)</option>').join('')
-        : '<option value="">لا يوجد كشف محفوظ</option>';
+        : '<option value="">لا يوجد صف محفوظ</option>';
     }
 
     function updateRosterMessage() {
       updateRosterSelector();
       const roster = getRoster();
       if (!roster || !roster.students.length) {
-        $('rosterMessage').textContent = 'سمِّ الكشف ثم ارفع ملف PDF أو Word أو Excel؛ ستراجع الأسماء قبل حفظها.';
+        $('rosterMessage').textContent = 'سمِّ الصف ثم ارفع ملف Word أو Excel أو PDF؛ راجع الأسماء وأولياء الأمور قبل الحفظ.';
         $('rosterPickerWrap').classList.add('hidden');
+        updateStartSummary();
         return;
       }
       const currentIndex = roster.currentIndex;
       const selectedStudent = currentStudent(roster);
       $('student').value = selectedStudent.name;
+      $('guardian').value = selectedStudent.guardianName || '';
       $('rosterName').value = roster.name;
       $('rosterPickerWrap').classList.remove('hidden');
       $('rosterStudent').innerHTML = roster.students.map((student, index) => '<option value="' + index + '"' + (index === currentIndex ? ' selected' : '') + '>' + (index + 1) + ' — ' + esc(student.name) + (roster.absentStudentIds[student.id] ? ' (غائب)' : '') + '</option>').join('');
-      $('rosterMessage').textContent = 'الكشف النشط: ' + roster.name + ' — ' + roster.students.length + ' طالبًا. الطالب الحالي: ' + (currentIndex + 1) + ' من ' + roster.students.length + ' — ' + selectedStudent.name + '.';
+      $('rosterMessage').textContent = 'الصف النشط: ' + roster.name + ' — ' + roster.students.length + ' طالبًا. الطالب الحالي: ' + (currentIndex + 1) + ' من ' + roster.students.length + ' — ' + selectedStudent.name + '.';
+      updateStartSummary();
     }
 
     function cleanRosterName(value) {
-      return value.replace(/\u00a0/g, ' ').replace(/^\s*(?:\d+|[٠-٩]+)\s*[.)،\-–—]?\s*/, '').replace(/\s+/g, ' ').trim();
+      return String(value ?? '').normalize('NFKC').replace(/[\u00a0\u200e\u200f\u200b\u200c\u200d\ufeff]/g, ' ')
+        .replace(/ـ/g, '').replace(/^\s*[0-9٠-٩۰-۹]+\s*[.)،\-–—]?\s*/, '').replace(/\s+/g, ' ').trim();
+    }
+    const studentHeader = value => /^(?:اسم\s*(?:الطالب|الطالبة|التلميذ|التلميذة)(?:\s*\/\s*\S+)?(?:\s*(?:الكامل|رباعيا|الرباعي))?|أسماء\s*(?:الطلاب|الطالبات)|الاسم(?:\s*(?:الكامل|رباعي|الرباعي))?(?:\s*لل(?:طالب|طالبة))?)$/.test(cleanRosterName(value).replace(/[\u064B-\u065F:：]/g,''));
+    const guardianHeader = value => /(?:ولي\s*الأمر|اسم\s*(?:الأب|الوالد))/.test(cleanRosterName(value));
+    function isStudentName(value) {
+      const name = cleanRosterName(value);
+      if (name.length < 3 || name.length > 160 || !/^[\p{Script=Arabic}\p{M}\s]+$/u.test(name) || /[٠-٩۰-۹]/.test(name)) return false;
+      if (studentHeader(name) || guardianHeader(name)) return false;
+      if (/^اسم\s*(?:المعلم|المعلمة|المدير|المديرة|المدرسة)(?:\s|$)/.test(name)) return false;
+      // Reject headings as complete words; names such as عبدالمجيد والعامري remain valid.
+      if (/(?:^|\s)(?:وزارة|إدارة|مدرسة|المملكة|السعودية|الصف|الفصل|الدراسي|كشف|صف|رصد|نتيجة|المادة|المجموع|الدرجة|الرقم|التوقيع|غياب|حضور|الاختبار|تقويم|مشاركة|واجبات|متقن|ممتاز|ضعيف|جيد|ناجح|راسب|المدير)(?:\s|$)/.test(name)) return false;
+      return !/^(?:رقم|م|الطالب|الطالبة|التلميذ|التلميذة|اسم|الحالة|ملاحظات|العام الدراسي)$/.test(name);
+    }
+    function namesFromText(text) {
+      return String(text).split(/\r?\n/).flatMap(line => line.split(/[\t|،؛]+|\s{3,}|\s+[0-9٠-٩۰-۹]+\s+/)
+        .map(cleanRosterName).filter(isStudentName));
+    }
+    function parseReviewRows(text) {
+      return text.split(/\r?\n/).filter(line => line.trim()).map(line => {
+        const [name, guardianName = ''] = line.split('\t');
+        return {name:cleanRosterName(name), guardianName:cleanRosterName(guardianName)};
+      }).filter(student => isStudentName(student.name));
+    }
+    function updateImportCount() {
+      const lines = $('reviewNames').value.split(/\r?\n/).filter(line => line.trim());
+      const rows = parseReviewRows($('reviewNames').value);
+      const invalid = lines.length - rows.length;
+      $('importCount').textContent = 'عدد الطلاب: ' + rows.length + '. ' + (invalid ? 'يوجد ' + invalid + ' سطر غير صالح؛ صححه قبل الاعتماد. ' : '') +
+        'قارن العدد بالصف الأصلي. يحتفظ البرنامج بالأسماء المتطابقة كطلاب مستقلين.';
+    }
+    function studentsFromRows(rows) {
+      const result = [];
+      let columns = [], guardians = [];
+      for (const cells of rows) {
+        const headers = cells.map((cell,index) => studentHeader(cell) ? index : -1).filter(index => index >= 0);
+        if (headers.length) {
+          columns = headers;
+          guardians = cells.map((cell,index) => guardianHeader(cell) ? index : -1).filter(index => index >= 0);
+          continue;
+        }
+        if (columns.length) {
+          columns.forEach((column, index) => {
+            const names = namesFromText(cells[column] || '');
+            const guardian = guardians.length === columns.length ? cleanRosterName(cells[guardians[index]] || '') : '';
+            names.forEach(name => result.push({name,guardianName:guardian}));
+          });
+        } else {
+          // Tables without headers can have several student lists side by side.
+          cells.forEach(cell => namesFromText(cell || '').forEach(name => result.push({name,guardianName:''})));
+        }
+      }
+      return result;
     }
 
-    function isStudentName(value, strict = false) {
-      const name = cleanRosterName(value).replace(/[٠-٩0-9]+(?:[.,/:-][٠-٩0-9]+)*/g, ' ').replace(/\s+/g, ' ').trim();
-      if (!name || name.length < 5 || name.length > 80 || !/[\u0621-\u064A]/.test(name)) return false;
-      if (/(?:وزارة|إدارة|مدرسة|المملكة|السعودية|الصف|الفصل|العام|الدراسي|كشف|رصد|نتيجة|المادة|المجموع|الدرجة|الرقم|اسم الطالب|اسم التلميذ|التوقيع|غياب|حضور|الاختبار|الأول|الثاني|الثالث|الرابع|الخامس|السادس|تقويم|مشاركة|واجبات)/.test(name)) return false;
-      const words = name.split(' ');
-      return !strict || (words.length >= 3 && words.filter(word => word.length >= 2).length >= 3 && !/[^\u0621-\u064A\s]/.test(name));
+    const xmlText = value => String(value).replace(/&#(x[0-9a-f]+|\d+);|&(amp|lt|gt|quot|apos);/gi, (_,number,entity) => {
+      if (number) return String.fromCodePoint(number[0].toLowerCase() === 'x' ? parseInt(number.slice(1),16) : Number(number));
+      return {amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"}[entity.toLowerCase()];
+    });
+    async function unzipOffice(file) {
+      const bytes = new Uint8Array(await file.arrayBuffer()), view = new DataView(bytes.buffer);
+      let end = -1;
+      for (let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--) if (view.getUint32(i,true) === 0x06054b50) {end=i;break;}
+      if (end<0) throw new Error('الملف ليس أرشيف Office صالحًا.');
+      const entries=new Map(), count=view.getUint16(end+10,true); let offset=view.getUint32(end+16,true);
+      for(let i=0;i<count;i++) {
+        if(view.getUint32(offset,true)!==0x02014b50) throw new Error('فهرس الأرشيف غير صالح.');
+        const method=view.getUint16(offset+10,true),length=view.getUint32(offset+20,true),nameLength=view.getUint16(offset+28,true),extra=view.getUint16(offset+30,true),comment=view.getUint16(offset+32,true),local=view.getUint32(offset+42,true);
+        const name=new TextDecoder().decode(bytes.subarray(offset+46,offset+46+nameLength));
+        if(local+30>bytes.length || view.getUint32(local,true)!==0x04034b50) throw new Error('مدخل الأرشيف غير صالح.');
+        const dataStart=local+30+view.getUint16(local+26,true)+view.getUint16(local+28,true);
+        if(dataStart+length>bytes.length) throw new Error('الملف غير مكتمل.');
+        if(name.endsWith('.xml')) {
+          let data=bytes.subarray(dataStart,dataStart+length);
+          if(method===8) {const stream=new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));data=new Uint8Array(await new Response(stream).arrayBuffer());}
+          else if(method!==0) throw new Error('طريقة ضغط غير مدعومة.');
+          entries.set(name,new TextDecoder().decode(data));
+        }
+        offset+=46+nameLength+extra+comment;
+      }
+      return entries;
     }
-
-    function namesFromText(text, strict = false) {
-      const names = [];
-      text.split(/\r?\n/).forEach(line => {
-        const parts = line.split(/[|،؛]+/).map(cleanRosterName);
-        parts.forEach(part => {
-          const name = part.replace(/[٠-٩0-9]+(?:[.,/:-][٠-٩0-9]+)*/g, ' ').replace(/\s+/g, ' ').trim();
-          if (isStudentName(name, strict) && !names.includes(name)) names.push(name);
-        });
-      });
-      return names;
-    }
-
+    const wordCells = xml => [...xml.matchAll(/<w:tc(?:\s[^>]*)?>([\s\S]*?)<\/w:tc>/g)].map(cell =>
+      [...cell[1].matchAll(/<w:p(?:\s[^>]*)?>([\s\S]*?)<\/w:p>/g)].map(p =>
+        xmlText([...p[1].matchAll(/<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>/g)].map(m => m[1]).join(''))).join('\n'));
     async function importDocxRoster(file) {
-      if (!window.mammoth) throw new Error('Mammoth is unavailable.');
-      const result = await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});
-      return namesFromText(result.value);
+      const xml=(await unzipOffice(file)).get('word/document.xml');
+      if(!xml) throw new Error('لا يوجد محتوى Word في الأرشيف.');
+      const fromTable = [...xml.matchAll(/<w:tbl(?:\s[^>]*)?>([\s\S]*?)<\/w:tbl>/g)].flatMap(table => {
+        const rows = [...table[1].matchAll(/<w:tr(?:\s[^>]*)?>([\s\S]*?)<\/w:tr>/g)].map(row => wordCells(row[1]));
+        return studentsFromRows(rows);
+      });
+      const outside=xml.replace(/<w:tbl(?:\s[^>]*)?>[\s\S]*?<\/w:tbl>/g,'');
+      const fromParagraph=[...outside.matchAll(/<w:p(?:\s[^>]*)?>([\s\S]*?)<\/w:p>/g)].flatMap(p => namesFromText(xmlText([...p[1].matchAll(/<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>/g)].map(m=>m[1]).join(''))).map(name => ({name,guardianName:''})));
+      return [...fromTable,...fromParagraph];
     }
 
     async function importXlsxRoster(file) {
-      if (!window.XLSX) throw new Error('XLSX is unavailable.');
-      const workbook = XLSX.read(await file.arrayBuffer(), {type:'array'});
-      const text = workbook.SheetNames.map(name => XLSX.utils.sheet_to_csv(workbook.Sheets[name], {FS:'\n'})).join('\n');
-      return namesFromText(text);
+      const entries=await unzipOffice(file);
+      const shared=[...(entries.get('xl/sharedStrings.xml') || '').matchAll(/<si(?:\s[^>]*)?>([\s\S]*?)<\/si>/g)].map(si => xmlText([...si[1].matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map(t=>t[1]).join('')));
+      return [...entries.entries()].filter(([name])=>/^xl\/worksheets\/sheet\d+\.xml$/.test(name)).flatMap(([,xml]) => {
+        const rows=[...xml.matchAll(/<row(?:\s[^>]*)?>([\s\S]*?)<\/row>/g)].map(row => {
+          const cells=[];
+          for(const match of row[1].matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
+            const ref=match[1].match(/\br="([A-Z]+)\d+"/)?.[1];if(!ref)continue;
+            let index=0;for(const ch of ref)index=index*26+ch.charCodeAt(0)-64;index--;
+            const raw=match[2] || '', value=raw.match(/<v>([\s\S]*?)<\/v>/)?.[1] || '';
+            cells[index]=/\bt="s"/.test(match[1]) ? shared[Number(value)] || '' : /\bt="inlineStr"/.test(match[1]) ? xmlText([...raw.matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map(t=>t[1]).join('')) : xmlText(value);
+          }
+          return cells;
+        });
+        return studentsFromRows(rows);
+      });
     }
 
     async function loadPdfLibrary() {
@@ -374,23 +707,68 @@
       return globalThis.pdfjsLib;
     }
 
+    function pdfRosterPage(items, previousLayout = null) {
+      const rows = [];
+      items.filter(item => item.str?.trim()).forEach(item => {
+        const y = item.transform[5];
+        let row = rows.find(row => Math.abs(row.y - y) <= 3);
+        if (!row) rows.push(row = {y,items:[]});
+        row.items.push({x:item.transform[4],width:Math.abs(item.width || 0),text:item.str});
+      });
+      let layout = previousLayout;
+      const names = [];
+      let expected = 0;
+      rows.sort((a,b) => b.y-a.y).forEach(row => {
+        const blocks = [];
+        row.items.sort((a,b) => b.x-a.x).forEach(item => {
+          const previous = blocks[blocks.length-1];
+          const numeric = /^[0-9٠-٩۰-۹]+[.)،]?$/.test(item.text.trim());
+          if (!previous || numeric || previous.numeric || previous.left-(item.x+item.width) > 20) {
+            blocks.push({text:item.text,left:item.x,right:item.x+item.width,numeric});
+          } else {
+            previous.text += ' ' + item.text;
+            previous.left = item.x;
+          }
+        });
+        const headers = blocks.filter(block => studentHeader(block.text));
+        if (headers.length) {
+          layout = blocks.map(block => ({center:(block.left+block.right)/2,student:studentHeader(block.text)}));
+          return;
+        }
+        if (blocks.some(block => block.numeric)) expected++;
+        if (layout) {
+          const cells = layout.map(() => []);
+          blocks.filter(block => !block.numeric).forEach(block => {
+            const center = (block.left+block.right)/2;
+            const distances = layout.map(header => Math.abs(header.center-center));
+            cells[distances.indexOf(Math.min(...distances))].push(block.text);
+          });
+          layout.forEach((header,index) => {
+            if (header.student) names.push(...namesFromText(cells[index].join(' ')));
+          });
+        } else {
+          blocks.filter(block => !block.numeric).forEach(block => names.push(...namesFromText(block.text)));
+        }
+      });
+      return {names,expected,layout};
+    }
+
     async function importPdfRoster(file) {
       const pdfjsLib = await loadPdfLibrary();
       const pdf = await pdfjsLib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
-      const lines = [];
+      const extractedByPage = [], expectedByPage = [];
+      let layout = null;
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
         const content = await (await pdf.getPage(pageNumber)).getTextContent();
-        const rows = new Map();
-        content.items.forEach(item => {
-          const y = Math.round(item.transform[5]);
-          if (!rows.has(y)) rows.set(y, []);
-          rows.get(y).push({x:item.transform[4], text:item.str});
-        });
-        [...rows.entries()].sort((a, b) => b[0] - a[0]).forEach(([, items]) => lines.push(items.sort((a, b) => b.x - a.x).map(item => item.text).join(' ')));
+        const result = pdfRosterPage(content.items,layout);
+        layout = result.layout;
+        extractedByPage.push(result.names);
+        expectedByPage.push(result.expected);
       }
-      const textNames = namesFromText(lines.join('\n'), true);
-      if (textNames.length) return textNames;
-      if (!window.Tesseract) throw new Error('Tesseract is unavailable.');
+      const textNames = extractedByPage.flat();
+      const needsOcr = extractedByPage.map((names, index) => !names.length || expectedByPage[index] > names.length);
+      if (!needsOcr.some(Boolean)) return textNames;
+      if (!window.Tesseract) return textNames;
       const worker = await Tesseract.createWorker('ara', 1, {
         workerPath:'./vendor/worker.min.js',
         corePath:'./vendor',
@@ -398,6 +776,7 @@
       });
       try {
         for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+          if (!needsOcr[pageNumber - 1]) continue;
           $('rosterMessage').textContent = 'جارٍ تحويل صفحة ' + pageNumber + ' من ' + pdf.numPages + ' إلى نص؛ قد يستغرق ذلك قليلًا للكشوف المصوّرة...';
           const page = await pdf.getPage(pageNumber);
           const viewport = page.getViewport({scale:2});
@@ -406,55 +785,86 @@
           canvas.height = Math.ceil(viewport.height);
           await page.render({canvasContext:canvas.getContext('2d'), viewport}).promise;
           const result = await worker.recognize(canvas);
-          lines.push(result.data.text);
+          const recognized = namesFromText(result.data.text);
+          if (recognized.length > extractedByPage[pageNumber - 1].length) extractedByPage[pageNumber - 1] = recognized;
         }
       } finally {
         await worker.terminate();
       }
-      return namesFromText(lines.join('\n'), true);
+      return extractedByPage.flat();
     }
 
-    function saveImportedRoster(file, names) {
-      const name = $('rosterName').value.trim() || file.name.replace(/\.[^.]+$/, '');
-      const roster = {
-        id:makeId('roster'),
-        name,
-        sourceName:file.name,
-        sourceType:file.name.toLowerCase().endsWith('.pdf') ? 'pdf' : file.name.toLowerCase().endsWith('.xlsx') ? 'xlsx' : 'docx',
-        students:names.map(name => ({id:makeId('student'), name})),
-        names,
-        currentIndex:0,
-        absentStudentIds:{},
-        createdAt:new Date().toISOString()
-      };
+    function classNameKey(value) {
+      return String(value ?? '').normalize('NFKC').replace(/[\u00a0\u200e\u200f\u200b\u200c\u200d\ufeff]/g,' ').replace(/ـ/g,'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآٱ]/g,'ا')
+        .replace(/[٠-٩]/g,char => String(char.charCodeAt(0)-1632)).replace(/[–—_\-]/g,' ').replace(/\s+/g,' ').trim().toLowerCase();
+    }
+    function importClassName(file) { return $('rosterName').value.trim() || file.name.replace(/\.[^.]+$/,''); }
+    function classNameCollision(name,file) {
+      const matches = getRosterStore().rosters.filter(roster => classNameKey(roster.name) === classNameKey(name));
+      if (matches.length === 1 && matches[0].sourceName === file?.name) return null;
+      return matches[0] || null;
+    }
+    function updateClassNameHint() {
+      const file = pendingRosterImport?.file || $('rosterFile').files?.[0];
+      const name = pendingRosterImport ? $('reviewClassName').value : $('rosterName').value;
+      const duplicate = getRosterStore().rosters.some(roster => classNameKey(roster.name) === classNameKey(name));
+      const invalid = Boolean(name.trim() && classNameCollision(name,file));
+      const hint = pendingRosterImport ? $('reviewClassHint') : $('classNameHint');
+      hint.textContent = duplicate ? 'اسم الصف مسجل مسبقًا. أعد رفع ملفه نفسه لتحديثه، أو استخدم اسم صف مختلف.' : 'استخدم اسمًا مميزًا لكل صف وفصل، مثل الصف الثاني — أ.';
+      hint.classList.toggle('invalid',invalid);
+    }
+
+    function saveImportedRoster(file, rows) {
+      const name = importClassName(file);
+      if (classNameCollision(name,file)) throw new Error('اسم الصف «' + name + '» مستخدم مسبقًا. اختر اسمًا مختلفًا، أو أعد رفع الملف الأصلي لتحديث الصف نفسه.');
       const store = getRosterStore();
-      store.rosters.push(roster);
-      store.activeRosterId = roster.id;
-      saveRosterStore(store);
-      updateRosterMessage();
+      const existing = store.rosters.find(roster => classNameKey(roster.name) === classNameKey(name) && roster.sourceName === file.name);
+      const previous = new Map();
+      (existing?.students || []).forEach(student => {
+        const key = studentNameKey(student.name);
+        if (!previous.has(key)) previous.set(key, []);
+        previous.get(key).push(student);
+      });
+      const students = rows.map(student => {
+        const prior = previous.get(studentNameKey(student.name))?.shift();
+        return {id:prior?.id || makeId('student'),name:student.name,guardianName:student.guardianName || prior?.guardianName || ''};
+      });
+      const roster = {...(existing || {}),id:existing?.id || makeId('roster'),name,sourceName:file.name,
+        sourceType:file.name.toLowerCase().split('.').pop(),students,names:students.map(student => student.name),
+        currentIndex:existing?.currentIndex || 0,absentStudentIds:existing?.absentStudentIds || {},createdAt:existing?.createdAt || new Date().toISOString()};
+      if (existing) store.rosters[store.rosters.indexOf(existing)] = roster;
+      else store.rosters.push(roster);
+      store.activeRosterId=roster.id; saveRosterStore(store); updateRosterMessage();
     }
 
     async function importRoster(file) {
       if (!file) return;
-      $('rosterMessage').textContent = 'جارٍ قراءة الكشف واستخراج أسماء الطلاب...';
+      if (classNameCollision(importClassName(file),file)) {
+        $('rosterMessage').textContent = 'اسم الصف مستخدم مسبقًا. اختر اسمًا مختلفًا أو أعد رفع الملف الأصلي لتحديثه.';
+        $('rosterFile').value = '';
+        $('rosterName').focus(); updateClassNameHint(); return;
+      }
+      $('rosterMessage').textContent = 'جارٍ قراءة الصف واستخراج أسماء الطلاب...';
       try {
         const extension = file.name.toLowerCase().split('.').pop();
-        const names = extension === 'pdf' ? await importPdfRoster(file) : extension === 'xlsx' ? await importXlsxRoster(file) : await importDocxRoster(file);
-        if (!names.length) {
+        const rows = extension === 'pdf' ? (await importPdfRoster(file)).map(name => ({name,guardianName:''})) : extension === 'xlsx' ? await importXlsxRoster(file) : await importDocxRoster(file);
+        if (!rows.length) {
           $('rosterMessage').textContent = file.name.toLowerCase().endsWith('.pdf')
-            ? 'لم يتم العثور على أسماء نصية في ملف PDF. استخدم كشفًا قابلًا لتحديد النص أو حوّله إلى Word.'
-            : 'لم يتم العثور على أسماء في الكشف. تأكد من أن الملف بصيغة DOCX وأن كل اسم في سطر أو خلية مستقلة.';
+            ? 'لم يتم العثور على أسماء نصية في ملف PDF. استخدم صفًا قابلًا لتحديد النص أو حوّله إلى Word.'
+            : 'لم يتم العثور على أسماء في الصف. تأكد من أن الملف بصيغة DOCX وأن كل اسم في سطر أو خلية مستقلة.';
           return;
         }
-        pendingRosterImport = {file, names};
-        $('reviewNames').value = names.join('\n');
+        pendingRosterImport = {file, rows};
+        $('reviewClassName').value = importClassName(file); updateClassNameHint();
+        $('reviewNames').value = rows.map(student => student.name + (student.guardianName ? '\t' + student.guardianName : '')).join('\n');
+        updateImportCount();
         hide('setup');
         show('importReview'); show('homeButton');
       } catch (error) {
         console.error('Unable to import student roster.', error);
         $('rosterMessage').textContent = file.name.toLowerCase().endsWith('.pdf')
-          ? 'تعذر قراءة كشف PDF. تأكد من أن الملف غير محمي ويحتوي على نص قابل للنسخ.'
-          : 'تعذر قراءة الكشف. استخدم ملف Word أو Excel غير محمي.';
+          ? 'تعذر قراءة صف PDF. تأكد من أن الملف غير محمي ويحتوي على نص قابل للنسخ.'
+          : 'تعذر قراءة الصف. استخدم ملف Word أو Excel غير محمي.';
       }
     }
 
@@ -477,44 +887,58 @@
       if (level === 'one') return shuffle(LEVEL_ONE_LETTERS).map(l => ({letter:l, position:'isolated', diacritic:''}));
       if (level === 'two') return letters.map((l, i) => ({letter:l, position:P[i % P.length], diacritic:H[Math.floor(Math.random() * H.length)]}));
       if (level === 'three') return shuffle([...L, ...L]).map(l => ({letter:l, position:P[Math.floor(Math.random() * P.length)], diacritic:H[Math.floor(Math.random() * H.length)]}));
+      if (level === 'fatha' || level === 'vocalized') return shuffle(level === 'fatha' ? FATHA_WORDS : VOCALIZED_WORDS).map(word => ({word,item:word}));
       if (level === 'four') {
         const words = $('wordSession').value === 'short' ? shortWordSelection() : WORDS;
         return shuffle(words).map(({word, difficulty, tanween}) => ({word, item:word, difficulty, tanween}));
       }
+      if (level === 'five') return SENTENCE_GROUPS.flatMap(({source, sentences}) => sentences.map(sentence => ({sentence, source, item:sentence})));
       return [];
     }
 
-    function begin() {
+    function begin(continueSession = false) {
       if (!$('student').value.trim()) return $('student').focus();
-      q = build(); pos = 0; res = []; activeRecord = null;
-      $('errorType').value = '';
-      hide('setup'); hide('report'); hide('history'); hide('allReport'); hide('studentProfile'); show('test'); show('homeButton');
+      if (readDraft() && $('test').classList.contains('hidden') && !window.confirm('يوجد اختبار محفوظ لم يكتمل. بدء اختبار جديد سيستبدل المسودة. هل تريد المتابعة؟')) return;
+      prepareTestSession(continueSession === true,activeRecord);
+      saveTeacherName();
+      saveGuardianName();
+      q = build(); pos = 0; res = Array(q.length).fill(null); activeRecord = null; assessmentStartedAt = 0; assessmentDuration = 0; stopTimer();
+      hide('setup'); hide('report'); hide('history'); hide('schoolPage'); hide('allReport'); hide('studentProfile'); show('test'); show('homeButton');
       const roster = getRoster();
       const selectedStudent = currentStudent(roster);
       const rosterPosition = selectedStudent && selectedStudent.name === $('student').value.trim() ? ' — ' + (roster.currentIndex + 1) + ' من ' + roster.students.length : '';
       $('studentName').textContent = 'الطالب: ' + $('student').value.trim() + rosterPosition;
-      startTimer();
-      render();
+      $('testLevel').textContent = levelName($('level').value);
+      saveDraft();
+      render(); updateTimer();
     }
 
     function render() {
       const item = q[pos];
       $('counter').textContent = 'البند ' + (pos + 1) + ' من ' + q.length;
-      $('letter').textContent = item.word || form(item.letter, item.position, item.diacritic);
+      $('previousItem').disabled = pos === 0;
+      $('nextItem').disabled = pos === q.length - 1;
+      $('letter').textContent = item.sentence || item.word || form(item.letter, item.position, item.diacritic);
       $('letter').classList.toggle('word-item', Boolean(item.word));
-      $('errorTypeWrap').classList.toggle('hidden', !item.word);
-      $('progress').style.width = (pos / q.length * 100) + '%';
-      $('last').textContent = pos ? 'آخر تقييم: ' + res[res.length - 1].item + ' ' + res[res.length - 1].score : 'لم تُسجّل نتيجة بعد.';
+      $('letter').classList.toggle('sentence-item', Boolean(item.sentence));
+      $('sentenceSource').textContent = item.source ? 'من نص: ' + item.source : '';
+      $('sentenceSource').classList.toggle('hidden', !item.source);
+      $('progress').style.width = (res.filter(Boolean).length / q.length * 100) + '%';
+      $('last').textContent = res[pos] ? 'تقييم هذا البند: ' + res[pos].score + ' — يمكنك تغييره.' : 'هذا البند لم يُقيّم بعد. تم تقييم ' + res.filter(Boolean).length + ' من ' + q.length + '.';
     }
 
     function mark(score) {
-      if ($('test').classList.contains('hidden') || pos >= q.length || !['✓', '✕', '↻'].includes(score)) return;
-      const item = q[pos];
-      res.push({letter:item.letter || '', word:item.word || '', position:item.position || '', diacritic:item.diacritic || '', difficulty:item.difficulty || '', tanween:item.tanween || '', errorType:item.word && score !== '✓' ? $('errorType').value : '', item:item.word || form(item.letter, item.position, item.diacritic), score});
-      $('errorType').value = '';
-      if (++pos === q.length) return completeAssessment();
-      render();
+      if ($('test').classList.contains('hidden') || pos >= q.length || !['✓','✕','↻'].includes(score)) return;
+      if (!assessmentStartedAt) startTimer();
+      const item=q[pos];
+      res[pos]={letter:item.letter || '',word:item.word || '',sentence:item.sentence || '',source:item.source || '',position:item.position || '',diacritic:item.diacritic || '',difficulty:item.difficulty || '',tanween:item.tanween || '',errorType:'',item:item.sentence || item.word || form(item.letter,item.position,item.diacritic),score};
+      if (res.every(Boolean)) return completeAssessment();
+      const next=res.findIndex((entry,index) => index>pos && !entry);
+      pos=next>=0 ? next : res.findIndex(entry => !entry);
+      saveDraft(); render();
     }
+    function previousItem() { if (pos>0) {pos--;saveDraft();render();} }
+    function nextItem() { if (pos<q.length-1) {pos++;saveDraft();render();} }
 
     function advanceRoster() {
       const roster = getRoster();
@@ -522,6 +946,7 @@
       roster.currentIndex++;
       saveRoster(roster);
       $('student').value = currentStudent(roster).name;
+      $('guardian').value = currentStudent(roster).guardianName || '';
       return true;
     }
 
@@ -529,26 +954,33 @@
       const roster = getRoster();
       const selectedStudent = currentStudent(roster);
       if (!roster || !selectedStudent || selectedStudent.name !== $('student').value.trim()) {
-        alert('يمكن تخطي الغائب عند اختبار طالب محدد من كشف الأسماء.');
+        alert('يمكن تخطي الغائب عند اختبار طالب محدد من صف الأسماء.');
         return;
+      }
+      if (currentTestSession) {
+        currentTestSession.absentStudentIds ||= {};
+        currentTestSession.absentStudentIds[selectedStudent.id] = true;
+        saveTestSession(currentTestSession);
       }
       roster.absentStudentIds[selectedStudent.id] = true;
       saveRoster(roster);
       stopTimer();
+      clearDraft();
       if (advanceRoster()) {
-        begin();
+        begin(true);
       } else {
         hide('test');
         show('setup');
         updateRosterMessage();
-        alert('تم تسجيل غياب الطالب. اكتمل كشف الأسماء.');
+        alert('تم تسجيل غياب الطالب. اكتمل صف الأسماء.');
       }
     }
 
     function createRecord() {
-      const correct = res.filter(x => x.score === '✓').length;
-      const incorrect = res.filter(x => x.score === '✕');
-      const retries = res.filter(x => x.score === '↻').length;
+      const assessed = res.filter(Boolean);
+      const correct = assessed.filter(x => x.score === '✓').length;
+      const incorrect = assessed.filter(x => x.score === '✕');
+      const retries = assessed.filter(x => x.score === '↻').length;
       const occurrence = {};
       const incorrectLetters = incorrect.filter(x => x.letter).map(x => {
         occurrence[x.letter] = (occurrence[x.letter] || 0) + 1;
@@ -561,27 +993,32 @@
         studentName: $('student').value.trim(),
         studentId: currentStudent(roster) && currentStudent(roster).name === $('student').value.trim() ? currentStudent(roster).id : makeId('student'),
         teacherName: $('teacher').value.trim(),
+        principalName: $('principal').value.trim(),
+        schoolName: $('schoolName').value.trim(),
+        guardianName: $('guardian').value.trim(),
         rosterId: roster && currentStudent(roster) && currentStudent(roster).name === $('student').value.trim() ? roster.id : null,
         rosterName: roster && currentStudent(roster) && currentStudent(roster).name === $('student').value.trim() ? roster.name : '',
+        testSessionId:currentTestSession?.id || null,
+        testSessionStartedAt:currentTestSession?.startedAt || null,
         completedAt: new Date().toISOString(),
         level: $('level').value,
-        levelLabel: levelName($('level').value) + ($('level').value === 'four' ? ($('wordSession').value === 'short' ? ' — قصير (15 كلمة)' : ' — كامل (30 كلمة)') : '') + (res.length < q.length ? ' — تقييم جزئي (' + res.length + ' من ' + q.length + ')' : ''),
+        levelLabel: levelName($('level').value) + ($('level').value === 'four' ? ($('wordSession').value === 'short' ? ' — قصير (15 كلمة)' : ' — كامل (30 كلمة)') : '') + (assessed.length < q.length ? ' — تقييم جزئي (' + assessed.length + ' من ' + q.length + ')' : ''),
         plannedTotal: q.length,
-        items: res.map(x => ({...x})),
-        summary: { total:res.length, correct, incorrect:incorrect.length, retries, percentage:res.length ? Math.round(correct / res.length * 100) : 0 },
-        durationSeconds: elapsedSeconds(),
+        items: assessed.map(x => ({...x})),
+        summary: { total:assessed.length, correct, incorrect:incorrect.length, retries, percentage:assessed.length ? Math.round(correct / assessed.length * 100) : 0 },
+        durationSeconds: assessmentDuration,
         incorrectLetters,
         incorrectWords
       };
     }
 
     function completeAssessment() {
-      if (!res.length || activeRecord) return;
-      stopTimer();
+      if (!res.some(Boolean) || activeRecord) return;
+      assessmentDuration = elapsedSeconds(); stopTimer();
       const record = createRecord();
       const store = getStore();
       store.records.unshift(record);
-      saveStore(store);
+      saveStore(store); clearDraft();
       renderReport(record);
     }
 
@@ -590,8 +1027,9 @@
     }
 
     function wrongText(record) {
+      if (record.level === 'five') return record.items.filter(x => x.sentence && x.score === '✕').map(x => x.sentence).join('، ') || 'لا توجد جمل تحتاج إلى تدريب.';
       if (record.incorrectWords && record.incorrectWords.length) return record.incorrectWords.join('، ');
-      if (record.level === 'four') return 'لا توجد كلمات تحتاج إلى تدريب.';
+      if (['four','fatha','vocalized'].includes(record.level)) return 'لا توجد كلمات تحتاج إلى تدريب.';
       return record.incorrectLetters.length ? record.incorrectLetters.map(x => x.letter + (x.occurrence > 1 ? ' (تكرار ' + x.occurrence + ')' : '')).join('، ') : 'لا توجد حروف مخطأ بها.';
     }
 
@@ -626,7 +1064,7 @@
     }
 
     function reportTitle(record) {
-      return record.level === 'four' ? 'تقرير تقييم الكلمات العربية' : 'تقرير تقييم الحروف العربية';
+      return record.level === 'five' ? 'تقرير تشخيص قراءة الجمل' : ['four','fatha','vocalized'].includes(record.level) ? 'تقرير تشخيص قراءة الكلمات' : 'تقرير الاختبار التشخيصي الشفوي';
     }
 
     function wordBreakdownHtml(record) {
@@ -640,7 +1078,7 @@
     }
 
     function mistakeLabel(record) {
-      return record.level === 'four' ? 'الكلمات التي تحتاج إلى تدريب' : 'الحروف التي تحتاج إلى تدريب';
+      return record.level === 'five' ? 'الجمل التي تحتاج إلى تدريب' : ['four','fatha','vocalized'].includes(record.level) ? 'الكلمات التي تحتاج إلى تدريب' : 'الحروف التي تحتاج إلى تدريب';
     }
 
     function renderDetails(record) {
@@ -651,21 +1089,22 @@
         : '<strong>تفصيل التقييم:</strong><table class="detail-table"><thead><tr><th>البند</th><th>النتيجة</th><th>الملاحظة</th></tr></thead><tbody>' + record.items.map(item => {
           const outcome = item.score === '✓' ? 'متقن' : item.score === '✕' ? 'يحتاج تدريبًا' : 'إعادة لاحقًا';
           const note = item.score === '✓' ? 'أداء جيد' : item.score === '✕' ? 'يحتاج إلى تدريب ومتابعة' : 'يعاد التقييم لاحقًا';
-          return '<tr><td>' + esc(item.item) + '</td><td>' + item.score + ' ' + outcome + '</td><td>' + note + (item.difficulty ? ' — ' + esc(item.difficulty) + '، تنوين ' + esc(item.tanween) : '') + (item.errorType ? ' — نوع الصعوبة: ' + esc(item.errorType) : '') + '</td></tr>';
+          return '<tr><td>' + esc(item.item) + '</td><td>' + item.score + ' ' + outcome + '</td><td>' + note + (item.source ? ' — ' + esc(item.source) : '') + (item.difficulty ? ' — ' + esc(item.difficulty) + '، تنوين ' + esc(item.tanween) : '') + (item.errorType ? ' — نوع الصعوبة: ' + esc(item.errorType) : '') + '</td></tr>';
         }).join('') + '</tbody></table>';
     }
 
     function renderReport(record) {
       activeRecord = record;
       stopTimer();
-      hide('test'); hide('setup'); hide('history'); hide('allReport'); hide('plans'); hide('studentProfile'); show('report'); show('homeButton');
+      hide('test'); hide('setup'); hide('history'); hide('schoolPage'); hide('allReport'); hide('studentProfile'); show('report'); show('homeButton');
       const s = record.summary;
       $('reportScore').textContent = s.percentage + '%';
       document.querySelector('#report .report-banner h2').textContent = reportTitle(record);
       document.querySelector('#report .report-score span').textContent = record.plannedTotal > s.total ? 'نتيجة البنود المقيمة' : 'النتيجة النهائية';
-      $('summary').innerHTML = '<section class="report-info"><div><span class="report-label">اسم الطالب</span>' + esc(record.studentName) + '</div><div><span class="report-label">اسم المعلم</span>' + esc(record.teacherName || 'غير محدد') + '</div><div><span class="report-label">تاريخ التقييم</span>' + esc(formatDate(record.completedAt)) + '</div></section>' +
-        '<section class="report-stats"><div class="report-stat good"><span>متقن</span><b>' + s.correct + '</b></div><div class="report-stat bad"><span>يحتاج تدريبًا</span><b>' + s.incorrect + '</b></div><div class="report-stat wait"><span>إعادة لاحقًا</span><b>' + s.retries + '</b></div><div class="report-stat time"><span>مدة الاختبار</span><b>' + formatDuration(record.durationSeconds || 0) + '</b></div></section>' +
-        '<div class="result"><strong>المستوى:</strong> ' + esc(record.levelLabel) + ' &nbsp; | &nbsp; <strong>عدد البنود:</strong> ' + s.total + (record.rosterName ? ' &nbsp; | &nbsp; <strong>الكشف:</strong> ' + esc(record.rosterName) : '') + '</div>' + wordBreakdownHtml(record);
+      $('summary').innerHTML = (record.schoolName || $('schoolName').value.trim() ? '<div class="report-school"><strong>' + esc(record.schoolName || $('schoolName').value.trim()) + '</strong>' + '</div>' : '') + '<section class="report-info"><div><span class="report-label">اسم الطالب</span>' + esc(record.studentName) + '</div><div><span class="report-label">تاريخ التقييم</span>' + esc(formatDate(record.completedAt)) + '</div></section>' +
+        '<section class="report-stats"><div class="report-stat good"><span>متقن</span><b>' + s.correct + '</b></div><div class="report-stat bad"><span>يحتاج تدريبًا</span><b>' + s.incorrect + '</b></div><div class="report-stat wait"><span>إعادة لاحقًا</span><b>' + s.retries + '</b></div><div class="report-stat time"><span>المدة · الصحيح/دقيقة</span><b>' + formatDuration(record.durationSeconds || 0) + ' · ' + (record.durationSeconds ? (s.correct * 60 / record.durationSeconds).toFixed(1) : '—') + '</b></div></section>' +
+        '<div class="result"><strong>المستوى:</strong> ' + esc(record.levelLabel) + ' &nbsp; | &nbsp; <strong>عدد البنود:</strong> ' + s.total + (record.rosterName ? ' &nbsp; | &nbsp; <strong>الصف:</strong> ' + esc(record.rosterName) : '') + '</div>' + wordBreakdownHtml(record);
+      $('signatures').innerHTML = [['المعلم',record.teacherName],['مدير المدرسة',record.principalName],['ولي الأمر',record.guardianName]].map(([title,name]) => '<div><strong>' + title + '</strong><span>' + esc(name || '________________') + '</span><small>التوقيع: ________________</small></div>').join('');
       $('wrongLetters').innerHTML = '<strong>' + mistakeLabel(record) + ':</strong> ' + esc(wrongText(record));
       const roster = getRoster();
       const selectedStudent = currentStudent(roster);
@@ -676,30 +1115,19 @@
       renderDetails(record);
     }
 
-    function row(texts) {
-      const {TableRow, TableCell, Paragraph, TextRun, AlignmentType} = docx;
-      return new TableRow({children:texts.map(text => new TableCell({children:[new Paragraph({alignment:AlignmentType.CENTER, children:[new TextRun(String(text))]})]}))});
-    }
-
     async function saveDoc(rows, name, title) {
-      if (!window.docx) return alert('تعذر تحميل خدمة Word. تحقق من اتصال الإنترنت ثم أعد المحاولة.');
-      const {Document, Paragraph, Table, Packer, TextRun, AlignmentType, WidthType} = docx;
-      const wordDocument = new Document({sections:[{children:[
-        new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:title,bold:true,size:36})]}),
-        new Paragraph(''),
-        new Table({rows:[row(rows[0].map(text => String(text))), ...rows.slice(1).map(row)],width:{size:100,type:WidthType.PERCENTAGE}})
-      ]}]});
-      const blob = await Packer.toBlob(wordDocument);
-      const anchor = globalThis.document.createElement('a');
-      anchor.href = URL.createObjectURL(blob); anchor.download = name; anchor.click();
-      URL.revokeObjectURL(anchor.href);
+      const html='<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>@page{size:A4;margin:12mm}body,table{font-family:Arial,sans-serif;direction:rtl}h1{text-align:center;color:#123b5d}table{border-collapse:collapse;width:100%}td{border:1px solid #aaa;padding:7px;vertical-align:top}tr{page-break-inside:avoid}</style></head><body><h1>'+esc(title)+'</h1><table>'+rows.map(cells=>'<tr>'+cells.map(cell=>'<td>'+esc(cell)+'</td>').join('')+'</tr>').join('')+'</table></body></html>';
+      const blob=new Blob(['\ufeff',html],{type:'application/msword;charset=utf-8'});
+      const anchor=globalThis.document.createElement('a');
+      anchor.href=URL.createObjectURL(blob);anchor.download=name.replace(/\.docx$/,'.doc');anchor.click();
+      window.setTimeout(()=>URL.revokeObjectURL(anchor.href),1000);
     }
 
     function individualRows(record) {
       return [
         ['الطالب', record.studentName],
-        ['المعلم', record.teacherName || 'غير محدد'],
-        ['الكشف أو الصف', record.rosterName || 'غير محدد'],
+        ['المدرسة', record.schoolName || $('schoolName').value.trim() || 'غير محددة'],
+        ['الصف', record.rosterName || 'غير محدد'],
         ['وقت التقييم', formatDate(record.completedAt)],
         ['مدة الاختبار', formatDuration(record.durationSeconds || 0)],
         ['المستوى', record.levelLabel],
@@ -717,14 +1145,114 @@
         ] : []),
         ...(record.level === 'four' && retryWordsText(record) ? [['كلمات مؤجلة لإعادة التقييم', retryWordsText(record)]] : []),
         ['البند', 'التقييم'],
-        ...record.items.map(x => [x.item + (x.difficulty ? ' (' + x.difficulty + '، تنوين ' + x.tanween + ')' : ''), x.score + (x.errorType ? ' — ' + x.errorType : '')])
+        ...record.items.map(x => [x.item + (x.source ? ' (' + x.source + ')' : '') + (x.difficulty ? ' (' + x.difficulty + '، تنوين ' + x.tanween + ')' : ''), x.score + (x.errorType ? ' — ' + x.errorType : '')]),
+        ['توقيع المعلم', record.teacherName || '________________'],
+        ['توقيع مدير المدرسة', record.principalName || '________________'],
+        ['توقيع ولي الأمر', record.guardianName || '________________']
       ];
     }
 
-    function showHistory() {
-      hide('setup'); hide('test'); hide('report'); hide('allReport'); hide('plans'); hide('studentProfile'); hide('importReview'); show('history'); show('homeButton');
-      const records = getStore().records;
-      $('historyList').innerHTML = records.length ? records.map(record => '<article class="history-item"><div class="history-head"><div><strong>' + esc(record.studentName) + '</strong><div class="history-meta">' + esc(record.levelLabel) + ' — ' + esc(formatDate(record.completedAt)) + (record.rosterName ? ' — الكشف: ' + esc(record.rosterName) : '') + (record.teacherName ? ' — المعلم: ' + esc(record.teacherName) : '') + '</div></div><span class="stat">' + record.summary.percentage + '%</span></div><div class="wrong"><strong>' + esc(mistakeLabel(record)) + ':</strong> ' + esc(wrongText(record)) + '</div><div class="actions no-print"><button class="secondary" data-record="' + record.id + '">عرض التقرير</button><button class="secondary" data-profile="' + record.id + '">ملف الطالب</button><button class="absent" data-delete-record="' + record.id + '" title="حذف التقرير">حذف التقرير</button></div></article>').join('') : '<div class="history-empty">لا توجد نتائج محفوظة بعد.</div>';
+    function historyClassFor(item) {
+      if (item.rosterId) return 'class:' + item.rosterId;
+      const rosters = getRosterStore().rosters;
+      if (item.rosterName) {
+        const matches = rosters.filter(roster => classNameKey(roster.name) === classNameKey(item.rosterName));
+        return matches.length === 1 ? 'class:' + matches[0].id : 'archive:' + classNameKey(item.rosterName);
+      }
+      if (item.studentName) {
+        const matches = rosters.filter(roster => recordStudentId(item,roster));
+        if (matches.length === 1) return 'class:' + matches[0].id;
+      }
+      if (item.id && !item.studentName) {
+        const keys = [...new Set(getStore().records.filter(record => record.testSessionId === item.id).map(record => historyClassFor(record)))];
+        if (keys.length === 1) return keys[0];
+      }
+      return 'unassigned';
+    }
+    function testDateKey(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? 'unknown' : new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Riyadh',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
+    }
+    function historyTestFor(record) {
+      return record.testSessionId || 'legacy:' + testDateKey(record.completedAt) + ':' + record.level + ':' + (record.plannedTotal || '');
+    }
+    function folderDate(value,withTime = false) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return 'تاريخ غير محدد';
+      return new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{timeZone:'Asia/Riyadh',dateStyle:'medium',...(withTime ? {timeStyle:'medium'} : {})}).format(date);
+    }
+    function historyClasses() {
+      const classes = new Map();
+      getRosterStore().rosters.forEach(roster => classes.set('class:'+roster.id,{key:'class:'+roster.id,name:roster.name,roster,records:[],sessions:[]}));
+      const add = item => {
+        const key = historyClassFor(item);
+        if (!classes.has(key)) classes.set(key,{key,name:item.rosterName || (key === 'unassigned' ? 'نتائج دون صف' : 'صف مؤرشف'),roster:null,records:[],sessions:[]});
+        return classes.get(key);
+      };
+      getStore().records.forEach(record => add(record).records.push(record));
+      Object.values(getTestSessions()).forEach(session => { if (session?.id) add(session).sessions.push(session); });
+      return [...classes.values()].sort((a,b) => a.name.localeCompare(b.name,'ar'));
+    }
+    function historyTests(group) {
+      if (!group) return [];
+      const tests = new Map();
+      group.sessions.forEach(session => tests.set(session.id,{key:session.id,startedAt:session.startedAt,level:session.level,wordSession:session.wordSession,number:session.number,legacy:false,records:[],session}));
+      group.records.forEach(record => {
+        const key = historyTestFor(record);
+        if (!tests.has(key)) tests.set(key,{key,startedAt:record.testSessionStartedAt || record.completedAt,level:record.level,wordSession:record.level === 'four' && (record.plannedTotal === 15 || record.levelLabel?.includes('قصير')) ? 'short' : 'full',legacy:!record.testSessionId,records:[]});
+        const test = tests.get(key); test.records.push(record);
+        if (test.legacy && record.completedAt < test.startedAt) test.startedAt = record.completedAt;
+      });
+      return [...tests.values()].sort((a,b) => (new Date(b.startedAt).getTime() || 0) - (new Date(a.startedAt).getTime() || 0));
+    }
+    function historyScope() {
+      const group = historyClasses().find(item => item.key === historyClassKey);
+      const test = historyTests(group).find(item => item.key === historyTestKey);
+      return {group,test,records:historyAll || !group ? getStore().records : test ? test.records : group.records};
+    }
+    function openHistoryClass(key) { historyClassKey=key;historyTestKey=null;historyAll=false;showHistory(); }
+    function openHistoryTest(key) { historyTestKey=key;historyAll=false;showHistory(); }
+    function historyTestTitle(test) {
+      return (test.legacy ? 'اختبار سابق' : 'اختبار' + (test.number ? ' '+test.number : '')) + ' — ' + folderDate(test.startedAt,!test.legacy);
+    }
+    function showHistory(reset = false) {
+      if (reset === true) { historyClassKey=null;historyTestKey=null;historyAll=false; }
+      hide('setup');hide('test');hide('report');hide('schoolPage');hide('allReport');hide('studentProfile');hide('importReview');show('history');show('homeButton');setActiveNav('navHistory');
+      const scope = historyScope();
+      if (historyClassKey && !scope.group) { historyClassKey=null;historyTestKey=null; }
+      if (historyTestKey && !scope.test) historyTestKey=null;
+      $('historyLevel').innerHTML='<option value="all">جميع المستويات</option>'+[...new Set(scope.records.map(record=>record.level))].map(level=>'<option value="'+esc(level)+'">'+esc(levelName(level))+'</option>').join('');
+      $('historyLevel').value='all';$('historySearch').value='';renderHistoryRows();
+    }
+    function renderHistoryRows() {
+      const {group,test,records:scopeRecords} = historyScope();
+      const query = classNameKey($('historySearch').value.trim());
+      const level = $('historyLevel').value || 'all';
+      const matches = record => (level === 'all' || record.level === level) && (!query || studentNameKey(record.studentName).includes(query));
+      const records = scopeRecords.filter(matches);
+      const pct = scopeRecords.length ? Math.round(scopeRecords.reduce((sum,r)=>sum+r.summary.percentage,0)/scopeRecords.length) : 0;
+      $('historyStats').innerHTML=[['إجمالي المحاولات',scopeRecords.length],['متوسط النتائج',pct+'%'],['بنود متقنة',scopeRecords.reduce((sum,r)=>sum+r.summary.correct,0)],['تحتاج تدريبًا',scopeRecords.reduce((sum,r)=>sum+r.summary.incorrect,0)]].map(([label,value])=>'<div class="history-stat"><span>'+label+'</span><b>'+value+'</b></div>').join('');
+      $('historyPath').innerHTML='<button class="secondary" id="historyRoot" type="button">مجلدات الصفوف</button>'+(group ? '<span aria-hidden="true">/</span><button class="secondary" id="historyClassParent" type="button">'+esc(group.name)+'</button>' : '')+(test ? '<span aria-hidden="true">/</span><span>'+esc(historyTestTitle(test))+'</span>' : '')+(historyAll ? '<span>/ جميع النتائج</span>' : '<button class="secondary" id="historyShowAll" type="button">جميع النتائج</button>');
+      $('historyRoot').onclick=()=>showHistory(true);
+      if (group) $('historyClassParent').onclick=()=>openHistoryClass(group.key);
+      if (!historyAll) $('historyShowAll').onclick=()=>{historyAll=true;historyClassKey=null;historyTestKey=null;showHistory();};
+      $('historyReportActions').classList.toggle('hidden',!group && !historyAll);
+      if (!group && !historyAll) {
+        const classes=historyClasses().filter(item => (!query && level==='all') || (level==='all' && classNameKey(item.name).includes(query)) || item.records.some(matches));
+        $('historyCount').textContent=classes.length+' صفوف';
+        $('historyList').innerHTML=classes.length ? '<div class="history-folders">'+classes.map(item=>'<button class="history-folder" data-history-class="'+esc(item.key)+'" type="button"><span class="history-folder-icon" aria-hidden="true">▤</span><strong>'+esc(item.name)+'</strong><small>'+historyTests(item).length+' اختبارات · '+item.records.length+' نتائج'+(item.roster ? ' · '+item.roster.students.length+' طالبًا' : ' · أرشيف')+'</small></button>').join('')+'</div>' : '<div class="history-empty">لا توجد صفوف تطابق البحث.</div>';
+        document.querySelectorAll('[data-history-class]').forEach(button=>button.onclick=()=>openHistoryClass(button.dataset.historyClass));
+        return;
+      }
+      if (group && !test && !historyAll) {
+        const tests=historyTests(group).filter(item=>(level==='all'||item.level===level)&&(!query||item.records.some(matches)));
+        $('historyCount').textContent=tests.length+' اختبارات';
+        $('historyList').innerHTML=tests.length ? '<div class="history-folders">'+tests.map(item=>'<button class="history-folder" data-history-test="'+esc(item.key)+'" type="button"><span class="history-folder-icon" aria-hidden="true">◷</span><strong>'+esc(historyTestTitle(item))+'</strong><small>'+esc(levelName(item.level))+(item.level==='four' ? ' · '+(item.wordSession==='short'?'قصير':'كامل'):'')+'</small><small>'+item.records.length+' نتائج محفوظة'+(item.legacy?' · أرشيف النسخة السابقة':'')+'</small></button>').join('')+'</div>' : '<div class="history-empty">لا توجد اختبارات تطابق البحث في هذا الصف.</div>';
+        document.querySelectorAll('[data-history-test]').forEach(button=>button.onclick=()=>openHistoryTest(button.dataset.historyTest));
+        return;
+      }
+      $('historyCount').textContent=records.length+' نتيجة';
+      $('historyList').innerHTML = records.length ? '<div class="history-table"><table><thead><tr><th>اسم الطالب</th><th>المستوى</th><th>النتيجة</th><th>البنود التي تحتاج إلى تدريب</th><th>الإجراءات</th></tr></thead><tbody>' + records.map(record => '<tr><td><span class="history-name">' + esc(record.studentName) + '</span><div class="history-meta">' + esc(formatDate(record.completedAt)) + (record.rosterName ? ' · ' + esc(record.rosterName) : '') + '</div></td><td>' + esc(record.levelLabel) + '</td><td><span class="history-percent">' + record.summary.percentage + '%</span><div class="history-meta">' + record.summary.correct + '/' + record.summary.total + ' متقن</div></td><td><span class="wrong">' + esc(wrongText(record)) + '</span></td><td><div class="history-actions no-print"><button class="secondary" data-record="' + esc(record.id) + '">التقرير</button><button class="secondary" data-profile="' + esc(record.id) + '">ملف الطالب</button><button class="absent" data-delete-record="' + esc(record.id) + '">حذف</button></div></td></tr>').join('') + '</tbody></table></div>' : '<div class="history-empty">لا توجد نتائج تطابق البحث.</div>';
       document.querySelectorAll('[data-record]').forEach(button => button.onclick = () => {
         const record = getStore().records.find(x => x.id === button.dataset.record);
         if (record) renderReport(record);
@@ -743,68 +1271,212 @@
       });
     }
 
+    function studentNameKey(name) {
+      return cleanRosterName(name).replace(/[\u064B-\u065F\u0670]/g, '').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/\s+/g, ' ');
+    }
+    function recordStudentId(record, roster) {
+      if (record.rosterId && record.rosterId !== roster.id) return null;
+      const byId = roster.students.find(student => student.id === record.studentId);
+      if (byId) return byId.id;
+      const candidates = roster.students.filter(student => studentNameKey(student.name) === studentNameKey(record.studentName));
+      // An unlinked manual attempt can belong to only one saved class by name.
+      if (!record.rosterId) {
+        const matching = getRosterStore().rosters.flatMap(item => item.students.filter(student => studentNameKey(student.name) === studentNameKey(record.studentName)));
+        if (matching.length !== 1) return null;
+      }
+      return candidates.length === 1 ? candidates[0].id : null;
+    }
+    function sameStudent(record, reference) {
+      const rosters = getRosterStore().rosters;
+      const roster = rosters.find(item => item.id === reference.rosterId) || rosters.find(item => recordStudentId(reference,item));
+      if (roster) {
+        const referenceId = recordStudentId(reference,roster);
+        if (referenceId) return recordStudentId(record,roster) === referenceId;
+      }
+      if (record.rosterId !== reference.rosterId) return false;
+      if (record.studentId && record.studentId === reference.studentId) return true;
+      if (record.rosterId) return false; // Do not combine ambiguous classmates.
+      return studentNameKey(record.studentName) === studentNameKey(reference.studentName);
+    }
+
     function showStudentProfile(reference) {
-      const records = getStore().records.filter(record => record.studentId && reference.studentId ? record.studentId === reference.studentId : record.studentName === reference.studentName && record.rosterId === reference.rosterId).sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+      const records = getStore().records.filter(record => sameStudent(record, reference)).sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
       $('profileTitle').textContent = 'ملف الطالب: ' + reference.studentName;
-      $('profileMeta').textContent = (reference.rosterName ? 'الكشف: ' + reference.rosterName + ' — ' : '') + records.length + ' تقييمات محفوظة';
-      $('profileContent').innerHTML = records.map(record => '<article class="history-item"><div class="history-head"><div><strong>' + esc(record.levelLabel) + '</strong><div class="history-meta">' + esc(formatDate(record.completedAt)) + ' — النتيجة: ' + record.summary.percentage + '%</div></div><button class="secondary no-print" data-profile-report="' + record.id + '">عرض التفاصيل</button></div><div class="result"><strong>المتقن:</strong> ' + esc(record.items.filter(item => item.score === '✓').map(item => item.item).join('، ') || '—') + '<br><strong>' + mistakeLabel(record) + ':</strong> ' + esc(wrongText(record)) + '</div></article>').join('') || '<div class="history-empty">لا توجد تقييمات محفوظة لهذا الطالب.</div>';
+      $('profileMeta').textContent = (reference.rosterName ? 'الصف: ' + reference.rosterName + ' — ' : '') + records.length + ' تقييمات محفوظة';
+      const sameLevel=records.filter(record => record.level===reference.level);
+      const chronological=[...sameLevel].reverse();
+      const comparison='<div class="result"><strong>مقارنة المستوى نفسه:</strong> أول محاولة ' + (chronological[0]?.summary.percentage ?? '—') + '% · آخر محاولة ' + (sameLevel[0]?.summary.percentage ?? '—') + '% · أفضل محاولة ' + (sameLevel.length ? Math.max(...sameLevel.map(record => record.summary.percentage)) : '—') + '%</div>';
+      $('profileContent').innerHTML = comparison + records.map(record => '<article class="history-item"><div class="history-head"><div><strong>' + esc(record.levelLabel) + '</strong><div class="history-meta">' + esc(formatDate(record.completedAt)) + ' — النتيجة: ' + record.summary.percentage + '%</div></div><button class="secondary no-print" data-profile-report="' + record.id + '">عرض التفاصيل</button></div><div class="result"><strong>المتقن:</strong> ' + esc(record.items.filter(item => item.score === '✓').map(item => item.item).join('، ') || '—') + '<br><strong>' + mistakeLabel(record) + ':</strong> ' + esc(wrongText(record)) + '</div></article>').join('') || '<div class="history-empty">لا توجد تقييمات محفوظة لهذا الطالب.</div>';
       document.querySelectorAll('[data-profile-report]').forEach(button => button.onclick = () => {
         const record = getStore().records.find(x => x.id === button.dataset.profileReport);
         if (record) renderReport(record);
       });
-      hide('history'); hide('report'); hide('setup'); hide('allReport'); hide('plans'); show('studentProfile'); show('homeButton');
+      hide('history'); hide('report'); hide('setup'); hide('allReport'); show('studentProfile'); show('homeButton');
+    }
+
+    function historyReportRoster() {
+      if (historyAll) return null;
+      if (historyClassKey) return historyScope().group?.roster || null;
+      return getRoster();
+    }
+    function historyReportTitle() {
+      const {group,test} = historyScope();
+      return 'تقرير نتائج الصف' + (group ? ' — '+group.name : '') + (test ? ' — '+historyTestTitle(test)+' — '+levelName(test.level) : '');
     }
 
     function renderAllReport() {
       const rows = classRows();
-      const roster = getRoster();
-      $('allReportContent').innerHTML = (roster ? '<p><strong>الكشف:</strong> ' + esc(roster.name) + '</p>' : '') + (rows.length ? '<table class="class-table"><thead><tr><th>الطالب</th><th>الحالة</th><th>النتيجة</th><th>الحروف أو الكلمات التي تحتاج إلى تدريب</th></tr></thead><tbody>' + rows.map(row => '<tr><td>' + esc(row[0]) + '</td><td>' + esc(row[1]) + '</td><td>' + esc(row[2]) + '</td><td>' + esc(row[3]) + '</td></tr>').join('') + '</tbody></table>' : 'لا توجد نتائج محفوظة بعد.');
-      hide('history'); hide('report'); hide('setup'); hide('plans'); hide('studentProfile'); show('allReport'); show('homeButton');
+      const roster = historyReportRoster();
+      $('allReportContent').innerHTML = '<p><strong>'+esc(historyReportTitle())+'</strong></p>' + (roster ? '<p><strong>الصف:</strong> ' + esc(roster.name) + '</p>' : '') + (rows.length ? '<table class="class-table"><thead><tr><th>الطالب</th><th>الحالة</th><th>النتيجة</th><th>البنود التي تحتاج إلى تدريب</th></tr></thead><tbody>' + rows.map(row => '<tr>' + row.map(cell => '<td>' + esc(cell) + '</td>').join('') + '</tr>').join('') + '</tbody></table>' : 'لا توجد نتائج محفوظة بعد.');
+      hide('history'); hide('report'); hide('setup'); hide('studentProfile'); show('allReport'); show('homeButton');
     }
 
     function classRows() {
-      const records = getStore().records;
-      const roster = getRoster();
-      if (!roster || !roster.students.length) return records.map(record => [record.studentName, assessmentStatus(record), record.summary.percentage + '%', wrongText(record)]);
+      const records = [...(historyClassKey || historyAll ? historyScope().records : getStore().records)].sort((a,b) => new Date(b.completedAt) - new Date(a.completedAt));
+      const roster = historyReportRoster();
+      const resultRow = (name,record) => [name,assessmentStatus(record),record.summary.percentage + '%',wrongText(record)];
+      if (!roster || !roster.students.length) return records.map(record => resultRow(record.studentName,record));
       const latestRecords = new Map();
-      records.filter(record => record.rosterId === roster.id || (roster.id.startsWith('migrated-') && !record.rosterId)).forEach(record => { const key = record.studentId || record.studentName; if (!latestRecords.has(key)) latestRecords.set(key, record); });
+      records.forEach(record => {
+        const id = recordStudentId(record,roster);
+        if (id && !latestRecords.has(id)) latestRecords.set(id,record);
+      });
       return roster.students.map(student => {
-        const record = latestRecords.get(student.id) || latestRecords.get(student.name);
-        if (record) return [student.name, assessmentStatus(record), record.summary.percentage + '%', wrongText(record)];
-        if (roster.absentStudentIds[student.id]) return [student.name, 'غائب', '—', '—'];
-        return [student.name, 'لم يُختبر بعد', '—', '—'];
+        const record = latestRecords.get(student.id);
+        if (record) return resultRow(student.name,record);
+        const test = historyScope().test;
+        const absent = test ? test.session?.absentStudentIds?.[student.id] : roster.absentStudentIds[student.id];
+        return [student.name,absent ? 'غائب' : 'لم يُختبر بعد','—','—'];
       });
     }
-
     function allRows() {
-      return [['الطالب','الحالة','النتيجة','الحروف أو الكلمات التي تحتاج إلى تدريب'], ...classRows()];
+      return [['الطالب','الحالة','النتيجة','البنود التي تحتاج إلى تدريب'], ...classRows()];
     }
 
-    function runPrintWithFreshLayout(prepare) {
+    async function runPrintWithFreshLayout(prepare, sectionId) {
       if (typeof prepare === 'function') prepare();
-      const trigger = () => window.print();
-      if (globalThis.requestAnimationFrame) {
-        requestAnimationFrame(() => requestAnimationFrame(trigger));
-      } else {
-        setTimeout(trigger, 0);
-      }
-    }
-
-    function showPlans() {
-      $('planList').innerHTML = TREATMENT_PLANS.map(plan => '<article class="plan-option"><h3>' + esc(plan.title) + '</h3><button class="secondary" data-plan-file="' + plan.file + '">فتح ملف PDF</button></article>').join('');
-      document.querySelectorAll('[data-plan-file]').forEach(button => button.onclick = () => window.open(button.dataset.planFile, '_blank', 'noopener'));
-      hide('report');
-      show('plans'); show('homeButton');
+      const source = $(sectionId);
+      if (!source) return alert('تعذر تجهيز التقرير للطباعة.');
+      const clone = source.cloneNode(true);
+      clone.classList.remove('hidden');
+      clone.querySelectorAll('.no-print').forEach(element => element.remove());
+      const css = document.querySelector('head style').textContent;
+      const title = sectionId === 'report' ? 'تقرير الطالب' : 'تقرير نتائج الصف';
+      const previewCss = `
+        @page { size: A4; margin: 12mm; }
+        html,body { direction:rtl; font-family:Arial,sans-serif; background:var(--ui-canvas); }
+        body { margin:0; }
+        .print-toolbar { position:sticky; top:0; z-index:5; display:flex; gap:10px;
+          padding:12px 20px; background:var(--ui-primary); color:#fff; align-items:center; }
+        .print-toolbar button { cursor:pointer; padding:8px 16px; }
+        #printStatus { font-size:14px; }
+        .preview-sheet { width:min(210mm, calc(100% - 24px)); min-height:297mm; margin:20px auto;
+          background:#fff; padding:12mm; box-shadow:0 8px 30px #25243a30; }
+        .preview-sheet .card { margin:0; }
+        .hidden { display:none!important; }
+        .no-print { display:none!important; }
+        .print-toolbar { display:flex!important; }
+        .report-info { grid-template-columns:repeat(2,1fr); }
+        .class-table { table-layout:fixed; font-size:12px; }
+        .class-table th,.class-table td { overflow-wrap:anywhere; padding:6px; }
+        .class-table th:first-child,.class-table td:first-child { width:28%; }
+        .class-table th:nth-child(2) { width:18%; }
+        .class-table th:nth-child(3) { width:12%; }
+        .preview-sheet .result { overflow:visible; }
+        .preview-sheet .report-banner h2 { font-size:20px; }
+        .preview-sheet .report-label { font-size:13px; }
+        thead { display:table-header-group; }
+        tr,.report-stat,.report-info div,.wrong { break-inside:avoid; page-break-inside:avoid; }
+        @media print {
+          html,body { background:#fff!important; font-size:13px; print-color-adjust:exact; }
+          .print-toolbar { display:none!important; }
+          .preview-sheet { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; }
+          .report-banner { padding:10px 12px; background:#fff!important; color:#123b5d!important; border-bottom:2px solid #555; }
+          .report-banner h2,.report-banner p,.report-score { color:#123b5d!important; }
+          .report-info div,.report-stat,.wrong,.result { background:#fff!important; border-color:#999!important; }
+          .signatures { break-inside:avoid; }
+          .report-body { padding:9px 0; }
+          .report-stats { margin:8px 0; }
+          .report-stat { padding:5px; }
+          .detail-table { font-size:12px; }
+          .detail-table th,.detail-table td { padding:5px; overflow-wrap:anywhere; }
+          #allReport { display:block!important; }
+          #report { display:block!important; }
+        }`;
+      const previewScript = `
+        const status = document.getElementById('printStatus');
+        const printButton = document.getElementById('doPrint');
+        const pdfButton = document.getElementById('savePdf');
+        async function runAction(pdf) {
+          printButton.disabled = pdfButton.disabled = true;
+          status.textContent = pdf ? 'جارٍ تجهيز PDF...' : 'جارٍ فتح نافذة الطباعة...';
+          try {
+            await document.fonts.ready;
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            if (!window.printActions) {
+              window.print();
+              status.textContent = 'استخدم نافذة الطباعة لاختيار طابعة أو حفظ PDF.';
+            } else {
+              const result = await (pdf ? window.printActions.savePdf() : window.printActions.print());
+              status.textContent = result.saved ? 'حُفظ ملف PDF.' : result.success ? 'أُرسلت المهمة إلى الطابعة.' :
+                result.canceled || result.reason === 'Print job canceled' ? 'أُلغي الطلب.' :
+                'تعذر إكمال الطلب: ' + (result.error || result.reason || 'تحقق من الطابعة.');
+            }
+          } catch (error) { status.textContent = 'تعذر إكمال الطلب: ' + error.message; }
+          finally { printButton.disabled = pdfButton.disabled = false; }
+        }
+        printButton.onclick = () => runAction(false);
+        pdfButton.onclick = () => runAction(true);
+      `;
+      const html = '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>' + title +
+        '</title><style>' + css + previewCss + '</style></head><body><nav class="print-toolbar no-print"><button id="doPrint">طباعة</button><button id="savePdf">حفظ PDF</button><span id="printStatus" role="status" aria-live="polite">راجع الصفحات ثم اختر الطباعة.</span></nav><main class="preview-sheet">' + clone.outerHTML + '</main><script>' + previewScript + '<\/script></body></html>';
+      try {
+        if (window.printActions?.openPreview) await window.printActions.openPreview(html);
+        else {
+          const preview = window.open('about:blank', '_blank');
+          if (!preview) throw new Error('تعذر فتح نافذة المعاينة.');
+          preview.document.open(); preview.document.write(html); preview.document.close();
+        }
+      } catch (error) { alert('تعذر فتح معاينة الطباعة: ' + error.message); }
     }
 
     $('start').onclick = begin;
+    function syncLevelChoices() {
+      document.querySelectorAll('[data-select-level]').forEach(button => {
+        button.setAttribute('aria-pressed', button.dataset.selectLevel === $('level').value ? 'true' : 'false');
+      });
+    }
+    document.querySelectorAll('[data-select-level]').forEach(button => button.onclick = () => {
+      $('level').value = button.dataset.selectLevel;
+      $('level').dispatchEvent(new Event('change', {bubbles:true}));
+    });
     $('level').addEventListener('change', () => {
       $('wordSessionWrap').classList.toggle('hidden', $('level').value !== 'four');
+      syncLevelChoices();
+      updateStartSummary();
     });
     $('wordSessionWrap').classList.toggle('hidden', $('level').value !== 'four');
+    syncLevelChoices();
     $('teacher').addEventListener('change', saveTeacherName);
     $('teacher').addEventListener('blur', saveTeacherName);
+    $('principal').addEventListener('change', saveTeacherName);
+    $('principal').addEventListener('blur', saveTeacherName);
+    $('guardian').addEventListener('change', saveGuardianName);
+    $('guardian').addEventListener('blur', saveGuardianName);
+    $('student').addEventListener('change', () => {
+      const student = getRoster()?.students.find(item => item.name === $('student').value.trim());
+      $('guardian').value = student?.guardianName || '';
+      updateStartSummary();
+    });
+    $('student').addEventListener('input', updateStartSummary);
+    $('historySearch').addEventListener('input', renderHistoryRows);
+    $('historyLevel').addEventListener('change', renderHistoryRows);
+    ['schoolName','principal'].forEach(id => $(id).addEventListener('input', updateSchoolPreview));
+    $('saveSchool').onclick = () => { saveTeacherName(); $('schoolSaved').textContent = '✓ تم الحفظ بنجاح'; window.setTimeout(() => $('schoolSaved').textContent = '', 2500); };
+    $('reviewNames').addEventListener('input', updateImportCount);
     $('importRoster').onclick = () => $('rosterFile').click();
+    $('rosterName').addEventListener('input',updateClassNameHint);
+    $('reviewClassName').addEventListener('input',updateClassNameHint);
     $('rosterFile').onchange = event => {
       const file = event.target.files[0];
       if (file && !$('rosterName').value.trim()) $('rosterName').value = file.name.replace(/\.[^.]+$/, '');
@@ -827,16 +1499,19 @@
     };
     $('clearRoster').onclick = () => {
       const roster = getRoster();
-      if (!roster || !window.confirm('هل تريد حذف الكشف النشط «' + roster.name + '»؟ لن تُحذف تقارير الطلاب المحفوظة.')) return;
+      if (!roster || !window.confirm('هل تريد حذف الصف النشط «' + roster.name + '»؟ لن تُحذف تقارير الطلاب المحفوظة.')) return;
       const store = getRosterStore();
       store.rosters = store.rosters.filter(item => item.id !== roster.id);
       store.activeRosterId = store.rosters.length ? store.rosters[0].id : null;
       saveRosterStore(store);
       $('rosterFile').value = '';
       $('student').value = '';
+      $('guardian').value = '';
       updateRosterMessage();
     };
     document.querySelectorAll('[data-score]').forEach(button => button.onclick = () => mark(button.dataset.score));
+    $('previousItem').onclick = previousItem;
+    $('nextItem').onclick = nextItem;
     document.addEventListener('keydown', event => {
       if ($('test').classList.contains('hidden') || event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
       if (event.target.closest?.('input, select, textarea, [contenteditable]:not([contenteditable="false"])')) return;
@@ -848,22 +1523,16 @@
       if (event.repeat) return;
       mark(score);
     });
-    $('finish').onclick = completeAssessment;
+    $('finish').onclick = () => { if (res.some(Boolean) && (res.every(Boolean) || window.confirm('هناك بنود لم تُقيّم. هل تريد حفظ تقرير جزئي؟'))) completeAssessment(); };
     $('returnHome').onclick = () => {
-      if (res.length && !window.confirm('سيتم إلغاء الاختبار الحالي غير المحفوظ. هل تريد العودة للصفحة الرئيسية؟')) return;
-      goHome();
+      stopTimer(); goHome();
     };
     $('skipAbsent').onclick = skipAbsentStudent;
     $('printFormat').onchange = () => activeRecord && renderDetails(activeRecord);
-    $('print').onclick = () => activeRecord && runPrintWithFreshLayout(() => renderDetails(activeRecord));
+    $('print').onclick = () => activeRecord && runPrintWithFreshLayout(() => renderDetails(activeRecord), 'report');
     $('word').onclick = () => activeRecord && saveDoc(individualRows(activeRecord), 'تقرير-' + activeRecord.studentName + '.docx', reportTitle(activeRecord) + ' للطالب ' + activeRecord.studentName);
-    $('showPlans').onclick = showPlans;
-    $('closePlans').onclick = () => {
-      hide('plans');
-      show('report');
-    };
     $('nextStudent').onclick = () => {
-      if (advanceRoster()) begin();
+      if (advanceRoster()) begin(true);
     };
     $('previousStudent').onclick = () => {
       const roster = getRoster();
@@ -872,34 +1541,48 @@
       delete roster.absentStudentIds[currentStudent(roster).id];
       saveRoster(roster);
       $('student').value = currentStudent(roster).name;
-      begin();
+      $('guardian').value = currentStudent(roster).guardianName || '';
+      begin(true);
     };
-    $('again').onclick = () => { goHome(); $('student').value = ''; updateRosterMessage(); };
-    $('showHistory').onclick = showHistory;
-    $('reportHistory').onclick = showHistory;
+    $('again').onclick = () => { goHome(); $('student').value = ''; $('guardian').value = ''; updateRosterMessage(); };
+    $('showHistory').onclick = () => showHistory(true);
+    $('reportHistory').onclick = () => { if (activeRecord) {historyClassKey=historyClassFor(activeRecord);historyTestKey=historyTestFor(activeRecord);historyAll=false;} showHistory(); };
     $('closeHistory').onclick = goHome;
     $('allWord').onclick = () => {
-      const roster = getRoster();
-      saveDoc(allRows(), 'كشف-نتائج-الطلاب.docx', 'الكشف الشامل لتقييم الحروف والكلمات العربية' + (roster ? ' — ' + roster.name : ''));
+      saveDoc(allRows(), 'نتائج-الصف.docx', historyReportTitle());
     };
-    $('allPrint').onclick = () => runPrintWithFreshLayout(renderAllReport);
+    $('allPrint').onclick = () => runPrintWithFreshLayout(renderAllReport, 'allReport');
     $('closeAllReport').onclick = showHistory;
     $('homeButton').onclick = () => {
-      if (!$('test').classList.contains('hidden') && res.length && !window.confirm('سيتم إلغاء الاختبار الحالي غير المحفوظ. هل تريد العودة للصفحة الرئيسية؟')) return;
-      goHome();
+      stopTimer(); goHome();
     };
+    $('navRoster').onclick = () => { goHome(); $('savedRosters').focus(); };
+    $('navHistory').onclick = () => showHistory(true);
+    $('navSettings').onclick = showSchoolPage;
+    $('rosterSchoolLink').onclick = showSchoolPage;
     $('approveRoster').onclick = () => {
       if (!pendingRosterImport) return goHome();
-      const names = namesFromText($('reviewNames').value);
-      if (!names.length) return alert('أدخل اسم طالب واحد على الأقل، كل اسم في سطر مستقل.');
-      saveImportedRoster(pendingRosterImport.file, names);
+      const rows = parseReviewRows($('reviewNames').value);
+      if (!rows.length) return alert('أدخل اسم طالب واحد على الأقل، كل اسم في سطر مستقل.');
+      if (rows.length !== $('reviewNames').value.split(/\r?\n/).filter(line => line.trim()).length) return alert('يوجد سطر غير صالح في الأسماء. صححه قبل الاعتماد حتى لا يُحذف أي طالب.');
+      $('rosterName').value = $('reviewClassName').value.trim();
+      if (!$('rosterName').value) return alert('أدخل اسم الصف.');
+      try { saveImportedRoster(pendingRosterImport.file, rows); } catch (error) { alert(error.message); updateClassNameHint(); return; }
       pendingRosterImport = null;
       $('rosterFile').value = '';
       goHome();
     };
     $('cancelRosterReview').onclick = () => { pendingRosterImport = null; $('rosterFile').value = ''; goHome(); };
+    $('resumeDraft').onclick = resumeDraft;
+    $('discardDraft').onclick = () => {if (window.confirm('حذف الاختبار غير المكتمل؟')) clearDraft();};
+    // Preserve data from the original repository build without overwriting trial data.
+    for (const suffix of ['records','roster','teacher-name','principal-name','school-info','draft']) {
+      const current = 'lughaty-oral-diagnostic.' + suffix;
+      const previous = 'arabic-letter-assessment.' + suffix;
+      if (localStorage.getItem(current) === null && localStorage.getItem(previous) !== null) localStorage.setItem(current,localStorage.getItem(previous));
+    }
     restoreTeacherName();
-    updateRosterMessage();
+    updateRosterMessage(); updateDraftBanner();
   </script>
 </body>
 </html>

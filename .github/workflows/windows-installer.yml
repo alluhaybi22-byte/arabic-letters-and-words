@@ -1,0 +1,84 @@
+name: Windows installer
+
+on:
+  push:
+    branches: [master, codex/windows-installer-1.3.2]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Verify and test
+        run: |
+          npm run verify
+          npm test
+      - name: Build Windows EXE installer
+        run: npm run dist
+      - name: Install UI test driver
+        run: npm install --no-save --package-lock=false playwright@1.62.1
+      - name: Install the EXE and test the installed app
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Get-ChildItem release/*Setup*.exe | Select-Object -First 1
+          if (-not $installer) { throw 'Installer missing' }
+          $destination = Join-Path $env:RUNNER_TEMP 'LughatyInstallTest'
+          $process = Start-Process -FilePath $installer.FullName -ArgumentList "/S /D=$destination" -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Installer exited $($process.ExitCode)" }
+          $env:LUGHATY_EXECUTABLE = Join-Path $destination 'Lughaty Oral Diagnostic.exe'
+          if (-not (Test-Path $env:LUGHATY_EXECUTABLE)) { throw 'Installed app missing' }
+          $sourceHash = (Get-FileHash release/win-unpacked/resources/app.asar).Hash
+          $installedHash = (Get-FileHash "$destination/resources/app.asar").Hash
+          if ($sourceHash -ne $installedHash) { throw 'Installed application differs from build' }
+          node tests/windows-ui.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'Installed UI tests failed' }
+          $uninstaller = Get-ChildItem $destination/*Uninstall*.exe | Select-Object -First 1
+          if (-not $uninstaller) { $uninstaller = Get-ChildItem $destination/*uninstall*.exe | Select-Object -First 1 }
+          if (-not $uninstaller) { throw 'Uninstaller missing' }
+          $remove = Start-Process $uninstaller.FullName -ArgumentList '/S' -Wait -PassThru
+          if ($remove.ExitCode -ne 0) { throw 'Uninstall failed' }
+          $proof = Get-Content release/ui-proof/results.json | ConvertFrom-Json
+          if (-not (Test-Path (Join-Path $proof.userData 'installer-data-retention-test'))) { throw 'Uninstall removed user data' }
+      - name: Record hashes and signing state
+        shell: pwsh
+        run: |
+          $installer = Get-ChildItem release/*Setup*.exe | Select-Object -First 1
+          $signature = Get-AuthenticodeSignature $installer.FullName
+          $hash = Get-FileHash $installer.FullName -Algorithm SHA256
+          "$($hash.Hash.ToLower())  $($installer.Name)" | Set-Content release/SHA256SUMS.txt -Encoding utf8
+          @{ file = $installer.Name; status = "$($signature.Status)"; publisher = $signature.SignerCertificate.Subject; approved = $false } | ConvertTo-Json | Set-Content release/SIGNING-STATUS.json
+          "This build is not signed by a trusted publisher. SignPath enrollment is pending; it must not be described as approved." | Set-Content release/SIGNING-STATUS.txt
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lughaty-Windows-Installer-1.3.2
+          path: |
+            release/*Setup*.exe
+            release/SHA256SUMS.txt
+            release/SIGNING-STATUS.*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload Windows test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-test-evidence
+          path: release/ui-proof/
+          if-no-files-found: ignore
+          retention-days: 14

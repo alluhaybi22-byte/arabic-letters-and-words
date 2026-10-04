@@ -1,16 +1,19 @@
-# Installed dependencies
 node_modules/
-
-# Generated installers and unpacked application
 release/
-
-# Local Electron and operating-system data
-.electron/
+dist/
 *.log
+*.pfx
+*.p12
+*.pem
+*.key
+.env
+.env.*
+!.env.example
+design-reference/
+vendor/licenses/
+.electron/
 *.tmp
 Thumbs.db
 Desktop.ini
-
-# Editor settings
 .vscode/
 .idea/
