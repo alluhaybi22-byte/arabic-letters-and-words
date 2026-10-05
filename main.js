@@ -51,6 +51,7 @@ function createWindow() {
 
 const previews = new Set();
 const busyPreviews = new Set();
+const pendingPrints = new Set();
 const previewDocuments = new Map();
 const previewFiles = new Map();
 
@@ -75,6 +76,7 @@ ipcMain.handle("preview:open", async (event, html) => {
     window.once("closed", () => {
       previews.delete(senderId);
       busyPreviews.delete(senderId);
+      pendingPrints.delete(senderId);
       previewDocuments.delete(senderId);
       previewFiles.delete(senderId);
       reports.remove(directory).catch(() => {});
@@ -121,6 +123,7 @@ ipcMain.handle("preview:printers", async event => {
 
 ipcMain.handle("preview:print", async (event, options) => {
   const window = previewWindow(event);
+  if (pendingPrints.has(event.sender.id)) return {success: false, pending: true, reason: "لم تؤكد الطابعة انتهاء الطلب السابق. تحقق من قائمة انتظار الطباعة؛ لم تُرسل مهمة أخرى."};
   if (busyPreviews.has(event.sender.id)) return {success: false, reason: "هناك طلب طباعة أو حفظ قيد التنفيذ."};
   busyPreviews.add(event.sender.id);
   try {
@@ -130,11 +133,19 @@ ipcMain.handle("preview:print", async (event, options) => {
     const copies = options.copies ?? 1;
     if (!Number.isInteger(copies) || copies < 1 || copies > 99) return {success: false, reason: "عدد النسخ يجب أن يكون بين 1 و99."};
     return await new Promise(resolve => {
+      const id = event.sender.id;
+      pendingPrints.add(id);
+      const timer = setTimeout(() => resolve({success: false, pending: true,
+        reason: "تأخر تأكيد الطابعة. قد تكون المهمة في قائمة انتظار Windows؛ تحقق منها قبل إعادة الطباعة. يمكنك حفظ PDF."}), 60000);
+      const complete = (success, reason) => {
+        clearTimeout(timer);
+        pendingPrints.delete(id);
+        resolve({success, reason: reason || ""});
+      };
       // The user has already chosen a printer beside the real PDF page preview.
       // Windows' native printer dialog does not supply Chromium's page preview.
-      window.webContents.print({silent: true, deviceName: options.deviceName, copies, printBackground: true, pageSize: "A4"}, (success, reason) => {
-        resolve({success, reason: reason || ""});
-      });
+      try { window.webContents.print({silent: true, deviceName: options.deviceName, copies, printBackground: true, pageSize: "A4"}, complete); }
+      catch (error) { clearTimeout(timer); pendingPrints.delete(id); throw error; }
     });
   } catch (error) {
     return {success: false, reason: error.message};

@@ -86,10 +86,10 @@
     try {
       if (!window.printActions) { window.print(); return; }
       const result = await (savePdf ? window.printActions.savePdf() : window.printActions.print({deviceName: printer.value, copies: count}));
-      status.textContent = result.saved ? 'حُفظ ملف PDF.' : result.success ? 'أُرسلت المهمة إلى الطابعة.' :
+      status.textContent = result.pending ? result.reason : result.saved ? 'حُفظ ملف PDF.' : result.success ? 'أُرسلت المهمة إلى الطابعة.' :
         result.canceled || result.reason === 'Print job canceled' ? 'أُلغي الطلب.' :
         'تعذر إكمال الطلب: ' + (result.error || result.reason || 'تحقق من الطابعة.');
-      if (!savePdf && !result.success) await refreshPrinters();
+      if (!savePdf && !result.success && !result.pending) await refreshPrinters();
     } catch (error) { status.textContent = 'تعذر إكمال الطلب: ' + error.message; }
     finally { busy = false; controls(); }
   }
