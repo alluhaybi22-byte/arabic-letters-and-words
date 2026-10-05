@@ -23,12 +23,18 @@ const output=path.resolve('release/ui-proof');
     assert.deepEqual(initial,{classes:0,records:0,draft:null,student:'',teacher:'',school:''},'first install must start without saved student/school data');
     const security=await page.evaluate(async()=>{
       const script=document.createElement('script');script.textContent='globalThis.securityInlineProbe=1';document.head.append(script);
-      let evalBlocked=false,networkBlocked=false;
-      try{window.eval('globalThis.securityEvalProbe=1')}catch{evalBlocked=true}
+      let networkBlocked=false;
       try{await fetch('https://example.invalid/student-data')}catch{networkBlocked=true}
       script.remove();
-      return {inlineBlocked:globalThis.securityInlineProbe!==1,evalBlocked,networkBlocked};
+      return {inlineBlocked:globalThis.securityInlineProbe!==1,networkBlocked};
     });
+    // DevTools evaluation bypasses unsafe-eval CSP by default. Explicitly turn
+    // off that debugger exemption when testing the application's policy.
+    const cdp=await page.context().newCDPSession(page);
+    try {
+      const probe=await cdp.send('Runtime.evaluate',{expression:"(()=>{try{window.eval('globalThis.securityEvalProbe=1');return false}catch{return true}})()",allowUnsafeEvalBlockedByCSP:false,returnByValue:true});
+      security.evalBlocked=probe.result.value;
+    } finally {await cdp.detach();}
     assert.deepEqual(security,{inlineBlocked:true,evalBlocked:true,networkBlocked:true});
     for(const sentinel of oldSentinels) assert.equal(await fs.readFile(sentinel,'utf8'),'previous-private-roster');
     const initialUserData=await app.evaluate(({app})=>app.getPath('userData'));

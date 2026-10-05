@@ -14,11 +14,15 @@ const {_electron:electron}=require('playwright');
     const policy=await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');assert.ok(policy.includes("default-src 'none'"));
     const blocked=await page.evaluate(async()=>{
       const script=document.createElement('script');script.textContent='globalThis.securityInlineProbe=1';document.head.append(script);
-      let evalBlocked=false,networkBlocked=false;
-      try{window.eval('globalThis.securityEvalProbe=1')}catch{evalBlocked=true}
+      let networkBlocked=false;
       try{await fetch('https://example.invalid/student-data')}catch{networkBlocked=true}
-      return {inlineBlocked:globalThis.securityInlineProbe!==1,evalBlocked,networkBlocked};
+      return {inlineBlocked:globalThis.securityInlineProbe!==1,networkBlocked};
     });
+    const cdp=await page.context().newCDPSession(page);
+    try {
+      const probe=await cdp.send('Runtime.evaluate',{expression:"(()=>{try{window.eval('globalThis.securityEvalProbe=1');return false}catch{return true}})()",allowUnsafeEvalBlockedByCSP:false,returnByValue:true});
+      blocked.evalBlocked=probe.result.value;
+    } finally {await cdp.detach();}
     assert.deepEqual(blocked,{inlineBlocked:true,evalBlocked:true,networkBlocked:true});
     await page.evaluate(()=>{document.getElementById('student').value='طالب اختبار أمان';begin();mark('✓');completeAssessment();});
     const previewPromise=app.waitForEvent('window');await page.locator('#print').click();
