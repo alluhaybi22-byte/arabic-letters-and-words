@@ -1,6 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const html=fs.readFileSync(__dirname+'/index.html','utf8');
-const js=html.match(/<script>([\s\S]*?)<\/script>\s*<\/body>/)[1];
+const js=fs.readFileSync(__dirname+'/renderer.js','utf8');
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
 const elements=new Map();
 function element(id){if(!elements.has(id)){
@@ -15,14 +15,14 @@ const previewElements=new Map();
 const FakeDate=class extends Date {constructor(...args){super(...(args.length?args:[now]))} static now(){return now}};
 const levelButtons=[...html.matchAll(/data-select-level="([^"]+)"/g)].map((match,index)=>{const button=element('level-card-'+index);button.dataset={selectLevel:match[1]};return button});
 const scoreButtons=['✓','✕','↻'].map((score,index)=>{const button=element('score-'+index);button.dataset={score};return button});
-const document={fonts:{ready:Promise.resolve()},getElementById:element,querySelector:selector=>({textContent:html.match(/<style>([\s\S]*?)<\/style>/)[1]}),querySelectorAll:selector=>{
+const document={baseURI:'file:///app/index.html',fonts:{ready:Promise.resolve()},getElementById:element,querySelector:selector=>({textContent:html.match(/<style>([\s\S]*?)<\/style>/)[1]}),querySelectorAll:selector=>{
  if(selector==='[data-history-class]'||selector==='[data-history-test]') {
   const attribute=selector.slice(1,-1),key=attribute==='data-history-class'?'historyClass':'historyTest';
   return [...element('historyList').innerHTML.matchAll(new RegExp(attribute+'="([^"\\n]+)"','g'))].map((m,i)=>{const button=element(attribute+'-'+i);button.dataset={[key]:m[1]};return button});
  }
  return selector==='[data-select-level]'?levelButtons:selector==='[data-score]'?scoreButtons:[]},addEventListener(){},createElement:()=>({click(){},set href(v){},set download(v){}})};
 const window={printActions:{openPreview:async html=>{printed=html;return {opened:true}}},confirm:()=>true,alert:()=>{},setInterval:()=>1,clearInterval:()=>{},setTimeout:()=>1,open:()=>({document:{open(){},write(x){printed=x},close(){},getElementById:id=>{if(!previewElements.has(id))previewElements.set(id,{onclick:null,textContent:''});return previewElements.get(id)}},printActions:{print:async()=>{printCalls++;return {success:true}},savePdf:async()=>{pdfCalls++;return {saved:true}}}})};
-const ctx=vm.createContext({document,window,alert:window.alert,localStorage,Date:FakeDate,console,Intl,Event,crypto:require('node:crypto').webcrypto,Blob,Response,TextDecoder,DecompressionStream,Uint8Array,DataView,globalThis:null});ctx.globalThis=ctx;
+const ctx=vm.createContext({document,window,alert:window.alert,localStorage,Date:FakeDate,console,Intl,Event,AbortController,setTimeout,clearTimeout,RosterImport:require('./roster-import'),crypto:require('node:crypto').webcrypto,Blob,URL,Response,TextDecoder,DecompressionStream,Uint8Array,DataView,globalThis:null});ctx.globalThis=ctx;
 storage.set('arabic-letter-assessment.teacher-name','معلم النسخة السابقة');
 storage.set('arabic-letter-assessment.roster',JSON.stringify({version:1,names:['طالب قديم'],sourceName:'old.xlsx'}));
 storage.set('arabic-letter-assessment.records',JSON.stringify({records:[{studentName:'طالب قديم'}]}));
@@ -87,12 +87,28 @@ storage.set('lughaty-oral-diagnostic.records',JSON.stringify(store));
 ctx.profileRecord=record;run('showStudentProfile(profileRecord)');
 assert.ok(element('profileContent').innerHTML.includes('أول محاولة 50%'));
 assert.ok(element('profileContent').innerHTML.includes('آخر محاولة 75%'));
+// An altered local record must be displayed as text, never parsed as markup.
+const originalHistory=storage.get('lughaty-oral-diagnostic.records');
+const hostile=JSON.parse(JSON.stringify(record));
+const injection='<img src=x onerror="globalThis.securityProbe=1">';
+hostile.id='record-" autofocus onfocus="globalThis.securityProbe=1';
+hostile.items[0].score=injection;
+hostile.summary.percentage=injection;hostile.summary.correct=injection;
+storage.set('lughaty-oral-diagnostic.records',JSON.stringify({version:run('STORAGE_VERSION'),records:[hostile]}));
+const hostileBytes=storage.get('lughaty-oral-diagnostic.records');
+ctx.hostileRecord=hostile;run('renderReport(hostileRecord)');
+assert.ok(element('details').innerHTML.includes('&lt;img'));
+assert.ok(!element('summary').innerHTML.includes('<img'));
+run('showStudentProfile(hostileRecord)');assert.ok(!element('profileContent').innerHTML.includes('<img'));
+assert.ok(!element('profileContent').innerHTML.includes('data-profile-report="record-" autofocus'));
+run('historyAll=true;renderHistoryRows()');assert.ok(!element('historyList').innerHTML.includes('<img'));
+assert.ok(!element('historyStats').innerHTML.includes('<img'));
+assert.equal(storage.get('lughaty-oral-diagnostic.records'),hostileBytes,'Rendering must not rewrite saved assessment data');
+storage.set('lughaty-oral-diagnostic.records',originalHistory);
+console.log('PASS: locally altered score, result, statistics and profile ID escaped without modifying saved history');
 console.log('PASS: source word constraints, timer, navigation, draft resume, partial report, signatures, print preview, import association');
 
-(async()=>{const previewScript=printed.match(/<script>([\s\S]*?)<\/script>/)[1];
-const previewContext=vm.createContext({document:{fonts:{ready:Promise.resolve()},getElementById:id=>{if(!previewElements.has(id))previewElements.set(id,{disabled:false,textContent:''});return previewElements.get(id)}},window:{printActions:{print:async()=>{printCalls++;return {success:true}},savePdf:async()=>{pdfCalls++;return {saved:true}}}},requestAnimationFrame:fn=>fn()});
-vm.runInContext(previewScript,previewContext);
-await previewElements.get('doPrint').onclick();await previewElements.get('savePdf').onclick();assert.equal(printCalls,1);assert.equal(pdfCalls,1);assert.ok(previewElements.get('printStatus').textContent.includes('PDF'));console.log('PASS: self-contained print/PDF preview controls');for(const type of ['docx','xlsx']){const bytes=fs.readFileSync(__dirname+'/tests/roster-test.'+type);const file={arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteLength+bytes.byteOffset)};ctx.testFile=file;const students=await run(type==='docx'?'importDocxRoster(testFile)':'importXlsxRoster(testFile)');assert.equal(students.length,2,type);assert.equal(students[0].name,'ريم الحربي');assert.equal(students[0].guardianName,'محمد الحربي');}for(const type of ['docx','xlsx']) {
+(async()=>{for(const type of ['docx','xlsx']){const bytes=fs.readFileSync(__dirname+'/tests/roster-test.'+type);const file={arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteLength+bytes.byteOffset)};ctx.testFile=file;const students=await run(type==='docx'?'importDocxRoster(testFile)':'importXlsxRoster(testFile)');assert.equal(students.length,2,type);assert.equal(students[0].name,'ريم الحربي');assert.equal(students[0].guardianName,'محمد الحربي');}for(const type of ['docx','xlsx']) {
  const bytes=fs.readFileSync(__dirname+'/tests/roster-columns.'+type);
  ctx.testFile={arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};
  const students=await run(type==='docx'?'importDocxRoster(testFile)':'importXlsxRoster(testFile)');
@@ -128,12 +144,7 @@ run('showStudentProfile(reference)');assert.ok(element('profileMeta').textConten
 element('historySearch').value='بحث قديم';run('showHistory(true)');run('historyAll=true;renderHistoryRows()');assert.equal(element('historySearch').value,'');assert.ok(element('historyList').innerHTML.includes('عبدالمجيد العامري'));
 assert.ok(!ids.includes('schoolCity')&&!ids.includes('schoolPhone'));
 assert.ok(printed.includes('.hidden { display:none!important; }'));
-// Print and PDF failures must be visible, and controls must become usable again.
-vm.runInContext("window.printActions.print=async()=>({success:false,reason:'لا توجد طابعة'})",previewContext);
-await previewElements.get('doPrint').onclick();assert.ok(previewElements.get('printStatus').textContent.includes('لا توجد طابعة'));assert.equal(previewElements.get('doPrint').disabled,false);
-vm.runInContext("window.printActions.savePdf=async()=>{throw new Error('فشل الحفظ')}",previewContext);
-await previewElements.get('savePdf').onclick();assert.ok(previewElements.get('printStatus').textContent.includes('فشل الحفظ'));assert.equal(previewElements.get('savePdf').disabled,false);
-console.log('PASS: multi-column/multi-sheet/full Arabic names/duplicates, PDF geometry, legacy student linkage, latest class results, visible print failures');
+console.log('PASS: multi-column/multi-sheet/full Arabic names/duplicates, PDF geometry, legacy student linkage, latest class results');
 
 // Folders, batch continuity, duplicate class names, and scoped reporting.
 storage.clear();now=Date.parse('2026-10-04T18:00:00Z');run('historyClassKey=null;historyTestKey=null;historyAll=false;currentTestSession=null;activeRecord=null;goHome()');
@@ -184,4 +195,28 @@ assert.equal(storage.get('lughaty-oral-diagnostic.records'),legacyBytes);assert.
 const legacyButtons=document.querySelectorAll('[data-history-test]');legacyButtons.find(b=>b.dataset.historyTest.startsWith('legacy:')).click();assert.equal(run('historyScope().records.length'),1);
 element('historyShowAll').click();assert.equal(run('historyAll'),true);assert.equal(run('historyScope().records.length'),5);
 console.log('PASS: class/test folder clicks, unique dated batches, next-student and resume continuity, session absence, duplicate class prevention, legacy date folders, folder-scoped reports without record mutation');
+// Cancel a PDF waiting for its worker, then verify the watchdog path separately.
+const cancelRosterBytes=storage.get('lughaty-oral-diagnostic.roster');
+const cancelHistoryBytes=storage.get('lughaty-oral-diagnostic.records');
+let pdfJobs=0,pdfDestroyed=0;
+ctx.pdfjsLib={getDocument:()=>{pdfJobs++;return {promise:new Promise(()=>{}),destroy:async()=>{pdfDestroyed++;}}}};
+ctx.cancelFile={name:'cancel-flow.pdf',size:0,arrayBuffer:async()=>new ArrayBuffer(0)};
+element('rosterName').value='صف اختبار الإلغاء';
+const importing=run('importRoster(cancelFile)');await new Promise(setImmediate);
+assert.equal(element('cancelRosterImport').classList.contains('hidden'),false);
+assert.equal(element('start').disabled,true);
+await run('importRoster(cancelFile)');assert.equal(pdfJobs,1,'Do not start concurrent imports');
+element('cancelRosterImport').click();await importing;
+assert.equal(element('cancelRosterImport').classList.contains('hidden'),true);
+assert.equal(element('start').disabled,false);assert.ok(pdfDestroyed>=1);
+assert.ok(element('rosterMessage').textContent.includes('أُلغي'));
+assert.equal(storage.get('lughaty-oral-diagnostic.roster'),cancelRosterBytes);
+assert.equal(storage.get('lughaty-oral-diagnostic.records'),cancelHistoryBytes);
+const nativeImporter=ctx.RosterImport;
+ctx.RosterImport={...nativeImporter,LIMITS:{...nativeImporter.LIMITS,pdfTimeoutMs:15}};
+try {await assert.rejects(()=>run('importPdfRoster(cancelFile)'),error=>error.code==='PDF_TIMEOUT');}
+finally {ctx.RosterImport=nativeImporter;delete ctx.pdfjsLib;}
+assert.equal(storage.get('lughaty-oral-diagnostic.roster'),cancelRosterBytes);
+assert.equal(storage.get('lughaty-oral-diagnostic.records'),cancelHistoryBytes);
+console.log('PASS: cancel UI, PDF worker termination, no concurrent import, watchdog timeout, controls restored and saved student/results bytes unchanged');
 console.log('PASS: offline DOCX/XLSX roster extraction with guardian association');})().catch(e=>{console.error(e);process.exitCode=1});

@@ -2,7 +2,9 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("printActions", {
   openPreview: html => ipcRenderer.invoke("preview:open", html),
-  print: () => ipcRenderer.invoke("preview:print"),
+  getDocument: () => ipcRenderer.invoke("preview:document"),
+  getPrinters: () => ipcRenderer.invoke("preview:printers"),
+  print: options => ipcRenderer.invoke("preview:print", options),
   savePdf: () => ipcRenderer.invoke("preview:pdf")
 });
 

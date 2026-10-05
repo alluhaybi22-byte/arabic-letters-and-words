@@ -1,12 +1,14 @@
-const { app, BrowserWindow, shell, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, shell, ipcMain, dialog, session } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs/promises");
-const os = require("node:os");
+const {authorizeFrame,protectSession,protectReport}=require('./security-policy');
+const {previewStorage}=require('./preview-storage');
 const {configureUserData} = require("./profile-policy");
 const {setupUpdates} = require("./update-service");
 
 // A separate profile starts empty and never imports another installation's data.
 configureUserData(app);
+const reports=previewStorage(app.getPath('userData'));
 
 let mainWindow;
 
@@ -34,63 +36,32 @@ function createWindow() {
   mainWindow.webContents.on("will-navigate", event => event.preventDefault());
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url === "about:blank") {
-      return {
-        action: "allow",
-        overrideBrowserWindowOptions: {
-          parent: mainWindow,
-          width: 1040,
-          height: 900,
-          minWidth: 750,
-          minHeight: 600,
-          autoHideMenuBar: true,
-          backgroundColor: "#ffffff",
-          webPreferences: {
-            preload: path.join(__dirname, "print-bridge.js"),
-            contextIsolation: true,
-            nodeIntegration: false,
-            sandbox: true
-          }
-        }
-      };
-    }
-    if (url.endsWith(".pdf")) {
-      return {
-        action: "allow",
-        overrideBrowserWindowOptions: {
-          width: 1280,
-          height: 900,
-          minWidth: 900,
-          minHeight: 650,
-          autoHideMenuBar: true,
-          backgroundColor: "#ffffff",
-          webPreferences: {
-            contextIsolation: true,
-            nodeIntegration: false,
-            sandbox: true
-          }
-        }
-      };
-    }
-    if (url.startsWith("https://")) {
-      shell.openExternal(url);
-    }
-    return { action: "deny" };
+    // Reports use the dedicated authenticated preview IPC, never arbitrary URLs.
+    try {
+      const link=new URL(url);
+      const repository='/alluhaybi22-byte/arabic-letters-and-words';
+      if(link.protocol==='https:' && link.hostname==='github.com' && !link.username && !link.password &&
+        (link.pathname===repository || link.pathname.startsWith(repository+'/'))) {
+        shell.openExternal(link.href).catch(()=>{});
+      }
+    } catch {}
+    return {action:'deny'};
   });
 }
 
 const previews = new Set();
 const busyPreviews = new Set();
+const previewDocuments = new Map();
+const previewFiles = new Map();
 
 ipcMain.handle("preview:open", async (event, html) => {
-  if (event.sender !== mainWindow.webContents || typeof html !== "string" || html.length > 8 * 1024 * 1024) {
+  authorizeFrame(event,mainWindow,path.join(__dirname,'index.html'));
+  if (typeof html !== "string" || Buffer.byteLength(html,'utf8') > 8 * 1024 * 1024) {
     throw new Error("طلب معاينة غير معتمد");
   }
-  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "lughaty-print-"));
-  const file = path.join(directory, "report.html");
+  const {directory,file}=await reports.create(protectReport(html));
   let window;
   try {
-    await fs.writeFile(file, html, "utf8");
     window = new BrowserWindow({
       parent: mainWindow, width: 1100, height: 900, minWidth: 720, minHeight: 580,
       show: false, autoHideMenuBar: true, backgroundColor: "#ffffff",
@@ -98,40 +69,70 @@ ipcMain.handle("preview:open", async (event, html) => {
       webPreferences: {preload: path.join(__dirname, "print-bridge.js"), contextIsolation: true, nodeIntegration: false, sandbox: true}
     });
     previews.add(window.webContents.id);
+    previewFiles.set(window.webContents.id,file);
     const senderId = window.webContents.id;
     window.webContents.setWindowOpenHandler(() => ({action: "deny"}));
     window.once("closed", () => {
       previews.delete(senderId);
       busyPreviews.delete(senderId);
-      fs.rm(directory, {recursive: true, force: true}).catch(() => {});
+      previewDocuments.delete(senderId);
+      previewFiles.delete(senderId);
+      reports.remove(directory).catch(() => {});
     });
     await window.loadFile(file);
     window.show();
+    window.focus();
     return {opened: true};
   } catch (error) {
     if (window && !window.isDestroyed()) window.destroy();
-    await fs.rm(directory, {recursive: true, force: true});
+    await reports.remove(directory);
     throw error;
   }
 });
 
 function previewWindow(event) {
   const window = BrowserWindow.fromWebContents(event.sender);
-  if (!window || !previews.has(event.sender.id) || window.getParentWindow() !== mainWindow) {
+  if (!window || !previews.has(event.sender.id) || event.senderFrame !== event.sender.mainFrame || window.getParentWindow() !== mainWindow) {
     throw new Error("طلب طباعة من نافذة غير معتمدة");
   }
+  authorizeFrame(event,window,previewFiles.get(event.sender.id));
   return window;
 }
 
-ipcMain.handle("preview:print", async event => {
+async function previewDocument(window) {
+  const id = window.webContents.id;
+  if (!previewDocuments.has(id)) {
+    const pending = window.webContents.printToPDF({printBackground: true, preferCSSPageSize: true, pageSize: "A4"});
+    previewDocuments.set(id, pending);
+    pending.catch(() => previewDocuments.delete(id));
+  }
+  return previewDocuments.get(id);
+}
+
+ipcMain.handle("preview:document", async event => {
+  const window = previewWindow(event);
+  return new Uint8Array(await previewDocument(window));
+});
+
+ipcMain.handle("preview:printers", async event => {
+  const window = previewWindow(event);
+  return (await window.webContents.getPrintersAsync()).map(({name, displayName, isDefault}) => ({name, displayName, isDefault}));
+});
+
+ipcMain.handle("preview:print", async (event, options) => {
   const window = previewWindow(event);
   if (busyPreviews.has(event.sender.id)) return {success: false, reason: "هناك طلب طباعة أو حفظ قيد التنفيذ."};
   busyPreviews.add(event.sender.id);
   try {
     const printers = await window.webContents.getPrintersAsync();
     if (!printers.length) return {success: false, reason: "لا توجد طابعة مثبتة في Windows. يمكنك حفظ التقرير بصيغة PDF."};
+    if (!options || !printers.some(printer => printer.name === options.deviceName)) return {success: false, reason: "اختر طابعة متاحة ثم أعد المحاولة."};
+    const copies = options.copies ?? 1;
+    if (!Number.isInteger(copies) || copies < 1 || copies > 99) return {success: false, reason: "عدد النسخ يجب أن يكون بين 1 و99."};
     return await new Promise(resolve => {
-      window.webContents.print({silent: false, printBackground: true, pageSize: "A4"}, (success, reason) => {
+      // The user has already chosen a printer beside the real PDF page preview.
+      // Windows' native printer dialog does not supply Chromium's page preview.
+      window.webContents.print({silent: true, deviceName: options.deviceName, copies, printBackground: true, pageSize: "A4"}, (success, reason) => {
         resolve({success, reason: reason || ""});
       });
     });
@@ -153,11 +154,7 @@ ipcMain.handle("preview:pdf", async event => {
     filters: [{name: "PDF", extensions: ["pdf"]}]
   });
   if (canceled || !filePath) return {canceled: true};
-    const pdf = await window.webContents.printToPDF({
-      printBackground: true,
-      preferCSSPageSize: true,
-      pageSize: "A4"
-    });
+    const pdf = await previewDocument(window);
     await fs.writeFile(filePath, pdf);
     return {saved: true};
   } catch (error) {
@@ -173,7 +170,11 @@ app.on("browser-window-created", (_, window) => {
   }
 });
 
-app.whenReady().then(() => {
+if(!app.requestSingleInstanceLock()) app.quit();
+else app.whenReady().then(async () => {
+  // The single-instance lock prevents removal of another live window's report.
+  await reports.cleanup();
+  protectSession(session.defaultSession);
   createWindow();
   setupUpdates({app,ipcMain,dialog,getWindow:()=>mainWindow,
     canInstall:()=>mainWindow.webContents.executeJavaScript("typeof readDraft === 'function' && !readDraft() && !pendingRosterImport && document.getElementById('test').classList.contains('hidden')")});
@@ -183,6 +184,9 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+}).catch(error=>{
+  dialog.showErrorBox('تعذر تشغيل البرنامج','تعذر تجهيز مساحة معاينة آمنة. بيانات الطلاب لم تُحذف.');
+  app.quit();
 });
 
 app.on("window-all-closed", () => {

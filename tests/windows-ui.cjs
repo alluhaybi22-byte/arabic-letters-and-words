@@ -21,6 +21,15 @@ const output=path.resolve('release/ui-proof');
     await page.waitForSelector('#student');
     const initial=await page.evaluate(()=>({classes:getRosterStore().rosters.length,records:getStore().records.length,draft:readDraft(),student:document.getElementById('student').value,teacher:document.getElementById('teacher').value,school:document.getElementById('schoolName').value}));
     assert.deepEqual(initial,{classes:0,records:0,draft:null,student:'',teacher:'',school:''},'first install must start without saved student/school data');
+    const security=await page.evaluate(async()=>{
+      const script=document.createElement('script');script.textContent='globalThis.securityInlineProbe=1';document.head.append(script);
+      let evalBlocked=false,networkBlocked=false;
+      try{window.eval('globalThis.securityEvalProbe=1')}catch{evalBlocked=true}
+      try{await fetch('https://example.invalid/student-data')}catch{networkBlocked=true}
+      script.remove();
+      return {inlineBlocked:globalThis.securityInlineProbe!==1,evalBlocked,networkBlocked};
+    });
+    assert.deepEqual(security,{inlineBlocked:true,evalBlocked:true,networkBlocked:true});
     for(const sentinel of oldSentinels) assert.equal(await fs.readFile(sentinel,'utf8'),'previous-private-roster');
     const initialUserData=await app.evaluate(({app})=>app.getPath('userData'));
     assert.equal(path.basename(initialUserData),'lughaty-oral-diagnostic-clean');
@@ -56,7 +65,7 @@ const output=path.resolve('release/ui-proof');
     assert.equal(await page.locator('.history-table tbody tr').count(),2);
     await page.screenshot({path:path.join(output,'history.png')});
     const waiting=app.waitForEvent('window');await page.locator('#allPrint').click();const preview=await waiting;
-    await preview.waitForSelector('#doPrint');assert.equal(await preview.locator('.class-table tbody tr').count(),2);
+    await preview.waitForFunction(()=>document.getElementById('pagePreview').dataset.pageCount && !document.getElementById('savePdf').disabled);assert.equal(await preview.locator('.class-table tbody tr').count(),2);
     await preview.screenshot({path:path.join(output,'print-preview.png')});
     const pdfPath=path.join(output,'report.pdf');
     await app.evaluate(({dialog},file)=>{
@@ -72,12 +81,17 @@ const output=path.resolve('release/ui-proof');
     const pdf=await fs.readFile(pdfPath);assert.ok(pdf.length>1000);assert.equal(pdf.subarray(0,4).toString(),'%PDF');
     await app.evaluate(({BrowserWindow})=>{
       const wc=BrowserWindow.getAllWindows().find(window=>window.getParentWindow()).webContents;
-      globalThis.lughatyTestPrinters=wc.getPrintersAsync;wc.getPrintersAsync=async()=>[];
+      globalThis.lughatyTestPrinters=wc.getPrintersAsync;wc.getPrintersAsync=async()=>[{name:'removed-after-selection',isDefault:true}];
     });
     try {
+      await preview.locator('#retryPreview').evaluate(button=>button.click());
+      await preview.locator('#doPrint').waitFor({state:'visible'});
+      await preview.waitForFunction(()=>!document.getElementById('doPrint').disabled);
+      await app.evaluate(({BrowserWindow})=>{BrowserWindow.getAllWindows().find(window=>window.getParentWindow()).webContents.getPrintersAsync=async()=>[];});
       await preview.locator('#doPrint').click();
       await preview.waitForFunction(()=>document.getElementById('printStatus').textContent.includes('لا توجد طابعة'));
-      assert.equal(await preview.locator('#doPrint').isEnabled(),true);
+      assert.equal(await preview.locator('#doPrint').isEnabled(),false);
+      assert.equal(await preview.locator('#savePdf').isEnabled(),true);
     } finally {
       await app.evaluate(({BrowserWindow})=>{
         BrowserWindow.getAllWindows().find(window=>window.getParentWindow()).webContents.getPrintersAsync=globalThis.lughatyTestPrinters;
