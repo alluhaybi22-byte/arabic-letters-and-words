@@ -1,0 +1,2874 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: https://login.microsoftonline.com https://graph.microsoft.com https://*.files.1drv.com https://*.1drv.com https://*.sharepoint.com https://*.sharepoint-df.com https://*.storage.live.com; worker-src 'self' blob:; object-src 'none'; frame-src 'self' https://login.microsoftonline.com https://login.live.com; base-uri 'self'; form-action 'none'"
+    />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tibyan | تِبْيان لقياس مدى الإتقان</title>
+
+    <style>
+      /* اتجاه 02: مساحة القراءة — القيم نفسها موثقة كمتغيرات في Figma. */
+      :root {
+        --ui-canvas: #f7f4ee;
+        --ui-surface: #fff;
+        --ui-surface-alt: #f1ede5;
+        --ui-ink: #25243a;
+        --ui-muted: #696a7a;
+        --ui-primary: #5746ad;
+        --ui-primary-hover: #463493;
+        --ui-primary-tint: #ede9fa;
+        --ui-success: #1b765f;
+        --ui-warning: #ac6b12;
+        --ui-danger: #bc4c5c;
+        --ui-info: #3d69a5;
+        --ui-border: #ded8cb;
+        --ui-white: #fff;
+        --ui-space-4: 4px;
+        --ui-space-8: 8px;
+        --ui-space-12: 12px;
+        --ui-space-16: 16px;
+        --ui-space-24: 24px;
+        --ui-space-32: 32px;
+        --ui-space-48: 48px;
+        --ui-radius-12: 12px;
+        --ui-radius-20: 20px;
+        --ui-radius-28: 28px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: var(--ui-canvas);
+        color: var(--ui-ink);
+        direction: rtl;
+      }
+      body,
+      input,
+      select,
+      textarea,
+      button,
+      .letter {
+        font-family: Arial, sans-serif;
+      }
+      body {
+        font-size: 17px;
+        line-height: 1.6;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid var(--ui-primary);
+        border-radius: var(--ui-radius-12);
+        padding: 11px 18px;
+        background: var(--ui-primary);
+        color: var(--ui-white);
+        font-weight: 700;
+        min-height: 48px;
+        transition:
+          background 0.15s,
+          border-color 0.15s,
+          box-shadow 0.15s,
+          transform 0.15s;
+      }
+      button:hover {
+        background: var(--ui-primary-hover);
+        border-color: var(--ui-primary-hover);
+        transform: translateY(-1px);
+      }
+      button:active {
+        transform: translateY(0);
+        box-shadow: inset 0 2px 4px #25243a1f;
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.46;
+        transform: none;
+        box-shadow: none;
+      }
+      button.secondary {
+        background: var(--ui-surface);
+        color: var(--ui-ink);
+        border-color: var(--ui-border);
+      }
+      button.secondary:hover {
+        background: var(--ui-primary-tint);
+        border-color: var(--ui-primary);
+        color: var(--ui-primary);
+      }
+      button.absent,
+      .danger-text {
+        background: var(--ui-surface);
+        color: var(--ui-danger);
+        border-color: #e7b8c0;
+      }
+      button.absent:hover,
+      .danger-text:hover {
+        background: #fff0f2;
+        color: var(--ui-danger);
+        border-color: var(--ui-danger);
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-height: 48px;
+        padding: 11px 14px;
+        background: var(--ui-white);
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-12);
+        color: var(--ui-ink);
+        direction: rtl;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus,
+      button:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid #cfc4fa;
+        outline-offset: 2px;
+        border-color: var(--ui-primary);
+      }
+      label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 700;
+        color: var(--ui-ink);
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+      h2,
+      h3 {
+        line-height: 1.35;
+      }
+      h2 {
+        font-size: 1.9rem;
+      }
+      h3 {
+        font-size: 1.15rem;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .sr-only {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+      }
+      .wrap {
+        max-width: 1600px;
+        min-height: 100vh;
+        margin: auto;
+        padding: 24px;
+        display: grid;
+        grid-template-columns: 224px minmax(0, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+      .side-nav {
+        position: sticky;
+        top: 24px;
+        min-height: calc(100vh - 48px);
+        padding: 22px 15px;
+        background: var(--ui-surface);
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-28);
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+      .hero {
+        padding: 8px 7px 18px;
+        border-bottom: 1px solid var(--ui-border);
+      }
+      .brand-lockup {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand-mark {
+        width: 54px;
+        height: 54px;
+        border-radius: 17px;
+        display: inline-grid;
+        place-items: center;
+        flex: none;
+        background: var(--ui-primary);
+        color: #fff;
+        font-size: 1.8rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .hero h1 {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+      .hero p {
+        font-size: 0.8rem;
+        color: var(--ui-muted);
+        margin: 0;
+      }
+      .hero-kicker {
+        display: none;
+      }
+      .side-links {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .nav-caption,
+      .eyebrow {
+        font-size: 0.78rem;
+        color: var(--ui-primary);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+      .nav-caption {
+        padding: 0 11px 8px;
+      }
+      .nav-link {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+        text-align: right;
+        padding: 10px 12px;
+        background: transparent;
+        color: var(--ui-ink);
+        border: 1px solid transparent;
+        border-radius: var(--ui-radius-12);
+        font-size: 0.95rem;
+        min-height: 45px;
+      }
+      .nav-link:hover,
+      .nav-link:focus-visible {
+        background: var(--ui-primary-tint);
+        color: var(--ui-primary);
+        border-color: transparent;
+        transform: none;
+      }
+      .side-note {
+        margin-top: auto;
+        color: var(--ui-muted);
+        font-size: 0.79rem;
+        padding: 15px 10px;
+        border-top: 1px solid var(--ui-border);
+      }
+      .workspace {
+        min-width: 0;
+      }
+      .card {
+        background: transparent;
+        margin: 0;
+        min-width: 0;
+      }
+      .card:not(.report-card) {
+        padding: 8px 0 24px;
+      }
+      .page-title {
+        margin-bottom: 24px;
+      }
+      .page-title h2 {
+        margin: 4px 0 5px;
+      }
+      .page-title p {
+        margin: 0;
+        color: var(--ui-muted);
+      }
+      .setup-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr);
+        gap: 20px;
+        align-items: start;
+      }
+      .setup-flow,
+      .setup-aside {
+        display: grid;
+        gap: 18px;
+        min-width: 0;
+      }
+      .form-panel {
+        border: 1px solid var(--ui-border);
+        background: var(--ui-surface);
+        border-radius: var(--ui-radius-20);
+        padding: 22px;
+        min-width: 0;
+        box-shadow: 0 2px 9px #25243a06;
+      }
+      .form-panel > * + * {
+        margin-top: 18px;
+      }
+      .form-panel > div + div {
+        margin-top: 18px;
+      }
+      .form-panel .file-message {
+        margin-top: 10px;
+      }
+      .panel-heading {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 18px;
+      }
+      .panel-heading h3 {
+        margin: 0 0 2px;
+      }
+      .panel-heading p {
+        margin: 0;
+        color: var(--ui-muted);
+        font-size: 0.88rem;
+      }
+      .step {
+        display: inline-grid;
+        place-items: center;
+        background: var(--ui-primary-tint);
+        color: var(--ui-primary);
+        border-radius: var(--ui-radius-12);
+        font-weight: 700;
+        min-width: 36px;
+        height: 36px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .level-choices {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .level-choice {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 3px;
+        min-height: 79px;
+        text-align: right;
+        background: var(--ui-white);
+        color: var(--ui-ink);
+        border: 1px solid var(--ui-border);
+        padding: 10px 13px;
+      }
+      .level-choice:hover {
+        background: var(--ui-primary-tint);
+        color: var(--ui-primary);
+        border-color: var(--ui-primary);
+      }
+      .level-choice[aria-pressed='true'] {
+        background: var(--ui-primary-tint);
+        border: 2px solid var(--ui-primary);
+        color: var(--ui-primary);
+        padding: 9px 12px;
+      }
+      .level-choice small {
+        color: var(--ui-muted);
+        font-size: 0.78rem;
+        font-weight: 400;
+      }
+      .level-choice[aria-pressed='true'] small {
+        color: var(--ui-primary);
+      }
+      .settings {
+        margin: 0;
+      }
+      .settings summary {
+        font-weight: 700;
+        cursor: pointer;
+        list-style: none;
+      }
+      .settings summary:before {
+        content: '⌄';
+        float: left;
+        color: var(--ui-primary);
+      }
+      .settings-fields {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .setup-actions {
+        margin-top: 0;
+      }
+      #start {
+        min-width: 190px;
+      }
+      #importRoster,
+      #clearRoster {
+        width: 100%;
+        margin-top: 8px;
+      }
+      .file-message {
+        background: var(--ui-primary-tint);
+        color: var(--ui-ink);
+        border-radius: var(--ui-radius-12);
+        padding: 12px 14px;
+        font-size: 0.85rem;
+        line-height: 1.6;
+      }
+      .file-message button {
+        margin: 5px;
+      }
+      /* شاشة التقييم: مادة القراءة هي العنصر المهيمن؛ الأزرار الثلاثة في متناول نقرة واحدة. */
+      #test {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .assessment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+      }
+      .assessment-header h2 {
+        margin: 5px 0 0;
+        font-size: 1.55rem;
+      }
+      .student {
+        color: var(--ui-muted);
+      }
+      .timer-block {
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-12);
+        background: var(--ui-surface-alt);
+        padding: 8px 16px;
+        text-align: center;
+        flex: none;
+      }
+      .timer-block span {
+        font-size: 0.76rem;
+        color: var(--ui-muted);
+      }
+      .timer {
+        direction: ltr;
+        font-size: 1.35rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.3;
+      }
+      .bar {
+        height: 8px;
+        background: #e6e0d5;
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--ui-primary);
+        border-radius: 99px;
+        transition: width 0.2s;
+      }
+      .reading-stage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 330px;
+        background: var(--ui-surface);
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-20);
+        padding: 25px;
+        box-shadow: 0 4px 15px #25243a0b;
+      }
+      .letter {
+        width: 100%;
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--ui-ink);
+        font-size: clamp(8rem, 14vw, 12rem);
+        font-weight: 700;
+        line-height: 1.5;
+        letter-spacing: 0;
+        overflow-wrap: anywhere;
+      }
+      .letter.word-item {
+        font-size: clamp(5rem, 8vw, 7.5rem);
+      }
+      .letter.sentence-item {
+        font-size: clamp(2.25rem, 4vw, 4.25rem);
+        min-height: 220px;
+        line-height: 1.8;
+      }
+      .sentence-source {
+        text-align: center;
+        color: var(--ui-primary);
+        font-weight: 700;
+        font-size: 0.87rem;
+      }
+      .hint {
+        text-align: center;
+        color: var(--ui-muted);
+        font-size: 0.9rem;
+      }
+      .scores {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .score {
+        min-height: 86px;
+        font-size: 1.12rem;
+        background: var(--ui-white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .score-symbol {
+        font-size: 1.6rem;
+        line-height: 1;
+      }
+      .score-key {
+        font-size: 0.73rem;
+        font-weight: 400;
+        opacity: 0.7;
+      }
+      .score.ok {
+        color: var(--ui-success);
+        border-color: var(--ui-success);
+      }
+      .score.ok:hover {
+        background: #e6f4ee;
+        box-shadow: 0 4px 13px #1b765f1a;
+      }
+      .score.no {
+        color: var(--ui-danger);
+        border-color: var(--ui-danger);
+      }
+      .score.no:hover {
+        background: #fff0f2;
+        box-shadow: 0 4px 13px #bc4c5c1a;
+      }
+      .score.later {
+        color: var(--ui-warning);
+        border-color: var(--ui-warning);
+      }
+      .score.later:hover {
+        background: #fff7e9;
+        box-shadow: 0 4px 13px #ac6b121a;
+      }
+      .assessment-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .assessment-footer .actions {
+        margin: 0;
+      }
+      .assessment-footer button {
+        min-height: 44px;
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+      .keyboard-help {
+        font-size: 0.76rem;
+        color: var(--ui-muted);
+        text-align: left;
+      }
+      #last {
+        margin: 0;
+        font-size: 0.85rem;
+      }
+      .test-level {
+        display: inline-block;
+        margin-top: 5px;
+        padding: 2px 9px;
+        border-radius: 999px;
+        background: var(--ui-primary-tint);
+        color: var(--ui-primary);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+      .score.ok:active {
+        background: var(--ui-success);
+        color: var(--ui-white);
+      }
+      .score.no:active {
+        background: var(--ui-danger);
+        color: var(--ui-white);
+      }
+      .score.later:active {
+        background: var(--ui-warning);
+        color: var(--ui-white);
+      }
+      /* النتائج والسجلات والحقول ذات المعاني المشتركة. */
+      .result {
+        background: var(--ui-surface);
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-12);
+        padding: 14px 16px;
+        line-height: 1.7;
+        margin-top: 16px;
+      }
+      .wrong {
+        background: #fff4f5;
+        border: 1px solid #ebcbd1;
+        color: #8e3645;
+        border-radius: var(--ui-radius-12);
+        padding: 12px 16px;
+        margin-top: 14px;
+      }
+      .history-item {
+        background: var(--ui-surface);
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-20);
+        padding: 18px 20px;
+        margin: 12px 0;
+      }
+      .history-head,
+      .test-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      .history-meta {
+        font-size: 0.85rem;
+        color: var(--ui-muted);
+      }
+      .history-empty {
+        color: var(--ui-muted);
+        background: var(--ui-surface);
+        border: 1px dashed var(--ui-border);
+        border-radius: var(--ui-radius-20);
+        padding: 32px;
+        text-align: center;
+      }
+      .stat {
+        background: var(--ui-primary-tint);
+        color: var(--ui-primary);
+        border-radius: 99px;
+        padding: 4px 12px;
+        font-weight: 700;
+      }
+      #history .test-head,
+      #importReview .test-head,
+      #studentProfile .test-head {
+        margin-bottom: 18px;
+      }
+      #allReport h2 {
+        margin: 5px 0 16px;
+      }
+      .review-list {
+        min-height: 260px;
+        line-height: 1.8;
+        white-space: pre;
+        overflow-x: auto;
+      }
+      .profile-timeline .history-item {
+        border-right: 4px solid var(--ui-primary);
+      }
+      .report-card {
+        background: var(--ui-surface);
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-20);
+        overflow: hidden;
+      }
+      .report-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 24px 26px;
+        border-bottom: 1px solid var(--ui-border);
+        background: var(--ui-white);
+      }
+      .report-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .report-heading img {
+        display: none;
+      }
+      .report-banner h2 {
+        margin: 0;
+        font-size: 1.45rem;
+        color: var(--ui-ink);
+      }
+      .report-banner p {
+        margin: 3px 0 0;
+        color: var(--ui-muted);
+        font-size: 0.88rem;
+      }
+      .report-score {
+        background: var(--ui-primary-tint);
+        border-radius: var(--ui-radius-12);
+        padding: 8px 17px;
+        text-align: center;
+        min-width: 140px;
+        color: var(--ui-primary);
+      }
+      .report-score span {
+        display: block;
+        font-size: 0.76rem;
+      }
+      .report-score b {
+        display: block;
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+      .report-body {
+        padding: 22px 26px;
+      }
+      .report-info,
+      .report-stats,
+      .signatures {
+        display: grid;
+        gap: 12px;
+      }
+      .report-info {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 15px;
+      }
+      .report-info > div,
+      .report-stat {
+        background: var(--ui-white);
+        border: 1px solid var(--ui-border);
+        border-radius: var(--ui-radius-12);
+        padding: 12px 14px;
+      }
+      .report-label {
+        display: block;
+        font-size: 0.78rem;
+        color: var(--ui-muted);
+      }
+      .report-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin: 15px 0;
+      }
+      .report-stat b {
+        display: block;
+        font-size: 1.65rem;
+        line-height: 1.4;
+      }
+      .report-stat.good b {
+        color: var(--ui-success);
+      }
+      .report-stat.bad b {
+        color: var(--ui-danger);
+      }
+      .report-stat.wait b {
+        color: var(--ui-warning);
+      }
+      .report-stat.time b {
+        font-size: 1.16rem;
+        color: var(--ui-primary);
+      }
+      .signatures {
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--ui-border);
+        margin-top: 27px;
+        padding-top: 16px;
+      }
+      .signatures > div {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .signatures small {
+        color: var(--ui-muted);
+      }
+      .report-card > .actions {
+        padding: 0 26px 25px;
+        margin: 0;
+      }
+      .detail-table,
+      .class-table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.85rem;
+        margin-top: 12px;
+      }
+      .detail-table th,
+      .detail-table td,
+      .class-table th,
+      .class-table td {
+        border: 1px solid var(--ui-border);
+        padding: 8px 10px;
+        text-align: right;
+      }
+      .detail-table th,
+      .class-table th {
+        background: var(--ui-surface-alt);
+        color: var(--ui-ink);
+      }
+      .class-table {
+        table-layout: fixed;
+        overflow-wrap: anywhere;
+      }
+      .print-only {
+        display: none;
+      }
+      @media (max-width: 1150px) {
+        .wrap {
+          grid-template-columns: 190px minmax(0, 1fr);
+          gap: 16px;
+          padding: 16px;
+        }
+        .side-nav {
+          top: 16px;
+          padding: 17px 10px;
+        }
+        .setup-layout {
+          grid-template-columns: 1fr;
+        }
+        .keyboard-help {
+          display: none;
+        }
+        .assessment-footer {
+          flex-wrap: wrap;
+        }
+      }
+      @media (max-width: 850px) {
+        .wrap {
+          display: block;
+          padding: 12px;
+        }
+        .side-nav {
+          position: static;
+          min-height: 0;
+          margin-bottom: 16px;
+          padding: 12px;
+          gap: 10px;
+        }
+        .hero {
+          padding: 0 0 8px;
+        }
+        .side-links {
+          flex-direction: row;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+        .nav-caption,
+        .side-note {
+          display: none;
+        }
+        .nav-link {
+          width: auto;
+        }
+        .workspace {
+          width: 100%;
+        }
+        .assessment-footer {
+          align-items: flex-start;
+        }
+        .scores {
+          gap: 8px;
+        }
+        .score {
+          min-height: 75px;
+          font-size: 0.95rem;
+          flex-wrap: wrap;
+        }
+        .reading-stage {
+          min-height: 300px;
+        }
+      }
+      @media (max-width: 600px) {
+        body {
+          font-size: 15px;
+        }
+        .wrap {
+          padding: 8px;
+        }
+        .hero h1 {
+          font-size: 1rem;
+        }
+        .brand-mark {
+          width: 42px;
+          height: 42px;
+          font-size: 1.45rem;
+        }
+        .nav-link {
+          font-size: 0.8rem;
+          min-height: 40px;
+          padding: 7px 9px;
+        }
+        .nav-link span {
+          display: none;
+        }
+        .page-title h2 {
+          font-size: 1.5rem;
+        }
+        .form-panel {
+          padding: 16px;
+        }
+        .grid,
+        .level-choices,
+        .report-info,
+        .signatures {
+          grid-template-columns: 1fr;
+        }
+        .setup-layout {
+          gap: 12px;
+        }
+        .assessment-header h2 {
+          font-size: 1.2rem;
+        }
+        .timer-block {
+          padding: 5px 8px;
+        }
+        .timer {
+          font-size: 1.03rem;
+        }
+        .reading-stage {
+          padding: 15px;
+          min-height: 270px;
+        }
+        .letter {
+          min-height: 185px;
+          font-size: clamp(6rem, 24vw, 9rem);
+        }
+        .letter.word-item {
+          font-size: clamp(3.5rem, 14vw, 5.7rem);
+        }
+        .letter.sentence-item {
+          font-size: clamp(1.7rem, 6.5vw, 2.6rem);
+          min-height: 190px;
+        }
+        .score {
+          min-height: 72px;
+          font-size: 0.78rem;
+          padding: 8px 3px;
+          gap: 2px;
+        }
+        .score-symbol {
+          font-size: 1.2rem;
+        }
+        .score-key {
+          display: none;
+        }
+        .assessment-footer .actions button {
+          flex: 1;
+        }
+        .report-stats {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .report-banner {
+          padding: 16px;
+          align-items: flex-start;
+        }
+        .report-body {
+          padding: 15px;
+        }
+        .report-card > .actions {
+          padding: 0 15px 18px;
+        }
+        .report-score {
+          min-width: 90px;
+          padding: 7px;
+        }
+        .report-score b {
+          font-size: 1.5rem;
+        }
+        .history-head,
+        .test-head {
+          flex-wrap: wrap;
+        }
+      }
+      /* Figma Make: توزيع مساحة المعلم والصف، مع إبقاء Arial وواجهات العمل الفعلية. */
+      :root {
+        --ui-canvas: #f5f1eb;
+        --ui-surface-alt: #fafaf9;
+        --ui-ink: #24243a;
+        --ui-muted: #8b8a98;
+        --ui-primary: #4f46e5;
+        --ui-primary-hover: #4338ca;
+        --ui-primary-tint: #eef2ff;
+        --ui-success: #059669;
+        --ui-warning: #d97706;
+        --ui-danger: #dc3549;
+        --ui-border: #e7e5e4;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+      }
+      .wrap {
+        max-width: none;
+        min-height: 100vh;
+        padding: 0;
+        gap: 0;
+        grid-template-columns: 166px minmax(0, 1fr);
+      }
+      .side-nav {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        min-height: 100vh;
+        border-radius: 0;
+        border: 0;
+        border-left: 1px solid var(--ui-border);
+        padding: 16px 11px;
+        background: #fff;
+        gap: 14px;
+      }
+      .hero {
+        padding: 0 0 16px;
+        border-bottom: 1px solid var(--ui-border);
+      }
+      .brand-lockup {
+        gap: 8px;
+      }
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      }
+      .hero h1 {
+        font-size: 0.92rem;
+      }
+      .hero p {
+        font-size: 0.55rem;
+        white-space: nowrap;
+      }
+      .side-links {
+        gap: 5px;
+      }
+      .nav-caption {
+        display: block;
+        padding: 0 10px 5px;
+        color: #6366f1;
+        font-size: 0.69rem;
+      }
+      .nav-link {
+        min-height: 37px;
+        padding: 8px 9px;
+        gap: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .nav-link .nav-icon {
+        display: inline-flex;
+        width: 16px;
+        justify-content: center;
+        flex: none;
+        font-size: 0.9rem;
+        color: #a8a3bb;
+      }
+      .nav-link.is-active {
+        background: var(--ui-primary-tint);
+        color: #4338ca;
+        border-color: transparent;
+      }
+      .nav-link.is-active .nav-icon {
+        color: #4f46e5;
+      }
+      .side-note {
+        font-size: 0.64rem;
+        line-height: 1.6;
+        padding: 10px 6px;
+      }
+      .workspace {
+        min-height: 100vh;
+      }
+      .card:not(.report-card) {
+        padding: 26px;
+        max-width: 1350px;
+        margin: auto;
+      }
+      .page-title {
+        margin: 0 0 20px;
+      }
+      .page-title h2 {
+        font-size: 2rem;
+        margin: 2px 0 3px;
+      }
+      .page-title p {
+        font-size: 0.82rem;
+      }
+      .eyebrow {
+        color: #6366f1;
+        font-size: 0.72rem;
+      }
+      #setup.card {
+        max-width: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: 240px minmax(0, 1fr);
+        gap: 0;
+        align-items: start;
+        min-height: 100vh;
+      }
+      #setup .page-title {
+        grid-column: 2;
+        padding: 24px 26px 0;
+        margin: 0;
+      }
+      .setup-layout {
+        display: contents;
+      }
+      .setup-flow {
+        grid-column: 2;
+        display: grid;
+        gap: 16px;
+        padding: 14px 26px 28px;
+        align-content: start;
+        min-width: 0;
+      }
+      .setup-aside {
+        grid-column: 1;
+        grid-row: 1 / span 4;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        min-width: 0;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        background: #fff;
+        border-left: 1px solid var(--ui-border);
+      }
+      #draftBanner {
+        grid-column: 2;
+        margin: 14px 26px 0;
+      }
+      .setup-aside .form-panel {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 22px 16px;
+        background: #fff;
+      }
+      .setup-aside .panel-heading {
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f1f0ee;
+        margin: -2px -16px 18px;
+        padding-right: 16px;
+        padding-left: 16px;
+      }
+      .setup-aside .panel-heading h3 {
+        font-size: 0.88rem;
+      }
+      .setup-aside .panel-heading p {
+        font-size: 0.68rem;
+      }
+      .form-panel {
+        border-color: #eeece8;
+        border-radius: 15px;
+        box-shadow: 0 2px 3px #24243a0b;
+        padding: 21px;
+      }
+      .form-panel > * + * {
+        margin-top: 14px;
+      }
+      .form-panel > div + div {
+        margin-top: 14px;
+      }
+      .panel-heading {
+        margin-bottom: 17px;
+        gap: 10px;
+      }
+      .panel-heading h3 {
+        font-size: 1rem;
+      }
+      .panel-heading p {
+        font-size: 0.72rem;
+      }
+      .step {
+        border-radius: 50%;
+        width: 28px;
+        min-width: 28px;
+        height: 28px;
+        color: #fff;
+        background: #4f46e5;
+        font-size: 0.82rem;
+      }
+      label {
+        font-size: 0.72rem;
+        margin-bottom: 5px;
+      }
+      input,
+      select,
+      textarea {
+        min-height: 39px;
+        padding: 8px 11px;
+        background: #fafaf9;
+        border-color: #e7e5e4;
+        border-radius: 10px;
+        font-size: 0.83rem;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        background: #fff;
+        border-color: #818cf8;
+        outline: 2px solid #e0e7ff;
+        outline-offset: 0;
+      }
+      button {
+        border-radius: 11px;
+      }
+      button:focus-visible {
+        outline-color: #a5b4fc;
+      }
+      .grid {
+        gap: 13px;
+      }
+      .level-choices {
+        gap: 9px;
+      }
+      .level-choice {
+        min-height: 57px;
+        padding: 9px 13px;
+        background: #fafaf9;
+        border-radius: 10px;
+        gap: 0;
+      }
+      .level-choice b {
+        font-size: 0.84rem;
+      }
+      .level-choice small {
+        font-size: 0.68rem;
+        color: #aaa6b1;
+      }
+      .level-choice[aria-pressed='true'] {
+        background: #4f46e5;
+        border-color: #4f46e5;
+        color: #fff;
+        padding: 8px 12px;
+        box-shadow: 0 4px 9px #4f46e52a;
+      }
+      .level-choice[aria-pressed='true'] small {
+        color: #d8d7ff;
+      }
+      .level-choice:hover:not([aria-pressed='true']) {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+      }
+      .setup-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      #start {
+        width: 100%;
+        min-height: 52px;
+        font-size: 1.08rem;
+        background: linear-gradient(115deg, #4f46e5, #7c3aed);
+        border: 0;
+        box-shadow: 0 6px 17px #4f46e53b;
+      }
+      #start:hover {
+        background: linear-gradient(115deg, #4338ca, #6d28d9);
+      }
+      .start-summary {
+        text-align: center;
+        color: var(--ui-muted);
+        font-size: 0.72rem;
+        margin: 0;
+      }
+      .setup-actions #showHistory {
+        align-self: center;
+        min-height: 33px;
+        padding: 5px 11px;
+        border: 0;
+        background: transparent;
+        color: #6366f1;
+        font-size: 0.75rem;
+      }
+      #importRoster {
+        border: 2px dashed #c7d2fe;
+        color: #4f46e5;
+        background: #fff;
+        font-size: 0.74rem;
+        min-height: 40px;
+        padding: 7px;
+        width: 100%;
+      }
+      #importRoster:hover {
+        background: #eef2ff;
+      }
+      .setup-aside #rosterName,
+      .setup-aside #savedRosters {
+        font-size: 0.75rem;
+      }
+      .setup-aside .file-message {
+        font-size: 0.71rem;
+        background: #fafaf9;
+        border: 1px solid var(--ui-border);
+        line-height: 1.65;
+        padding: 11px;
+        color: #706d7a;
+      }
+      .setup-aside #clearRoster {
+        font-size: 0.71rem;
+        min-height: 36px;
+        padding: 7px;
+        width: 100%;
+      }
+      .roster-school-link {
+        margin-top: auto !important;
+        border: 0;
+        border-top: 1px solid var(--ui-border) !important;
+        border-radius: 0;
+        background: #fff;
+        text-align: right;
+        display: flex;
+        justify-content: space-between;
+        color: #37334a;
+        font-size: 0.72rem;
+        padding: 13px 17px;
+        min-height: 44px;
+      }
+      .roster-school-link:hover {
+        background: #eef2ff;
+      }
+      #test,
+      #report,
+      #history,
+      #schoolPage,
+      #allReport,
+      #importReview,
+      #studentProfile {
+        max-width: 1250px;
+      }
+      .reading-stage {
+        box-shadow: 0 3px 12px #24243a0a;
+      }
+      .score.ok:hover,
+      .score.no:hover,
+      .score.later:hover {
+        transform: translateY(-1px);
+      }
+      .report-card {
+        margin: 26px auto;
+        border-radius: 15px;
+      }
+      .report-banner {
+        border-bottom: 2px solid #4f46e5;
+      }
+      .report-banner h2 {
+        color: #4338ca;
+      }
+      .report-score {
+        background: #eef2ff;
+        color: #4338ca;
+      }
+      .report-card > .actions {
+        padding-bottom: 24px;
+      }
+      #history .page-title,
+      #schoolPage .page-title {
+        margin-bottom: 20px;
+      }
+      .history-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 17px;
+      }
+      .history-stat {
+        background: #fff;
+        border: 1px solid #eeece8;
+        border-radius: 15px;
+        padding: 16px 18px;
+        box-shadow: 0 2px 3px #24243a0b;
+      }
+      .history-stat span {
+        display: block;
+        color: #9995a4;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .history-stat b {
+        display: block;
+        color: #4338ca;
+        font-size: 1.9rem;
+        line-height: 1.35;
+      }
+      .history-filters {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid #eeece8;
+        border-radius: 15px;
+        padding: 12px 15px;
+        margin-bottom: 16px;
+      }
+      .history-filters input {
+        flex: 1;
+      }
+      .history-filters select {
+        width: 190px;
+      }
+      .history-filters span {
+        font-size: 0.72rem;
+        color: #9995a4;
+        white-space: nowrap;
+      }
+      .history-filters button {
+        font-size: 0.74rem;
+        min-height: 39px;
+      }
+      .history-table {
+        background: #fff;
+        border: 1px solid #eeece8;
+        border-radius: 15px;
+        overflow-x: auto;
+      }
+      .history-table table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 690px;
+        font-size: 0.83rem;
+      }
+      .history-table th {
+        background: #fafaf9;
+        color: #8b8a98;
+        font-size: 0.72rem;
+      }
+      .history-table td,
+      .history-table th {
+        padding: 12px 13px;
+        text-align: right;
+        border-bottom: 1px solid #f2f0ed;
+      }
+      .history-table tr:last-child td {
+        border-bottom: 0;
+      }
+      .history-table tbody tr:hover {
+        background: #f7f8ff;
+      }
+      .history-name {
+        font-weight: 700;
+        color: #303046;
+      }
+      .history-meta {
+        font-size: 0.7rem;
+        color: #9895a0;
+      }
+      .history-percent {
+        font-weight: 800;
+        color: #4338ca;
+      }
+      .history-actions {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .history-actions button {
+        min-height: 29px;
+        padding: 3px 7px;
+        font-size: 0.68rem;
+      }
+      .history-table .wrong {
+        margin: 0;
+        padding: 3px 7px;
+        font-size: 0.7rem;
+        display: inline-block;
+      }
+      .history-empty {
+        margin: 0;
+        border: 0;
+        background: #fff;
+      }
+      #schoolPage .form-panel {
+        margin-bottom: 16px;
+      }
+      .school-preview-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 2px solid #4f46e5;
+        padding-bottom: 14px;
+      }
+      .school-preview-head strong {
+        font-size: 1.3rem;
+        color: #4338ca;
+      }
+      .school-preview-head p {
+        font-size: 0.78rem;
+        color: #6b7280;
+        margin: 0;
+      }
+      .school-preview-head > div:last-child {
+        text-align: left;
+        font-size: 0.8rem;
+      }
+      .school-preview-head span {
+        display: block;
+        color: #6b7280;
+      }
+      .school-form .settings-fields {
+        max-width: 720px;
+        margin-bottom: 18px;
+      }
+      .school-form .settings-fields > div {
+        margin-bottom: 12px;
+      }
+      .school-form .settings-fields .grid > div {
+        margin: 0;
+      }
+      .school-form .step {
+        border-radius: 9px;
+      }
+      @media (max-width: 1100px) {
+        .wrap {
+          grid-template-columns: 150px minmax(0, 1fr);
+        }
+        #setup.card {
+          grid-template-columns: 220px minmax(0, 1fr);
+        }
+        .side-nav {
+          padding: 12px 7px;
+        }
+        .hero p {
+          white-space: normal;
+        }
+        .setup-flow {
+          padding: 13px 18px 24px;
+        }
+        #setup .page-title {
+          padding: 20px 18px 0;
+        }
+        .level-choice small {
+          line-height: 1.3;
+        }
+        .history-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 850px) {
+        .wrap {
+          display: block;
+        }
+        .side-nav {
+          position: static;
+          height: auto;
+          min-height: 0;
+          border-bottom: 1px solid var(--ui-border);
+          border-left: 0;
+          padding: 10px 12px;
+        }
+        .hero {
+          border: 0;
+          padding: 0;
+        }
+        .side-links {
+          display: flex;
+          flex-direction: row;
+        }
+        .nav-caption,
+        .side-note {
+          display: none;
+        }
+        .nav-link {
+          width: auto;
+        }
+        .nav-link span {
+          display: inline;
+        }
+        .workspace {
+          min-height: 0;
+        }
+        #setup.card {
+          grid-template-columns: 1fr;
+        }
+        .setup-aside {
+          grid-column: 1;
+          grid-row: auto;
+          position: static;
+          height: auto;
+          border: 0;
+          border-bottom: 1px solid var(--ui-border);
+          order: 0;
+        }
+        #setup .page-title {
+          grid-column: 1;
+          grid-row: 1;
+        }
+        .setup-aside {
+          grid-row: 2;
+          display: block;
+        }
+        .setup-aside .form-panel {
+          padding: 12px 18px;
+        }
+        .setup-aside .form-panel > div {
+          margin-top: 8px;
+        }
+        .setup-aside .panel-heading {
+          margin: 0 0 8px;
+        }
+        .roster-school-link {
+          width: 100%;
+        }
+        .setup-flow {
+          grid-column: 1;
+          grid-row: 3;
+        }
+        #draftBanner {
+          grid-column: 1;
+          grid-row: 4;
+        }
+        #history.card,
+        #schoolPage.card {
+          padding: 18px;
+        }
+      }
+      @media (max-width: 600px) {
+        .side-links {
+          flex-wrap: wrap;
+        }
+        .nav-link {
+          font-size: 0.7rem;
+        }
+        .nav-link span {
+          display: inline;
+        }
+        .page-title h2 {
+          font-size: 1.55rem;
+        }
+        .setup-flow {
+          padding: 12px;
+        }
+        .form-panel {
+          padding: 16px;
+        }
+        .grid,
+        .level-choices {
+          grid-template-columns: 1fr;
+        }
+        .level-choice {
+          min-height: 50px;
+        }
+        .history-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .history-filters {
+          flex-wrap: wrap;
+        }
+        .history-filters input {
+          flex-basis: 100%;
+        }
+        .history-filters select {
+          flex: 1;
+        }
+        .school-preview-head {
+          flex-direction: column;
+        }
+        .school-preview-head > div:last-child {
+          text-align: right;
+        }
+      }
+      .report-school {
+        margin-bottom: 13px;
+        border-bottom: 2px solid #4f46e5;
+        padding: 0 0 10px;
+        color: #5145ba;
+        font-size: 0.88rem;
+      }
+
+      /* 1.3.1: readable Arabic typography and spacious controls, separate from paper styles. */
+      @media screen {
+        :root {
+          font-size: 19px;
+          --ui-muted: #686575;
+        }
+        body {
+          font-size: 19px;
+        }
+        .wrap {
+          grid-template-columns: 208px minmax(0, 1fr);
+        }
+        .side-nav {
+          padding: 22px 14px;
+          overflow-y: auto;
+        }
+        .brand-mark {
+          width: 46px;
+          height: 46px;
+          font-size: 1.5rem;
+        }
+        .hero h1 {
+          font-size: 1.05rem;
+        }
+        .hero p {
+          font-size: 0.8rem;
+          white-space: normal;
+        }
+        .nav-link {
+          font-size: 0.95rem;
+          min-height: 50px;
+          white-space: normal;
+        }
+        .nav-caption,
+        .side-note {
+          font-size: 0.82rem;
+        }
+        #setup.card {
+          grid-template-columns: 288px minmax(0, 1fr);
+        }
+        .setup-aside .form-panel {
+          padding: 24px 20px;
+        }
+        .setup-aside .panel-heading {
+          margin-inline: -20px;
+          padding-inline: 20px;
+        }
+        .setup-aside .panel-heading h3,
+        .panel-heading h3 {
+          font-size: 1.1rem;
+        }
+        .setup-aside .panel-heading p,
+        .panel-heading p,
+        .page-title p {
+          font-size: 0.9rem;
+        }
+        label {
+          font-size: 0.95rem;
+          margin-bottom: 8px;
+        }
+        input,
+        select,
+        textarea {
+          font-size: 1rem;
+          min-height: 50px;
+          padding: 11px 14px;
+        }
+        button {
+          font-size: 1rem;
+          min-height: 50px;
+        }
+        .level-choice {
+          min-height: 86px;
+          padding: 14px 16px;
+          gap: 6px;
+        }
+        .level-choice[aria-pressed='true'] {
+          padding: 13px 15px;
+        }
+        .level-choice b {
+          font-size: 1.05rem;
+        }
+        .level-choice small {
+          font-size: 0.88rem;
+          line-height: 1.6;
+          color: #706d7a;
+        }
+        .level-choice[aria-pressed='true'] small {
+          color: #fff;
+        }
+        #start {
+          min-height: 62px;
+          font-size: 1.2rem;
+        }
+        .start-summary,
+        .setup-actions #showHistory {
+          font-size: 0.9rem;
+        }
+        .setup-actions #showHistory {
+          min-height: 46px;
+        }
+        #importRoster,
+        .setup-aside #clearRoster,
+        .roster-school-link {
+          font-size: 0.9rem;
+          min-height: 50px;
+        }
+        .setup-aside #rosterName,
+        .setup-aside #savedRosters {
+          font-size: 0.95rem;
+        }
+        .setup-aside .file-message,
+        .file-message {
+          font-size: 0.9rem;
+          color: var(--ui-ink);
+        }
+        .history-stat span,
+        .history-filters span,
+        .history-meta {
+          font-size: 0.88rem;
+          color: var(--ui-muted);
+        }
+        .history-table table {
+          font-size: 0.95rem;
+        }
+        .history-table th {
+          font-size: 0.9rem;
+          color: var(--ui-muted);
+        }
+        .history-actions button {
+          font-size: 0.88rem;
+          min-height: 44px;
+          padding: 7px 12px;
+        }
+        .history-table .wrong {
+          font-size: 0.9rem;
+          line-height: 1.6;
+        }
+        .history-filters button {
+          font-size: 0.95rem;
+          min-height: 50px;
+        }
+        .history-filters {
+          flex-wrap: wrap;
+        }
+        .history-filters input {
+          min-width: 180px;
+        }
+        .history-filters select {
+          width: 220px;
+        }
+        .detail-table,
+        .class-table {
+          font-size: 0.95rem;
+        }
+        .report-label,
+        .report-score span,
+        .report-school {
+          font-size: 0.9rem;
+        }
+        .school-preview-head p,
+        .school-preview-head > div:last-child {
+          font-size: 0.95rem;
+        }
+        .score {
+          font-size: 1.1rem;
+          min-height: 86px;
+        }
+        .score-key,
+        .timer-block span,
+        .keyboard-help {
+          font-size: 0.85rem;
+        }
+        .assessment-footer button {
+          font-size: 0.95rem;
+          min-height: 50px;
+        }
+        .hint,
+        #last,
+        .test-level {
+          font-size: 0.95rem;
+        }
+        @media (max-width: 1200px) {
+          .wrap {
+            grid-template-columns: 190px minmax(0, 1fr);
+          }
+          #setup.card {
+            grid-template-columns: 1fr;
+          }
+          #setup .page-title {
+            grid-column: 1;
+            grid-row: 1;
+          }
+          .setup-flow {
+            grid-column: 1;
+            grid-row: 2;
+          }
+          .setup-aside {
+            grid-column: 1;
+            grid-row: 3;
+            position: static;
+            height: auto;
+            border-top: 1px solid var(--ui-border);
+          }
+          #draftBanner {
+            grid-column: 1;
+            grid-row: 4;
+          }
+          .roster-school-link {
+            width: 100%;
+          }
+          .assessment-footer {
+            flex-wrap: wrap;
+          }
+          .history-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+        @media (max-width: 850px) {
+          .wrap {
+            display: block;
+          }
+          .side-nav {
+            height: auto;
+            min-height: 0;
+            padding: 14px;
+            position: static;
+            gap: 12px;
+          }
+          .side-links {
+            flex-wrap: wrap;
+          }
+          .nav-link {
+            white-space: normal;
+          }
+          .nav-caption,
+          .side-note {
+            display: none;
+          }
+          .setup-aside .form-panel {
+            padding: 20px;
+          }
+          .setup-aside .panel-heading {
+            margin-inline: 0;
+            padding-inline: 0;
+          }
+          .assessment-header {
+            flex-wrap: wrap;
+          }
+          .assessment-footer .actions {
+            flex-wrap: wrap;
+          }
+        }
+        @media (max-width: 700px) {
+          .grid,
+          .level-choices {
+            grid-template-columns: 1fr;
+          }
+          .score {
+            font-size: 1rem;
+            flex-wrap: wrap;
+          }
+          .score-key {
+            display: none;
+          }
+          .history-filters input {
+            flex-basis: 100%;
+          }
+          .history-filters select {
+            flex: 1;
+            min-width: 150px;
+          }
+        }
+      }
+
+      @media screen {
+        .history-path {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 18px;
+        }
+        .history-path button {
+          font-size: 0.95rem;
+          min-height: 46px;
+          padding: 8px 13px;
+        }
+        .history-path span {
+          font-weight: 700;
+        }
+        .history-folders {
+          display: grid;
+          grid-template-columns: repeat(
+            auto-fit,
+            minmax(min(100%, 270px), 1fr)
+          );
+          gap: 16px;
+        }        .history-folder {
+          min-height: 164px;
+          background: #fff;
+          color: var(--ui-ink);
+          border: 1px solid var(--ui-border);
+          padding: 22px;
+          text-align: right;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          align-items: flex-start;
+          white-space: normal;
+          overflow-wrap: anywhere;
+        }
+        .history-folder:hover {
+          background: var(--ui-primary-tint);
+          border-color: var(--ui-primary);
+          color: var(--ui-ink);
+        }
+        .history-folder-icon {
+          font-size: 1.7rem;
+          color: var(--ui-primary);
+          line-height: 1;
+        }
+        .history-folder strong {
+          font-size: 1.12rem;
+          line-height: 1.5;
+        }
+        .history-folder small {
+          font-size: 0.88rem;
+          font-weight: 400;
+          color: var(--ui-muted);
+        }
+        .class-name-hint {
+          display: block;
+          color: var(--ui-muted);
+          font-size: 0.85rem;
+          margin-top: 7px;
+          line-height: 1.6;
+        }
+        .class-name-hint.invalid {
+          color: var(--ui-danger);
+        }
+        #reviewClassName {
+          margin-bottom: 5px;
+        }
+        #reviewClassHint {
+          margin-bottom: 15px;
+        }
+        #historyReportActions {
+          margin-top: 18px;
+        }
+      }
+
+      @media print {
+        @page {
+          size: A4;
+          margin: 12mm;
+        }
+        html,
+        body {
+          background: #fff !important;
+          color: #111 !important;
+          font:
+            13px/1.4 Arial,
+            sans-serif !important;
+          direction: rtl;
+        }
+        .side-nav,
+        .no-print,
+        #setup,
+        #test,
+        #history,
+        #schoolPage,
+        #studentProfile,
+        #importReview {
+          display: none !important;
+        }
+        .wrap,
+        .workspace {
+          display: block !important;
+          max-width: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        .card,
+        .report-card {
+          background: #fff !important;
+          border: 0 !important;
+          border-radius: 0 !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        .report-banner {
+          background: #fff !important;
+          padding: 4px 0 8px !important;
+          border-bottom: 1px solid #555 !important;
+          color: #111 !important;
+        }
+        .report-banner h2,
+        .report-banner p,
+        .report-score,
+        .report-score b {
+          color: #111 !important;
+        }
+        .report-score {
+          background: #fff !important;
+          border: 1px solid #999 !important;
+        }
+        .report-body {
+          padding: 10px 0 !important;
+        }
+        .report-info > div,
+        .report-stat,
+        .result,
+        .wrong,
+        .signatures {
+          background: #fff !important;
+          color: #111 !important;
+          border-color: #bbb !important;
+          box-shadow: none !important;
+        }
+        .report-stat b,
+        .wrong strong,
+        .report-school {
+          color: #111 !important;
+        }
+        .report-stats {
+          gap: 6px;
+          margin: 8px 0;
+        }
+        .report-stat {
+          padding: 6px;
+        }
+        .report-info {
+          gap: 6px;
+          margin-bottom: 8px;
+        }
+        .detail-table,
+        .class-table {
+          font-size: 11px;
+        }
+        .detail-table th,
+        .detail-table td,
+        .class-table th,
+        .class-table td {
+          padding: 5px;
+          border-color: #999 !important;
+          background: #fff !important;
+          color: #111 !important;
+        }
+        table {
+          break-inside: auto;
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr,
+        .report-stat,
+        .report-info > div,
+        .signatures,
+        .wrong {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+        .print-only {
+          display: block;
+        }
+      }
+
+      .trial-notice {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        padding: 16px 24px;
+        background: #ede9fa;
+        color: #25243a;
+        border-bottom: 1px solid #ded8cb;
+        font:
+          16px/1.6 Arial,
+          sans-serif;
+      }
+      .trial-notice span {
+        flex: 1;
+        min-width: 230px;
+      }
+      .trial-report-mark {
+        font: 700 44px Arial;
+        color: #5746ad;
+      }
+      .trial-notice button {
+        width: auto;
+        white-space: nowrap;
+      }
+      input[readonly],
+      textarea[readonly] {
+        background: #f1ede5;
+      }
+      @media (max-width: 600px) {
+        .trial-notice {
+          padding: 12px;
+          font-size: 14px;
+        }
+        .trial-notice span {
+          min-width: 0;
+          flex-basis: 100%;
+        }
+        .print-toolbar {
+          flex-wrap: wrap;
+        }
+      }
+      @media print {
+        .trial-notice {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="trial-notice no-print" aria-label="حفظ البيانات">
+      <strong>حفظ بيانات تبيان</strong>
+      <span>تُحفظ الأسماء والنتائج على هذا المتصفح. اربط OneDrive لحفظ نسخة تلقائية واستعادتها على جهاز آخر.</span>
+      <button id="cloudOpen" class="secondary" type="button">OneDrive والنسخ الاحتياطي</button>
+      <small id="cloudBadge" role="status">OneDrive غير مربوط</small>
+      <button id="resetLocal" class="secondary" type="button">مسح البيانات المحلية</button>
+    </section>
+    <main class="wrap">
+      <aside class="side-nav no-print" aria-label="تنقل المعلم">
+        <section class="hero">
+          <div class="brand-lockup">
+            <span class="brand-mark" aria-hidden="true"><img src="./resources/tibyan-logo.png" alt="" /></span>
+            <div>
+              <h1>تِبْيان <small lang="en" dir="ltr">Tibyan</small></h1>
+              <p>الاختبار التشخيصي الشفوي</p>
+            </div>
+          </div>
+        </section>
+        <nav class="side-links" aria-label="التنقل">
+          <span class="nav-caption">مساحة المعلم</span>
+          <button id="homeButton" class="nav-link hidden" type="button">
+            ⌂ <span>الرئيسية</span>
+          </button>
+          <button id="navRoster" class="nav-link" type="button">
+            <span class="nav-icon" aria-hidden="true">▤</span
+            ><span>الرئيسية</span>
+          </button>
+          <button id="navKashf" class="nav-link" type="button"><span>الكشوف</span></button>
+          <button id="navHistory" class="nav-link" type="button">
+            <span class="nav-icon" aria-hidden="true">◷</span
+            ><span>سجل النتائج</span>
+          </button>
+          <button id="navSettings" class="nav-link" type="button">
+            <span class="nav-icon" aria-hidden="true">⚙</span
+            ><span>بيانات المدرسة</span>
+          </button>
+        </nav>
+        <div class="side-note">
+          تقييم شفوي بقرار المعلم<br />تُحفظ النتائج على هذا الجهاز
+        </div>
+      </aside>
+      <div class="workspace">
+        <section id="classHome" class="tibyan-home no-print">
+          <div class="home-form">
+            <img class="tibyan-logo" src="./resources/tibyan-logo.png" alt="شعار تبيان" />
+            <span class="home-kicker">لقياس مدى إتقان مهارات لغتي الجميلة</span>
+            <h2>اختر الصف</h2>
+            <p class="home-intro">خطوة بسيطة، وبداية جديدة لكل طالب.</p>
+            <div id="homeClassField"></div>
+            <p id="homeClassInfo"></p>
+            <button id="toStudent" type="button">التالي: اختيار الطالب</button>
+            <p id="homeEmpty" class="file-message hidden">لا يوجد صف محفوظ بعد. أضف كشفك من تبويب الكشوف للبدء.</p>
+            <button id="homeManage" type="button">إدارة الكشوف وإضافة صف</button>
+          </div>
+          <div class="home-art" role="img" aria-label="مشهد تعليمي لطالب وكتاب وزخارف عربية">
+            <div class="home-art-copy"><strong>لغة أعمق، لجيل أكثر إتقانًا.</strong><span>تبيان — مساحة القراءة والتقييم</span></div>
+          </div>
+        </section>
+        <section id="rosterPage" class="tibyan-stage hidden no-print">
+          <header class="page-title"><span class="eyebrow">تبيان / إدارة الصفوف</span><h2>الكشوف</h2><p>ارفع كشف Excel أو Word، وراجع الأسماء قبل الحفظ.</p></header>
+          <div class="tibyan-roster-tools">
+            <div id="rosterToolbar"></div>
+            <label for="manageClassPicker">الصف الذي تريد إدارته</label>
+            <select id="manageClassPicker"></select>
+            <div id="rosterControls"></div>
+          </div>
+          <h3>الصفوف المحفوظة</h3>
+          <div id="rosterList"></div>
+        </section>
+        <section id="setup" class="card tibyan-stage hidden">
+          <header class="page-title">
+            <span class="eyebrow">تبيان / الخطوة الثانية</span>
+            <h2 id="studentStepTitle">اختيار الطالب</h2>
+            <p>
+              اختر الطالب والمستوى، ثم ابدأ الاختبار.
+            </p>
+          </header>
+          <div id="draftBanner" class="file-message hidden">
+            <span>يوجد اختبار لم يكتمل محفوظ على هذا الجهاز.</span>
+            <button id="resumeDraft" type="button">استئناف الاختبار</button
+            ><button id="discardDraft" class="secondary" type="button">
+              حذف المسودة
+            </button>
+          </div>
+          <div class="setup-layout">
+            <div class="setup-flow">
+              <section class="form-panel" aria-labelledby="studentPanelTitle">
+                <div class="panel-heading">
+                  <span class="step">١</span>
+                  <div>
+                    <h3 id="studentPanelTitle">اختيار الطالب</h3>
+                    <p>
+                      اختر الطالب الذي تريد تقييمه من الصف المحدد.
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <label for="savedRosters">الصف النشط</label
+                  ><select id="savedRosters">
+                    <option value="">لا يوجد صف محفوظ</option>
+                  </select>
+                </div>
+                <p id="selectedClassLabel"></p>
+                <div id="rosterPickerWrap" class="hidden">
+                  <label for="rosterStudent">طالب من الصف</label
+                  ><select id="rosterStudent"></select>
+                </div>
+                <div id="emptyRosterNotice" class="file-message">لا يوجد كشف محفوظ بعد. أضف صفك الأول للبدء.</div>
+                <button id="uploadRoster" type="button" aria-describedby="uploadRosterHint">رفع كشف Excel أو Word</button>
+                <p id="uploadRosterHint" class="file-message">اختر ملف Excel بصيغة .xlsx أو Word بصيغة .docx، ثم راجع الأسماء واعتمد الصف. تدعم الملفات النصية وCSV أيضًا.</p>
+                <button id="newRoster" class="secondary" type="button">إضافة كشف جديد</button>
+                <div id="rosterMessage" class="file-message" role="status" aria-live="polite"></div>
+                <button id="cancelRosterImport" class="secondary no-print hidden" type="button">إلغاء الاستيراد</button>
+                <details class="student-details">
+                  <summary>بيانات الطالب وولي الأمر</summary>
+                <div class="grid">
+                  <div>
+                    <label for="student">اسم الطالب</label
+                    ><input id="student" placeholder="اكتب اسم الطالب" />
+                  </div>
+                  <div>
+                    <label for="guardian">اسم ولي الأمر</label
+                    ><input
+                      id="guardian"
+                      placeholder="اسم ولي أمر الطالب (اختياري)"
+                    />
+                  </div>
+                </div>
+                </details>
+              </section>
+              <section class="form-panel" aria-labelledby="levelPanelTitle">
+                <div class="panel-heading">
+                  <span class="step">٢</span>
+                  <div>
+                    <h3 id="levelPanelTitle">اختيار المستوى</h3>
+                    <p>يمكن إعادة المستوى لاحقًا ومقارنة المحاولات.</p>
+                  </div>
+                </div>
+                <label class="sr-only" for="level">المستوى</label
+                ><select id="level" class="sr-only">
+                  <option value="one">
+                    المستوى الأول — 28 حرفًا منفردًا بلا حركات
+                  </option>
+                  <option value="two">
+                    المستوى الثاني — 28 حرفًا في مواضع عشوائية
+                  </option>
+                  <option value="three">
+                    المستوى الثالث — عشوائي موسّع (56 بندًا)
+                  </option>
+                  <option value="fatha">
+                    كلمات من نصوص القراءة — بالفتحة فقط
+                  </option>
+                  <option value="vocalized">
+                    كلمات من نصوص القراءة — بالحركات والتنوين
+                  </option>
+                  <option value="four">
+                    المستوى الرابع — 30 كلمة متنوعة بالحركات والتنوين والمدود
+                  </option>
+                  <option value="five">
+                    المستوى الخامس — جمل قصيرة مشكولة (22 جملة)
+                  </option>
+                </select>
+                <div
+                  class="level-choices"
+                  role="group"
+                  aria-label="اختيار مستوى الاختبار"
+                >
+                  <button
+                    type="button"
+                    class="level-choice"
+                    data-select-level="one"
+                  >
+                    <b>الحروف</b><small>منفردة بلا حركات · 28 بندًا</small>
+                  </button>
+                  <button
+                    type="button"
+                    class="level-choice"
+                    data-select-level="two"
+                  >
+                    <b>مواضع الحروف</b><small>أول ووسط وآخر الكلمة</small>
+                  </button>
+                  <button
+                    type="button"
+                    class="level-choice"
+                    data-select-level="three"
+                  >
+                    <b>عشوائي موسّع</b><small>56 بندًا من الحروف</small>
+                  </button>
+                  <button
+                    type="button"
+                    class="level-choice"
+                    data-select-level="fatha"
+                  >
+                    <b>كلمات الفتحة</b><small>من نصوص القراءة · 12 كلمة</small>
+                  </button>
+                  <button
+                    type="button"
+                    class="level-choice"
+                    data-select-level="vocalized"
+                  >
+                    <b>كلمات بالحركات</b><small>حركات وتنوين · 12 كلمة</small>
+                  </button>
+                  <button
+                    type="button"
+                    class="level-choice"
+                    data-select-level="four"
+                  >
+                    <b>كلمات متنوعة</b><small>30 كلمة أو اختبار قصير</small>
+                  </button>
+                  <button
+                    type="button"
+                    class="level-choice"
+                    data-select-level="five"
+                  >
+                    <b>جمل قصيرة</b><small>22 جملة مشكولة</small>
+                  </button>
+                </div>
+                <div id="wordSessionWrap" class="hidden">
+                  <label for="wordSession">عدد كلمات المستوى الرابع</label
+                  ><select id="wordSession">
+                    <option value="full">اختبار كامل — 30 كلمة</option>
+                    <option value="short">اختبار قصير — 15 كلمة متوازنة</option>
+                  </select>
+                </div>
+              </section>
+              <div class="actions setup-actions no-print">
+                <button id="start">ابدأ الاختبار الشفوي</button>
+                <p
+                  id="startSummary"
+                  class="start-summary"
+                  aria-live="polite"
+                ></p>
+                <button class="secondary" id="showHistory">
+                  عرض سجل النتائج
+                </button>
+              </div>
+            </div>
+            <details class="setup-aside">
+              <summary>إدارة الصف واستيراد كشف</summary>
+              <button id="newRosterAside" class="secondary" type="button">كتابة كشف جديد</button>
+              <section class="form-panel">
+                <div class="panel-heading">
+                  <span class="step">▤</span>
+                  <div>
+                    <h3>صف الطلاب</h3>
+                    <p>راجع بيانات الفصل قبل البدء.</p>
+                  </div>
+                </div>
+                <div>
+                  <label for="rosterName">اسم الصف</label
+                  ><input
+                    id="rosterName"
+                    placeholder="مثال: الصف الثاني الابتدائي — الفصل أ"
+                    aria-describedby="classNameHint"
+                  /><small
+                    id="classNameHint"
+                    class="class-name-hint"
+                    role="status"
+                  ></small>
+                </div>
+
+                <div>
+                  <label>استيراد صف أسماء الطلاب</label
+                  ><input
+                    id="rosterFile"
+                    class="hidden"
+                    type="file"
+                    accept=".docx,.xlsx,.txt,.csv,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,text/csv"
+                  /><button
+                    class="secondary no-print"
+                    id="importRoster"
+                    type="button"
+                  >
+                    استيراد DOCX أو XLSX أو TXT أو CSV</button
+>
+
+                </div>
+                <button class="secondary danger-text no-print" id="clearRoster">
+                  حذف الصف النشط
+                </button>
+              </section>
+              <button
+                class="secondary roster-school-link"
+                id="rosterSchoolLink"
+                type="button"
+              >
+                بيانات المدرسة والتوقيعات <span aria-hidden="true">←</span>
+              </button>
+            </details>
+          </div>
+          <button id="studentBack" class="secondary no-print" type="button">العودة لاختيار الصف</button>
+        </section>
+
+        <section id="test" class="card hidden">
+          <header class="assessment-header">
+            <div>
+              <span class="eyebrow">الاختبار التشخيصي الشفوي</span>
+              <h2 id="counter">البند 1</h2>
+              <div class="student" id="studentName"></div>
+              <div id="testLevel" class="test-level"></div>
+            </div>
+            <div class="timer-block">
+              <span>مدة التقييم</span>
+              <div id="timer" class="timer">00:00</div>
+            </div>
+          </header>
+          <div class="bar" role="progressbar" aria-label="تقدم التقييم">
+            <i id="progress"></i>
+          </div>
+          <div class="reading-stage">
+            <div id="sentenceSource" class="sentence-source hidden"></div>
+            <div class="letter" id="letter">أَ</div>
+            <div class="hint">اطلب من الطالب قراءة ما يظهر، ثم سجّل حكمك.</div>
+          </div>
+          <div class="scores no-print" role="group" aria-label="تقييم المعلم">
+            <button class="score ok" data-score="✓" title="متقن — Enter">
+              <span class="score-symbol">✓</span>متقن<span class="score-key"
+                >Enter</span
+              ></button
+            ><button
+              class="score no"
+              data-score="✕"
+              title="يحتاج تدريبًا — مسافة"
+            >
+              <span class="score-symbol">✕</span>يحتاج تدريبًا<span
+                class="score-key"
+                >مسافة</span
+              ></button
+            ><button
+              class="score later"
+              data-score="↻"
+              title="إعادة لاحقًا — R"
+            >
+              <span class="score-symbol">↻</span>إعادة لاحقًا<span
+                class="score-key"
+                >R</span
+              >
+            </button>
+          </div>
+          <div class="assessment-footer no-print">
+            <div class="actions">
+              <button class="secondary" id="previousItem" type="button">
+                السابق</button
+              ><button class="secondary" id="nextItem" type="button">
+                التالي</button
+              ><button class="secondary" id="returnHome">الرئيسية</button
+              ><button class="absent" id="skipAbsent">تخطي الغائب</button
+              ><button class="secondary" id="finish">إنهاء الاختبار</button>
+            </div>
+            <div class="keyboard-help">
+              الاختصارات: Enter متقن · مسافة يحتاج تدريبًا · R إعادة لاحقًا
+            </div>
+          </div>
+          <div class="result" id="last" aria-live="polite">
+            لم تُسجّل نتيجة بعد.
+          </div>
+        </section>
+
+        <p
+          id="printFeedback"
+          class="no-print file-message"
+          role="status"
+          aria-live="polite"
+        ></p>
+        <section id="report" class="card report-card hidden">
+          <header class="report-banner">
+            <div class="report-heading">
+              <span class="trial-report-mark" aria-hidden="true">ل</span>
+              <div>
+                <h2>تقرير الاختبار التشخيصي الشفوي</h2>
+                <p>نسبة إتقان الطالب وتفصيل أدائه في الاختبار</p>
+              </div>
+            </div>
+            <div class="report-score">
+              <span>نسبة الإتقان</span><b id="reportScore">0%</b>
+            </div>
+          </header>
+          <div class="report-body">
+            <div id="summary"></div>
+            <div id="wrongLetters" class="wrong"></div>
+            <div id="details" class="result"></div>
+            <div id="signatures" class="signatures"></div>
+          </div>
+          <div class="report-workflow no-print">
+            <div class="actions report-navigation">
+              <button id="nextStudent">اختبار الطالب التالي ←</button>
+              <button class="secondary" id="previousStudent">اختبار الطالب السابق</button>
+              <button class="secondary" id="again">اختبار طالب جديد</button>
+              <button class="secondary" id="reportHistory">سجل النتائج</button>
+            </div>
+            <details class="report-tools">
+              <summary>مشاركة وتنزيل التقرير</summary>
+              <div class="actions">
+                <label for="printFormat">تفصيل التقرير</label>
+                <select id="printFormat">
+                  <option value="brief">طباعة مختصرة</option>
+                  <option value="detailed">طباعة تفصيلية</option>
+                </select>
+                <button class="secondary" id="print">مشاركة التقرير</button>
+                <button class="secondary" id="word">تنزيل تقرير Word</button>
+              </div>
+            </details>
+          </div> </section>
+
+        <section id="history" class="card hidden">
+          <header class="page-title">
+            <span class="eyebrow">ساحة المعلم / سجل النتائج</span>
+            <h2>سجل النتائج</h2>
+            <p>نتائج الاختبارات الشفوية المحفوظة وتقاريرها التفصيلية.</p>
+          </header>
+          <nav
+            id="historyPath"
+            class="history-path no-print"
+            aria-label="مسار سجل النتائج"
+          ></nav>
+          <div id="historyStats" class="history-stats"></div>
+          <div class="history-filters no-print">
+            <label for="historySearch" class="sr-only"
+              >ابحث باسم الصف أو الطالب</label
+            ><input
+              id="historySearch"
+              type="search"
+              placeholder="ابحث باسم الصف أو الطالب..."
+            /><label for="historyLevel" class="sr-only">تصفية حسب المستوى</label
+            ><select id="historyLevel">
+              <option value="all">جميع المستويات</option></select
+            ><span id="historyCount"></span
+            ><button class="secondary" id="closeHistory">العودة</button>
+          </div>
+          <div id="historyList"></div>
+          <div id="historyReportActions" class="actions no-print">
+            <button id="allWord">تنزيل تقرير الصف Word</button
+            ><button class="secondary" id="allPrint">طباعة تقرير الصف</button>
+          </div>
+        </section>
+
+        <section id="schoolPage" class="card hidden">
+          <header class="page-title">
+            <span class="eyebrow">ساحة المعلم / بيانات المدرسة</span>
+            <h2>بيانات المدرسة</h2>
+            <p>تظهر بيانات المدرسة والتوقيعات في تقارير الطلاب.</p>
+          </header>
+          <section class="form-panel school-preview">
+            <p class="history-meta">معاينة رأس التقرير</p>
+            <div class="school-preview-head">
+              <div>
+                <strong>لغتي الجميلة</strong>
+                <p>الاختبار التشخيصي الشفوي</p>
+              </div>
+              <div>
+                <b id="schoolPreviewName">—</b
+                ><span id="schoolPreviewPrincipal">مدير المدرسة: —</span>
+              </div>
+            </div>
+          </section>
+          <section class="form-panel school-form">
+            <div class="panel-heading">
+              <span class="step">⚙</span>
+              <div>
+                <h3>معلومات المدرسة</h3>
+                <p>أدخل البيانات ليتم تضمينها في التقرير.</p>
+              </div>
+            </div>
+            <div class="settings-fields">
+              <div>
+                <label for="schoolName">اسم المدرسة</label
+                ><input id="schoolName" placeholder="اسم المدرسة" />
+              </div>
+              <div>
+                <label for="teacher">اسم المعلم</label
+                ><input id="teacher" placeholder="اسم المعلم" />
+              </div>
+              <div>
+                <label for="principal">اسم مدير / مديرة المدرسة</label
+                ><input id="principal" placeholder="اسم المدير (اختياري)" />
+              </div>
+            </div>
+            <div class="actions">
+              <button id="saveSchool" type="button">حفظ البيانات</button
+              ><span
+                id="schoolSaved"
+                class="history-meta"
+                aria-live="polite"
+              ></span>
+            </div>
+          </section>
+          <div class="file-message">
+            تُحفظ هذه البيانات على هذا الجهاز وتظهر في معاينة التقرير والطباعة.
+          </div>
+          <section
+            class="form-panel no-print"
+            aria-labelledby="updateHeading"
+            style="margin-top: 20px"
+          >
+            <div class="panel-heading">
+              <span class="step" aria-hidden="true">↻</span>
+              <div>
+                <h3 id="updateHeading">تحديث البرنامج</h3>
+                <p>الإصدار الحالي: <span id="appVersion">—</span></p>
+              </div>
+            </div>
+            <p id="updateStatus" role="status" aria-live="polite">
+              جارٍ تجهيز خدمة التحديث...
+            </p>
+            <progress
+              id="updateProgress"
+              class="hidden"
+              max="100"
+              value="0"
+              aria-label="تنزيل التحديث"
+              style="width: 100%"
+            ></progress>
+            <div class="actions">
+              <button id="checkUpdate" class="secondary" type="button">
+                التحقق من التحديثات</button
+              ><button id="downloadUpdate" class="hidden" type="button">
+                تنزيل التحديث</button
+              ><button id="installUpdate" class="hidden" type="button">
+                تثبيت وإعادة التشغيل
+              </button>
+            </div>
+            <small class="history-meta"
+              >يتصل التحديث بخدمة GitHub عند طلبك؛ لا يرسل أسماء الطلاب أو
+              نتائجهم.</small
+            >
+          </section>
+        </section>
+
+        <section id="allReport" class="card hidden">
+          <h2>تقرير نتائج الصف</h2>
+          <div class="print-only">
+            تقرير نتائج الصف للاختبار التشخيصي الشفوي
+          </div>
+          <div id="allReportContent" class="result"></div>
+          <div class="actions no-print">
+            <button class="secondary" id="closeAllReport">
+              العودة إلى السجل
+            </button>
+          </div>
+        </section>
+
+        <section id="importReview" class="card hidden">
+          <div class="test-head">
+            <div>
+              <h2 style="margin: 0">كشف الصف</h2>
+              <div class="student">
+                كل سطر: اسم الطالب ثم علامة تبويب ثم اسم ولي الأمر إن وُجد. عدّل
+                السطور أو احذفها قبل الحفظ.
+              </div>
+            </div>
+          </div>
+          <div id="importCount" class="file-message" aria-live="polite"></div>
+          <label for="reviewClassName">اسم الصف</label
+          ><input
+            id="reviewClassName"
+            aria-describedby="reviewClassHint"
+          /><small
+            id="reviewClassHint"
+            class="class-name-hint"
+            role="status"
+          ></small>
+          <textarea
+            id="reviewNames"
+            class="review-list"
+            aria-label="أسماء الطلاب" placeholder="كل اسم طالب في سطر مستقل"
+          ></textarea>
+          <div class="actions no-print">
+            <button id="approveRoster">اعتماد وحفظ الصف</button
+            ><button class="secondary" id="cancelRosterReview">إلغاء</button>
+          </div>
+        </section>
+
+        <section id="studentProfile" class="card hidden">
+          <div class="test-head">
+            <div>
+              <h2 id="profileTitle" style="margin: 0">ملف الطالب</h2>
+              <div id="profileMeta" class="student"></div>
+            </div>
+          </div>
+          <div id="profileContent" class="profile-timeline"></div>
+        </section>
+      </div>
+    </main>
+
+    <script src="./roster-import.js" defer></script>
+    <dialog id="reportShareDialog" class="no-print" aria-labelledby="reportShareTitle">
+      <h2 id="reportShareTitle">مشاركة التقرير</h2>
+      <p id="reportShareName"></p>
+      <p>اختر طريقة المشاركة. لن يُرسل التقرير قبل اختيارك وتأكيدك.</p>
+      <div class="share-options">
+        <button id="shareNative" type="button">مشاركة عبر التطبيقات</button>
+        <button id="shareWhatsApp" type="button">مشاركة عبر واتساب</button>
+        <button id="shareDownload" type="button" class="secondary">تنزيل تقرير جاهز للطباعة</button>
+        <button id="shareBrowserPrint" type="button" class="secondary">طباعة / حفظ PDF من المتصفح</button>
+      </div>
+      <p class="history-meta">مشاركة التطبيقات ترسل ملفًا نصيًا عند دعم الجهاز لذلك. واتساب يشارك نص التقرير؛ ولإرسال النسخة المنسقة نزّلها وأرفقها بنفسك. لحفظ PDF اختر حفظ كملف PDF في نافذة المتصفح.</p>
+      <details><summary>راجع نص التقرير قبل المشاركة</summary><pre id="shareReportText"></pre></details>
+      <p id="shareStatus" role="status" aria-live="polite"></p>
+      <button id="shareClose" type="button" class="secondary">إغلاق</button>
+    </dialog>
+    <style>
+      #reportShareDialog { width:min(620px,calc(100% - 32px)); max-height:85vh; overflow:auto; border:1px solid #d9d5ed; border-radius:18px; padding:24px; color:#25243a; font-family:Arial,sans-serif; }
+      #reportShareDialog::backdrop { background:#25243a80; }
+      .share-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+      .share-options button { width:100%; white-space:normal; }
+      #shareReportText { white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; background:#f6f5fa; padding:12px; }
+      #shareStatus { min-height:1.5em; }
+      @media(max-width:600px) { .share-options { grid-template-columns:1fr; } #reportShareDialog { padding:18px; } }
+      @media print { #reportShareDialog { display:none!important; } }
+    </style>
+    <dialog id="cloudDialog" aria-labelledby="cloudHeading">
+      <header class="test-head">
+        <h2 id="cloudHeading">OneDrive والنسخ الاحتياطي</h2>
+        <button id="cloudClose" class="secondary" type="button">إغلاق</button>
+      </header>
+      <p>بعد الربط، تُحفظ الصفوف والنتائج وبيانات المدرسة ومسودة الاختبار تلقائيًا في مجلد Tibyan داخل OneDrive الخاص بحسابك. تبقى نسخة محلية للعمل عند انقطاع الإنترنت.</p>
+      <p id="cloudAccount">لم يتم تسجيل الدخول</p>
+      <p id="cloudStatus" role="status" aria-live="polite">OneDrive غير مربوط</p>
+      <p id="cloudLastSave" class="history-meta"></p>
+      <div class="actions">
+        <button id="cloudConnect" type="button">ربط حساب Microsoft</button>
+        <button id="cloudSave" class="secondary" type="button" disabled>حفظ الآن / إعادة المحاولة</button>
+        <button id="cloudList" class="secondary" type="button" disabled>النسخ المحفوظة في OneDrive</button>
+        <button id="cloudDisconnect" class="secondary" type="button" disabled>فصل الربط</button>
+      </div>
+      <label class="cloud-checkbox"><input id="cloudAuto" type="checkbox" disabled />الحفظ التلقائي بعد كل تغيير أثناء فتح تبيان</label>
+      <p class="history-meta">كل جهاز يحفظ ملفًا مستقلًا. لاستكمال العمل على جهاز آخر استعد نسخته أولًا؛ لا تُدمج النسخ تلقائيًا. إذا طلب Microsoft تجديد الدخول، ستظهر رسالة هنا.</p>
+      <div id="cloudFiles" class="cloud-files"></div>
+      <details id="cloudSetup">
+        <summary>إعداد الربط لأول مرة</summary>
+        <p>لم يُفعّل تسجيل Microsoft لهذا الإصدار بعد. يلزم تسجيل تطبيق باسم Tibyan لدى Microsoft، ثم إدخال معرّفه العام هنا. لا تدخل كلمة مرور أو مفتاحًا سريًا.</p>
+        <label for="cloudClientId">معرّف تطبيق Microsoft (Application Client ID)</label>
+        <input id="cloudClientId" dir="ltr" autocomplete="off" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+        <p>رابط العودة المسجل للتطبيق: <code id="cloudRedirectUri" dir="ltr"></code></p>
+      </details>
+      <hr />
+      <h3>نسخة احتياطية على جهازك</h3>
+      <div class="actions">
+        <button id="backupExport" class="secondary" type="button">تنزيل نسخة كاملة</button>
+        <label class="backup-file-label" for="backupImport">استعادة نسخة من ملف</label>
+        <input id="backupImport" type="file" accept=".json,application/json" />
+        <button id="backupRecovery" class="secondary" type="button">تنزيل نسخة ما قبل الاستعادة</button>
+      </div>
+    </dialog>
+    <script src="./renderer.js" defer></script>
+    <script src="./share-report.js" defer></script>
+    <style>#report .report-stats { grid-template-columns:repeat(3,minmax(0,1fr)); } @media(max-width:600px) { #report .report-stats { grid-template-columns:1fr; } }</style>
+    <link rel="stylesheet" href="./comfort.css" />
+    <link rel="stylesheet" href="./tibyan.css" />
+    <script src="./tibyan-ui.js" defer></script>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
+

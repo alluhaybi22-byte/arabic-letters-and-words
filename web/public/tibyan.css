@@ -1,0 +1,81 @@
+/* Tibyan identity: interface only. Paper reports keep their independent layout. */
+@media screen {
+  :root { --ui-primary:#007f8d; --ui-primary-hover:#006472; --ui-primary-tint:#e7f4f3; --ui-border:#e4dfd6; --ui-muted:#697b84; --ui-ink:#073b6e; --ui-canvas:#faf7f0; }
+  body { background:#faf7f0; color:#073b6e; font-family:Arial,sans-serif; }
+  .wrap { max-width:1440px; }
+  .trial-notice { background:#f0ece3; color:#687b84; font-size:12px; }
+  .side-nav { background:#fffcf5; border-bottom:1px solid #e9dfcd; }
+  .hero h1 { font-size:30px; color:#073b6e; }
+  .hero p { color:#687b84; }
+  .brand-mark { background:transparent; width:64px; height:64px; border-radius:0; }
+  .brand-mark img { width:100%; height:100%; object-fit:contain; }
+  .side-links { gap:7px; }
+  .nav-link { border-radius:12px; }
+  .nav-link.is-active { background:linear-gradient(110deg,#006a7b,#073b6e); color:white; }
+  .workspace { padding:28px 32px 40px; }
+  .tibyan-home { max-width:1160px; margin:auto; display:grid; grid-template-columns:minmax(340px,1fr) minmax(0,1.05fr); overflow:hidden; border:1px solid #e6dece; border-radius:30px; background:#fffcf6; box-shadow:0 16px 50px #073b6e0b; }
+  .tibyan-home .home-form { padding:45px 38px; }
+  .tibyan-logo { width:96px; height:96px; object-fit:contain; display:block; margin-bottom:12px; }
+  .home-kicker { color:#a77832; font-size:14px; font-weight:bold; }
+  .home-form h2 { font-size:36px; line-height:1.7; margin:5px 0 10px; color:#073b6e; }
+  .home-form .home-intro { color:#697b84; font-size:18px; margin-bottom:25px; line-height:1.8; }
+  .home-form select { width:100%; margin:12px 0; min-height:58px; border:1px solid #d7dcd5; border-radius:14px; background:white; color:#073b6e; font-size:19px; }
+  .home-form label { font-size:18px; }
+  #homeClassInfo { color:#697b84; font-size:15px; margin:0 0 20px; }
+  #toStudent { width:100%; min-height:56px; background:linear-gradient(110deg,#008e96,#073b6e); border-radius:16px; font-size:20px; font-weight:bold; color:#fff; box-shadow:0 5px 16px #007f8d18; }
+  #toStudent:disabled { background:#e1e6e4; color:#859393; box-shadow:none; cursor:not-allowed; }
+  #homeManage { background:transparent; color:#087a86; width:100%; margin-top:15px; border:0; font-size:15px; min-height:42px; }
+  .tibyan-home .home-art { min-height:580px; position:relative; background:#e7ede6 url('./resources/tibyan-scene.png') left center/cover; }
+  .home-art::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 50%,#073b6ec9); }
+  .home-art-copy { position:absolute; z-index:1; bottom:35px; right:30px; left:30px; color:white; }
+  .home-art-copy strong { font-size:26px; line-height:1.6; display:block; }
+  .home-art-copy span { color:#ead3a8; font-size:16px; line-height:1.8; }
+  .tibyan-stage { max-width:1000px; margin:auto; }
+  #setup.card { max-width:1000px; }
+  #setup .page-title { padding:0 4px; margin-bottom:20px; }
+  #setup .setup-flow { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+  #setup .level-choices { display:none; }
+  #setup #level { display:block; position:static; width:100%; height:auto; clip:auto; margin-top:12px; font-size:17px; }
+  #selectedClassLabel { color:#007f8d; font-size:17px; font-weight:bold; padding:0 0 16px; }
+  .tibyan-stage .form-panel { background:#fffdf7; border-color:#e6dece; }
+  #start,#nextStudent { background:linear-gradient(110deg,#008e96,#073b6e); color:#fff; } #start:not(:disabled):hover,#nextStudent:not(:disabled):hover { background:#006472; color:#fff; }
+  .setup-actions { background:#fffdf7; border-color:#e6dece; }
+  #studentBack { margin-top:18px; min-height:44px; }
+  .tibyan-roster-tools { padding:25px; border:1px solid #e6dece; background:#fffdf7; border-radius:20px; margin-bottom:20px; }
+  #rosterToolbar { display:grid; gap:12px; }
+  #uploadRoster { background:linear-gradient(110deg,#008e96,#073b6e); min-height:54px; color:white; font-size:18px; border-radius:14px; }
+  #uploadRosterHint { margin:0; }
+  #rosterControls .setup-aside { margin:0; border:0; padding:0; }
+  #rosterControls summary,#newRosterAside,#importRoster { display:none; }
+  #rosterControls .form-panel { padding:0; margin-top:20px; background:transparent; border:0; }
+  #rosterControls .roster-school-link { margin-top:14px; border-radius:12px; }
+  #rosterList { display:grid; gap:10px; margin-top:20px; }
+  .tibyan-roster-row { display:grid; grid-template-columns:1fr auto auto; gap:18px; align-items:center; padding:18px 20px; border:1px solid #e6dece; border-radius:14px; background:#fffdf7; }
+  .tibyan-roster-row strong { font-size:19px; }
+  .tibyan-roster-row span { color:#697b84; font-size:15px; }
+  .reading-stage { background:#fffdf9; border:1px solid #d4ad703d; }
+  .letter { color:#073b6e; }
+  .report-score { background:#e8f4f2; color:#007f8d; } .trial-report-mark { width:58px; height:58px; display:block; overflow:hidden; font-size:0; background:url('./resources/tibyan-logo.png') center/contain no-repeat; } .home-form #draftBanner { margin:12px 0 20px; padding:14px; border-radius:12px; line-height:1.8; }
+  :focus-visible { outline:3px solid #c99c53; outline-offset:3px; }
+  @media(max-width:760px) {
+    .workspace { padding:18px 14px 28px; }
+    .side-nav { padding:12px 16px; }
+    .hero h1 { font-size:25px; }
+    .brand-mark { width:52px; height:52px; }
+    .nav-link { font-size:13px; padding:8px 6px; }
+    .tibyan-home { display:flex; flex-direction:column; border-radius:22px; }
+    .tibyan-home .home-form { padding:25px 24px; }
+    .tibyan-logo { width:78px; height:78px; }
+    .home-form h2 { font-size:30px; }
+    .home-form .home-intro { font-size:16px; margin-bottom:20px; }
+    .tibyan-home .home-art { min-height:230px; background-position:50% 55%; }
+    .home-art-copy { bottom:20px; right:22px; left:22px; }
+    .home-art-copy strong { font-size:22px; }
+    .home-art-copy span { font-size:14px; }
+    #setup .setup-flow { grid-template-columns:1fr; }
+    .tibyan-roster-tools { padding:18px; }
+    .tibyan-roster-row { grid-template-columns:1fr auto; padding:15px; gap:12px; }
+    .tibyan-roster-row button { grid-column:1 / -1; }
+  }
+}
+

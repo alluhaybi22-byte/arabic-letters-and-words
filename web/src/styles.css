@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* STYLES */
+
+
+#cloudDialog { width: min(760px, calc(100% - 24px)); max-height: 88dvh; overflow: auto; border: 1px solid #ded8cb; border-radius: 20px; padding: 24px; color: #25243a; font: 17px/1.8 Arial, sans-serif; }
+#cloudDialog::backdrop { background: #25243a88; }
+#cloudDialog .actions { flex-wrap: wrap; gap: 10px; }
+#cloudDialog input[type='checkbox'] { width: auto; margin-inline-end: 10px; }
+#cloudDialog input[type='file'] { max-width: 100%; font-size: 14px; }
+#cloudDialog code { overflow-wrap: anywhere; }
+#cloudDialog summary { cursor: pointer; font-weight: bold; }
+.cloud-checkbox { margin-block: 18px; }
+.cloud-files { display: grid; gap: 10px; margin-block: 12px; }
+.cloud-files button { overflow-wrap: anywhere; white-space: normal; text-align: start; }
+#cloudStatus { background: #f1eef9; padding: 12px; border-radius: 12px; }
+#cloudBadge { max-width: 100%; overflow-wrap: anywhere; }
+.hero h1 small { display: block; font-size: 16px; letter-spacing: 1px; }
+@media print { #cloudDialog, #cloudBadge { display: none !important; } }
