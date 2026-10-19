@@ -1,3 +1,3 @@
-// Public Microsoft Entra application ID, never a client secret.
-// Fill this once after the owner registers Tibyan as a single-page application.
-export const MICROSOFT_CLIENT_ID = '';
+// Public Google OAuth Web Client ID, never a client secret.
+// Configure the published origin in Google Cloud before enabling account sign-in.
+export const GOOGLE_CLIENT_ID = '';

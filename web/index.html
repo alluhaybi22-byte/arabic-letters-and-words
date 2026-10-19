@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: https://login.microsoftonline.com https://graph.microsoft.com https://*.files.1drv.com https://*.1drv.com https://*.sharepoint.com https://*.sharepoint-df.com https://*.storage.live.com; worker-src 'self' blob:; object-src 'none'; frame-src 'self' https://login.microsoftonline.com https://login.live.com; base-uri 'self'; form-action 'none'"
+      content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval' https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: https://www.googleapis.com https://accounts.google.com; worker-src 'self' blob:; object-src 'none'; frame-src 'self' https://accounts.google.com; base-uri 'self'; form-action 'none'"
     />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Tibyan | تِبْيان لقياس مدى الإتقان</title>
@@ -2220,9 +2220,9 @@
   <body>
     <section class="trial-notice no-print" aria-label="حفظ البيانات">
       <strong>حفظ بيانات تبيان</strong>
-      <span>تُحفظ الأسماء والنتائج على هذا المتصفح. اربط OneDrive لحفظ نسخة تلقائية واستعادتها على جهاز آخر.</span>
-      <button id="cloudOpen" class="secondary" type="button">OneDrive والنسخ الاحتياطي</button>
-      <small id="cloudBadge" role="status">OneDrive غير مربوط</small>
+      <span>تُحفظ الأسماء والنتائج على هذا المتصفح. اربط Google Drive لحفظ نسخة تلقائية واستعادتها على جهاز آخر.</span>
+      <button id="cloudOpen" class="secondary" type="button">Google Drive والنسخ الاحتياطي</button>
+      <small id="cloudBadge" role="status">Google Drive غير مربوط</small>
       <button id="resetLocal" class="secondary" type="button">مسح البيانات المحلية</button>
     </section>
     <main class="wrap">
@@ -2830,29 +2830,30 @@
     </style>
     <dialog id="cloudDialog" aria-labelledby="cloudHeading">
       <header class="test-head">
-        <h2 id="cloudHeading">OneDrive والنسخ الاحتياطي</h2>
+        <h2 id="cloudHeading">Google Drive والنسخ الاحتياطي</h2>
         <button id="cloudClose" class="secondary" type="button">إغلاق</button>
       </header>
-      <p>بعد الربط، تُحفظ الصفوف والنتائج وبيانات المدرسة ومسودة الاختبار تلقائيًا في مجلد Tibyan داخل OneDrive الخاص بحسابك. تبقى نسخة محلية للعمل عند انقطاع الإنترنت.</p>
+      <p>بعد الربط، تُحفظ الصفوف والنتائج وبيانات المدرسة ومسودة الاختبار تلقائيًا في مساحة بيانات تبيان الخاصة داخل Google Drive لحسابك. تبقى نسخة محلية للعمل عند انقطاع الإنترنت.</p>
       <p id="cloudAccount">لم يتم تسجيل الدخول</p>
-      <p id="cloudStatus" role="status" aria-live="polite">OneDrive غير مربوط</p>
+      <p id="cloudStatus" role="status" aria-live="polite">Google Drive غير مربوط</p>
       <p id="cloudLastSave" class="history-meta"></p>
       <div class="actions">
-        <button id="cloudConnect" type="button">ربط حساب Microsoft</button>
+        <button id="cloudConnect" type="button">ربط حساب Google</button>
         <button id="cloudSave" class="secondary" type="button" disabled>حفظ الآن / إعادة المحاولة</button>
-        <button id="cloudList" class="secondary" type="button" disabled>النسخ المحفوظة في OneDrive</button>
+        <button id="cloudList" class="secondary" type="button" disabled>النسخ المحفوظة في Google Drive</button>
         <button id="cloudDisconnect" class="secondary" type="button" disabled>فصل الربط</button>
       </div>
       <label class="cloud-checkbox"><input id="cloudAuto" type="checkbox" disabled />الحفظ التلقائي بعد كل تغيير أثناء فتح تبيان</label>
-      <p class="history-meta">كل جهاز يحفظ ملفًا مستقلًا. لاستكمال العمل على جهاز آخر استعد نسخته أولًا؛ لا تُدمج النسخ تلقائيًا. إذا طلب Microsoft تجديد الدخول، ستظهر رسالة هنا.</p>
+      <p class="history-meta">كل جهاز يحفظ ملفًا مستقلًا في مساحة بيانات التطبيق المخفية في Drive، وتظهر النسخ هنا للاستعادة. لاستكمال العمل على جهاز آخر استعد نسخته أولًا؛ لا تُدمج النسخ تلقائيًا. إذا طلب Google تجديد الدخول، ستظهر رسالة هنا.</p>
       <div id="cloudFiles" class="cloud-files"></div>
       <details id="cloudSetup">
         <summary>إعداد الربط لأول مرة</summary>
-        <p>لم يُفعّل تسجيل Microsoft لهذا الإصدار بعد. يلزم تسجيل تطبيق باسم Tibyan لدى Microsoft، ثم إدخال معرّفه العام هنا. لا تدخل كلمة مرور أو مفتاحًا سريًا.</p>
-        <label for="cloudClientId">معرّف تطبيق Microsoft (Application Client ID)</label>
-        <input id="cloudClientId" dir="ltr" autocomplete="off" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-        <p>رابط العودة المسجل للتطبيق: <code id="cloudRedirectUri" dir="ltr"></code></p>
+        <p>لم يُفعّل تسجيل Google لهذا الإصدار بعد. يلزم إعداد OAuth لتطبيق Tibyan في Google Cloud، ثم إدخال معرّفه العام هنا. لا تدخل كلمة مرور أو مفتاحًا سريًا.</p>
+        <label for="cloudClientId">معرّف تطبيق Google (OAuth Client ID)</label>
+        <input id="cloudClientId" dir="ltr" autocomplete="off" placeholder="123456789-xxxxxxxx.apps.googleusercontent.com" />
+        <p>أصل JavaScript المسموح للتطبيق: <code id="cloudRedirectUri" dir="ltr"></code></p>
       </details>
+      <p class="history-meta">بعد إعادة تحميل الصفحة أو انتهاء جلسة Google قد تحتاج إلى تجديد الربط. لن تُرفع بيانات دون جلسة صالحة؛ يستمر الحفظ المحلي.</p>
       <hr />
       <h3>نسخة احتياطية على جهازك</h3>
       <div class="actions">

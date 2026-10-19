@@ -2820,7 +2820,7 @@ updateRosterMessage();
 updateDraftBanner();
 
 // Only this web app's explicitly named keys are cleared; unrelated data is untouched.
-$('appVersion').textContent = 'Tibyan 1.4.0 — نسخة الويب';
+$('appVersion').textContent = 'Tibyan 1.4.1 — نسخة الويب';
 $('again').onclick = () => {
   goHome();
   updateRosterMessage();
